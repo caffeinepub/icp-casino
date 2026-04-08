@@ -4,9 +4,9 @@ import List "mo:core/List";
 import Time "mo:core/Time";
 
 module {
-  let DEFAULT_BALANCE : Types.E8s = 1_000_000_000_000; // 10_000 ICP in e8s
-
-  // --- Game Catalog ---
+  // ---------------------------------------------------------------------------
+  // Game Catalog
+  // ---------------------------------------------------------------------------
 
   public func listGames(games : List.List<Types.Game>) : [Types.Game] {
     games.toArray()
@@ -24,15 +24,14 @@ module {
     games.filter(func(g) { g.category == category }).toArray()
   };
 
-  // --- Wallet ---
+  // ---------------------------------------------------------------------------
+  // Wallet
+  // ---------------------------------------------------------------------------
 
   public func getBalance(wallets : Map.Map<Types.UserId, Types.E8s>, owner : Types.UserId) : Types.E8s {
     switch (wallets.get(owner)) {
       case (?bal) bal;
-      case null {
-        wallets.add(owner, DEFAULT_BALANCE);
-        DEFAULT_BALANCE;
-      };
+      case null { 0 };
     }
   };
 
@@ -47,7 +46,9 @@ module {
     newBalance
   };
 
-  // --- Transactions ---
+  // ---------------------------------------------------------------------------
+  // Transactions
+  // ---------------------------------------------------------------------------
 
   public func getTransactions(
     transactions : Map.Map<Types.UserId, List.List<Types.Transaction>>,
@@ -65,6 +66,64 @@ module {
       };
     }
   };
+
+  // ---------------------------------------------------------------------------
+  // RNG helpers
+  // ---------------------------------------------------------------------------
+
+  // Pseudo-random seed from timestamp + principal blob size + betAmount.
+  // Returns a value in [0, 99].
+  func rngValue(caller : Types.UserId, betAmount : Types.E8s) : Nat {
+    let timeNow = Time.now();
+    let principalSize = caller.toBlob().size();
+    // timeNow is Int (nanoseconds); take absolute value mod a large prime then add deterministic parts
+    let t : Nat = if (timeNow >= 0) { timeNow.toNat() } else { ((-timeNow).toNat()) };
+    (t + principalSize + betAmount) % 100
+  };
+
+  // Win threshold per category (out of 100).
+  // Slots: 35%, TableGames: 45%, CardGames: 40%
+  func winThreshold(category : Types.GameCategory) : Nat {
+    switch (category) {
+      case (#Slots)      { 35 };
+      case (#TableGames) { 45 };
+      case (#CardGames)  { 40 };
+    }
+  };
+
+  // Payout multiplier (scaled by 100 to keep Nat math).
+  // Slots 2.63x → 263; TableGames 2.04x → 204; CardGames 2.30x → 230
+  func payoutMultiplier100(category : Types.GameCategory) : Nat {
+    switch (category) {
+      case (#Slots)      { 263 };
+      case (#TableGames) { 204 };
+      case (#CardGames)  { 230 };
+    }
+  };
+
+  // ---------------------------------------------------------------------------
+  // Transaction recording helper
+  // ---------------------------------------------------------------------------
+
+  func recordTx(
+    transactions : Map.Map<Types.UserId, List.List<Types.Transaction>>,
+    caller : Types.UserId,
+    tx : Types.Transaction,
+  ) {
+    let txList = switch (transactions.get(caller)) {
+      case (?list) list;
+      case null {
+        let newList = List.empty<Types.Transaction>();
+        transactions.add(caller, newList);
+        newList;
+      };
+    };
+    txList.add(tx);
+  };
+
+  // ---------------------------------------------------------------------------
+  // Generic placeBet — game-type-based win rates & payouts with ~8% house edge
+  // ---------------------------------------------------------------------------
 
   public func placeBet(
     games : List.List<Types.Game>,
@@ -91,14 +150,17 @@ module {
       return (#err("Insufficient balance"), nextTxId);
     };
 
-    // Simulate win/loss — use time-based pseudo-random (50% chance)
+    let rng = rngValue(caller, req.betAmount);
+    let threshold = winThreshold(game.category);
+    let isWin = rng < threshold;
+
     let timeNow = Time.now();
-    let isWin = (timeNow % 2) == 0;
 
     let (netAmount, result, txType, newBalance) = if (isWin) {
-      let winnings : Nat = req.betAmount * 2;
-      let net : Int = req.betAmount.toInt();
-      (net, "win", #Winning, balance - req.betAmount + winnings)
+      let mult = payoutMultiplier100(game.category);
+      let payout : Nat = (req.betAmount * mult) / 100;
+      let net : Int = (payout - req.betAmount).toInt();
+      (net, "win", #Winning, balance - req.betAmount + payout)
     } else {
       let net : Int = -(req.betAmount.toInt());
       (net, "loss", #Bet, balance - req.betAmount)
@@ -117,40 +179,170 @@ module {
       transactionType = txType;
     };
 
-    let txList = switch (transactions.get(caller)) {
-      case (?list) list;
-      case null {
-        let newList = List.empty<Types.Transaction>();
-        transactions.add(caller, newList);
-        newList;
-      };
-    };
-    txList.add(tx);
+    recordTx(transactions, caller, tx);
 
-    (#ok(tx), nextTxId + 1)
+    (#ok({ transaction = tx; newBalance }), nextTxId + 1)
   };
 
-  // --- Seed data ---
+  // ---------------------------------------------------------------------------
+  // Lucky Sevens — Game ID 1, Slots, 35% win rate, ~8% house edge
+  // Payouts: 1 ICP → 2.63 ICP, 3 ICP → 7.89 ICP, 5 ICP → 13.15 ICP
+  // ---------------------------------------------------------------------------
+
+  let LUCKY_SEVENS_GAME_ID : Nat = 1;
+  let ICP_1 : Types.E8s = 100_000_000;
+  let ICP_3 : Types.E8s = 300_000_000;
+  let ICP_5 : Types.E8s = 500_000_000;
+
+  // Win payouts in e8s (≈ betAmount × 2.63)
+  func luckySevensPayout(betAmount : Types.E8s) : Types.E8s {
+    if (betAmount == ICP_1)      { 263_000_000 }   // 2.63 ICP
+    else if (betAmount == ICP_3) { 789_000_000 }   // 7.89 ICP
+    else                         { 1_315_000_000 } // 13.15 ICP (5 ICP bet)
+  };
+
+  public func placeLuckySevensBet(
+    games : List.List<Types.Game>,
+    wallets : Map.Map<Types.UserId, Types.E8s>,
+    transactions : Map.Map<Types.UserId, List.List<Types.Transaction>>,
+    nextTxId : Nat,
+    caller : Types.UserId,
+    betAmount : Types.E8s,
+  ) : (Types.PlaceBetResult, Nat) {
+    // Only 1, 3, or 5 ICP allowed
+    if (betAmount != ICP_1 and betAmount != ICP_3 and betAmount != ICP_5) {
+      return (#err("Invalid bet amount. Lucky Sevens only accepts 1, 3, or 5 ICP bets"), nextTxId);
+    };
+
+    let game = switch (games.find(func(g) { g.id == LUCKY_SEVENS_GAME_ID })) {
+      case (?g) g;
+      case null { return (#err("Lucky Sevens game not found"), nextTxId) };
+    };
+
+    let balance = getBalance(wallets, caller);
+    if (balance < betAmount) {
+      return (#err("Insufficient balance"), nextTxId);
+    };
+
+    // 35% win rate (Slots threshold)
+    let rng = rngValue(caller, betAmount);
+    let isWin = rng < 35;
+
+    let timeNow = Time.now();
+
+    let (netAmount, result, txType, newBalance) = if (isWin) {
+      let payout = luckySevensPayout(betAmount);
+      let net : Int = (payout - betAmount).toInt();
+      (net, "win", #Winning, balance - betAmount + payout)
+    } else {
+      let net : Int = -(betAmount.toInt());
+      (net, "loss", #Bet, balance - betAmount)
+    };
+
+    wallets.add(caller, newBalance);
+
+    let tx : Types.Transaction = {
+      id = nextTxId;
+      gameId = ?game.id;
+      gameName = ?game.name;
+      betAmount;
+      result = ?result;
+      netAmount;
+      timestamp = timeNow;
+      transactionType = txType;
+    };
+
+    recordTx(transactions, caller, tx);
+
+    (#ok({ transaction = tx; newBalance }), nextTxId + 1)
+  };
+
+  // ---------------------------------------------------------------------------
+  // Midnight Dragons — Game ID 13, Slots, 35% win rate, 2.63x payout (~8% edge)
+  // ---------------------------------------------------------------------------
+
+  let MIDNIGHT_DRAGONS_GAME_ID : Nat = 13;
+
+  public func placeMidnightDragonsBet(
+    games : List.List<Types.Game>,
+    wallets : Map.Map<Types.UserId, Types.E8s>,
+    transactions : Map.Map<Types.UserId, List.List<Types.Transaction>>,
+    nextTxId : Nat,
+    caller : Types.UserId,
+    betAmount : Types.E8s,
+  ) : (Types.PlaceBetResult, Nat) {
+    if (betAmount == 0) {
+      return (#err("Bet amount must be greater than 0"), nextTxId);
+    };
+
+    let game = switch (games.find(func(g) { g.id == MIDNIGHT_DRAGONS_GAME_ID })) {
+      case (?g) g;
+      case null { return (#err("Midnight Dragons game not found"), nextTxId) };
+    };
+
+    let balance = getBalance(wallets, caller);
+    if (balance < betAmount) {
+      return (#err("Insufficient balance"), nextTxId);
+    };
+
+    // 35% win rate with 2.63x payout → ~92% RTP / ~8% house edge
+    let rng = rngValue(caller, betAmount);
+    let isWin = rng < 35;
+
+    let timeNow = Time.now();
+
+    let (netAmount, result, txType, newBalance) = if (isWin) {
+      let payout : Nat = (betAmount * 263) / 100;
+      let net : Int = (payout - betAmount).toInt();
+      (net, "win", #Winning, balance - betAmount + payout)
+    } else {
+      let net : Int = -(betAmount.toInt());
+      (net, "loss", #Bet, balance - betAmount)
+    };
+
+    wallets.add(caller, newBalance);
+
+    let tx : Types.Transaction = {
+      id = nextTxId;
+      gameId = ?game.id;
+      gameName = ?game.name;
+      betAmount;
+      result = ?result;
+      netAmount;
+      timestamp = timeNow;
+      transactionType = txType;
+    };
+
+    recordTx(transactions, caller, tx);
+
+    (#ok({ transaction = tx; newBalance }), nextTxId + 1)
+  };
+
+  // ---------------------------------------------------------------------------
+  // Seed data — all games set to houseEdge=8.0, rtp=92.0
+  // ---------------------------------------------------------------------------
 
   public func seedGames(games : List.List<Types.Game>) {
     if (not games.isEmpty()) { return };
 
     let catalog : [Types.Game] = [
-      // Slots (6 games)
-      { id = 1; name = "Lucky Sevens"; category = #Slots; rtp = 96.5; houseEdge = 3.5; imageUrl = "https://picsum.photos/seed/lucky7/400/300"; playerCount = 1240; featured = true },
-      { id = 2; name = "Golden Fortune"; category = #Slots; rtp = 95.8; houseEdge = 4.2; imageUrl = "https://picsum.photos/seed/goldfort/400/300"; playerCount = 987; featured = true },
-      { id = 3; name = "Neon Nights"; category = #Slots; rtp = 97.1; houseEdge = 2.9; imageUrl = "https://picsum.photos/seed/neonnights/400/300"; playerCount = 756; featured = false },
-      { id = 4; name = "Diamond Rush"; category = #Slots; rtp = 96.0; houseEdge = 4.0; imageUrl = "https://picsum.photos/seed/diamondrush/400/300"; playerCount = 1102; featured = false },
-      { id = 5; name = "Wild Safari"; category = #Slots; rtp = 95.5; houseEdge = 4.5; imageUrl = "https://picsum.photos/seed/wildsafari/400/300"; playerCount = 642; featured = false },
-      { id = 6; name = "Space Odyssey"; category = #Slots; rtp = 97.3; houseEdge = 2.7; imageUrl = "https://picsum.photos/seed/spaceodyssey/400/300"; playerCount = 889; featured = true },
-      // Table Games (3 games)
-      { id = 7; name = "Roulette Royale"; category = #TableGames; rtp = 97.3; houseEdge = 2.7; imageUrl = "https://picsum.photos/seed/roulette/400/300"; playerCount = 520; featured = true },
-      { id = 8; name = "Baccarat Classic"; category = #TableGames; rtp = 98.9; houseEdge = 1.1; imageUrl = "https://picsum.photos/seed/baccarat/400/300"; playerCount = 315; featured = false },
-      { id = 9; name = "Craps Deluxe"; category = #TableGames; rtp = 98.6; houseEdge = 1.4; imageUrl = "https://picsum.photos/seed/crapsdeluxe/400/300"; playerCount = 278; featured = false },
-      // Card Games (3 games)
-      { id = 10; name = "Blackjack Pro"; category = #CardGames; rtp = 99.5; houseEdge = 0.5; imageUrl = "https://picsum.photos/seed/blackjackpro/400/300"; playerCount = 1875; featured = true },
-      { id = 11; name = "Texas Hold'em"; category = #CardGames; rtp = 98.0; houseEdge = 2.0; imageUrl = "https://picsum.photos/seed/texasholdem/400/300"; playerCount = 1430; featured = false },
-      { id = 12; name = "Three Card Poker"; category = #CardGames; rtp = 96.7; houseEdge = 3.3; imageUrl = "https://picsum.photos/seed/threecardpoker/400/300"; playerCount = 563; featured = false },
+      // Slots — 35% win rate, 2.63x payout, ~8% house edge
+      { id = 1;  name = "Lucky Sevens";      category = #Slots;      rtp = 92.0; houseEdge = 8.0; imageUrl = "https://picsum.photos/seed/lucky7/400/300";         playerCount = 1240; featured = true  },
+      { id = 2;  name = "Golden Fortune";    category = #Slots;      rtp = 92.0; houseEdge = 8.0; imageUrl = "https://picsum.photos/seed/goldfort/400/300";       playerCount = 987;  featured = true  },
+      { id = 3;  name = "Neon Nights";       category = #Slots;      rtp = 92.0; houseEdge = 8.0; imageUrl = "https://picsum.photos/seed/neonnights/400/300";     playerCount = 756;  featured = false },
+      { id = 4;  name = "Diamond Rush";      category = #Slots;      rtp = 92.0; houseEdge = 8.0; imageUrl = "https://picsum.photos/seed/diamondrush/400/300";    playerCount = 1102; featured = false },
+      { id = 5;  name = "Wild Safari";       category = #Slots;      rtp = 92.0; houseEdge = 8.0; imageUrl = "https://picsum.photos/seed/wildsafari/400/300";     playerCount = 642;  featured = false },
+      { id = 6;  name = "Space Odyssey";     category = #Slots;      rtp = 92.0; houseEdge = 8.0; imageUrl = "https://picsum.photos/seed/spaceodyssey/400/300";   playerCount = 889;  featured = true  },
+      // Table Games — 45% win rate, 2.04x payout, ~8% house edge
+      { id = 7;  name = "Roulette Royale";   category = #TableGames; rtp = 92.0; houseEdge = 8.0; imageUrl = "https://picsum.photos/seed/roulette/400/300";       playerCount = 520;  featured = true  },
+      { id = 8;  name = "Baccarat Classic";  category = #TableGames; rtp = 92.0; houseEdge = 8.0; imageUrl = "https://picsum.photos/seed/baccarat/400/300";       playerCount = 315;  featured = false },
+      { id = 9;  name = "Craps Deluxe";      category = #TableGames; rtp = 92.0; houseEdge = 8.0; imageUrl = "https://picsum.photos/seed/crapsdeluxe/400/300";    playerCount = 278;  featured = false },
+      // Card Games — 40% win rate, 2.30x payout, ~8% house edge
+      { id = 10; name = "Blackjack Pro";     category = #CardGames;  rtp = 92.0; houseEdge = 8.0; imageUrl = "https://picsum.photos/seed/blackjackpro/400/300";   playerCount = 1875; featured = true  },
+      { id = 11; name = "Texas Hold'em";     category = #CardGames;  rtp = 92.0; houseEdge = 8.0; imageUrl = "https://picsum.photos/seed/texasholdem/400/300";    playerCount = 1430; featured = false },
+      { id = 12; name = "Three Card Poker";  category = #CardGames;  rtp = 92.0; houseEdge = 8.0; imageUrl = "https://picsum.photos/seed/threecardpoker/400/300"; playerCount = 563;  featured = false },
+      // Midnight Dragons — Slots, 35% win rate, 2.63x payout, ~8% house edge
+      { id = 13; name = "Midnight Dragons";  category = #Slots;      rtp = 92.0; houseEdge = 8.0; imageUrl = "https://picsum.photos/seed/midnightdragons/400/300"; playerCount = 734; featured = true  },
     ];
 
     for (game in catalog.values()) {

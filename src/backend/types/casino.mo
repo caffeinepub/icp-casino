@@ -15,8 +15,8 @@ module {
     id : Nat;
     name : Text;
     category : GameCategory;
-    rtp : Float;        // Return to player percentage (e.g. 96.5)
-    houseEdge : Float;  // House edge percentage (e.g. 3.5)
+    rtp : Float;        // Return to player percentage (e.g. 92.0)
+    houseEdge : Float;  // House edge percentage (e.g. 8.0)
     imageUrl : Text;
     playerCount : Nat;
     featured : Bool;
@@ -49,8 +49,9 @@ module {
     betAmount : E8s;
   };
 
+  // ok carries both the transaction record and the caller's updated balance
   public type PlaceBetResult = {
-    #ok : Transaction;
+    #ok : { transaction : Transaction; newBalance : E8s };
     #err : Text;
   };
 

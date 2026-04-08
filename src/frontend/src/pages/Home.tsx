@@ -215,10 +215,10 @@ function TransactionRow({ tx }: { tx: Transaction }) {
       data-ocid="transaction-row"
     >
       <div
-        className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${isPositive ? "bg-lime-500/20" : "bg-pink-500/20"}`}
+        className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${isPositive ? "bg-win-muted" : "bg-loss-muted"}`}
       >
         <TrendingUp
-          className={`w-4 h-4 ${isPositive ? "text-lime-400" : "text-pink-400 rotate-180"}`}
+          className={`w-4 h-4 ${isPositive ? "text-win" : "text-loss rotate-180"}`}
         />
       </div>
       <div className="flex-1 min-w-0">
@@ -230,7 +230,7 @@ function TransactionRow({ tx }: { tx: Transaction }) {
         </p>
       </div>
       <span
-        className={`text-sm font-mono font-semibold ${isPositive ? "text-lime-400" : "text-pink-400"}`}
+        className={`text-sm font-mono font-semibold ${isPositive ? "text-win" : "text-loss"}`}
       >
         {isPositive ? "+" : ""}
         {formatICP(tx.netAmount)} ICP
@@ -238,10 +238,10 @@ function TransactionRow({ tx }: { tx: Transaction }) {
       <span
         className={`text-xs px-2 py-0.5 rounded-full font-medium ${
           tx.transactionType === TransactionType.Deposit
-            ? "bg-cyan-500/20 text-cyan-300"
+            ? "bg-deposit-muted text-deposit"
             : tx.transactionType === TransactionType.Winning
-              ? "bg-lime-500/20 text-lime-300"
-              : "bg-pink-500/20 text-pink-300"
+              ? "bg-win-muted text-win"
+              : "bg-loss-muted text-loss"
         }`}
       >
         {TRANSACTION_TYPE_LABEL[tx.transactionType]}

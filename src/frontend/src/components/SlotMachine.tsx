@@ -35,9 +35,10 @@ function Reel({ result, spinning, delay, duration }: ReelProps) {
         width: 88,
         height: symbolHeight,
         borderRadius: "0.5rem",
-        background: "oklch(0.10 0 0)",
-        border: "2px solid oklch(var(--primary) / 0.4)",
-        boxShadow: "inset 0 0 16px oklch(0 0 0 / 0.6)",
+        background: "oklch(0.07 0 0)",
+        border: "2px solid oklch(0.72 0.18 65 / 0.55)",
+        boxShadow:
+          "inset 0 0 20px oklch(0 0 0 / 0.7), 0 0 8px oklch(0.72 0.18 65 / 0.12)",
       }}
       aria-hidden="true"
     >
@@ -47,24 +48,25 @@ function Reel({ result, spinning, delay, duration }: ReelProps) {
         style={{
           height: 28,
           background:
-            "linear-gradient(to bottom, oklch(0.10 0 0), transparent)",
+            "linear-gradient(to bottom, oklch(0.07 0 0), transparent)",
         }}
       />
       <div
         className="absolute inset-x-0 bottom-0 z-10 pointer-events-none"
         style={{
           height: 28,
-          background: "linear-gradient(to top, oklch(0.10 0 0), transparent)",
+          background: "linear-gradient(to top, oklch(0.07 0 0), transparent)",
         }}
       />
 
-      {/* Center highlight line */}
+      {/* Center highlight line — gold */}
       <div
         className="absolute inset-x-0 z-10 pointer-events-none"
         style={{
           top: symbolHeight / 2 - 1,
           height: 2,
-          background: "oklch(var(--primary) / 0.5)",
+          background: "oklch(0.72 0.18 65 / 0.70)",
+          boxShadow: "0 0 6px oklch(0.72 0.18 65 / 0.50)",
         }}
       />
 
@@ -173,34 +175,32 @@ export function SlotMachine({ title }: SlotMachineProps) {
           ? "text-loss"
           : "";
 
-  const machineBorderClass =
-    outcome === "win"
-      ? "border-win shadow-win-glow"
-      : outcome === "loss"
-        ? "border-loss"
-        : "border-primary/30";
+  const isWin = outcome === "win";
 
   return (
     <div
       className={cn(
-        "flex flex-col items-center gap-4 p-5 rounded-2xl bg-card border-2 transition-smooth",
-        machineBorderClass,
+        "flex flex-col items-center gap-4 p-5 rounded-2xl border-2 transition-smooth",
       )}
-      style={
-        outcome === "win"
-          ? {
-              boxShadow:
-                "0 0 24px oklch(var(--win) / 0.35), 0 0 6px oklch(var(--win) / 0.2)",
-            }
-          : undefined
-      }
+      style={{
+        background:
+          "linear-gradient(160deg, oklch(0.11 0.02 45), oklch(0.08 0.01 45))",
+        borderColor: isWin
+          ? "oklch(0.72 0.18 65 / 0.80)"
+          : outcome === "loss"
+            ? "oklch(0.40 0.15 300 / 0.55)"
+            : "oklch(0.72 0.18 65 / 0.35)",
+        boxShadow: isWin
+          ? "0 0 28px oklch(0.72 0.18 65 / 0.45), 0 0 8px oklch(0.72 0.18 65 / 0.25)"
+          : "0 4px 24px oklch(0 0 0 / 0.5)",
+      }}
       data-ocid="slot-machine"
     >
       {/* Title bar */}
       <div className="flex items-center gap-2">
         <span
           className="text-xs font-bold uppercase tracking-widest"
-          style={{ color: "oklch(var(--primary))" }}
+          style={{ color: "oklch(0.80 0.18 65)" }}
         >
           {title}
         </span>
@@ -244,16 +244,19 @@ export function SlotMachine({ title }: SlotMachineProps) {
             type="button"
             onClick={() => setBet(opt.value)}
             disabled={spinning}
-            className={cn(
-              "px-3 py-1 rounded-md text-xs font-semibold border transition-smooth",
-              bet === opt.value
-                ? "border-primary bg-primary/20 text-foreground"
-                : "border-border bg-muted text-muted-foreground hover:border-primary/50 hover:text-foreground",
-            )}
+            className="px-3 py-1 rounded-md text-xs font-semibold transition-smooth"
             style={
               bet === opt.value
-                ? { borderColor: "oklch(var(--primary))" }
-                : undefined
+                ? {
+                    border: "1px solid oklch(0.72 0.18 65 / 0.80)",
+                    background: "oklch(0.72 0.18 65 / 0.20)",
+                    color: "oklch(0.90 0.18 65)",
+                  }
+                : {
+                    border: "1px solid oklch(0.25 0.05 65 / 0.50)",
+                    background: "oklch(0.14 0.02 45)",
+                    color: "oklch(0.70 0.03 65)",
+                  }
             }
             data-ocid={`bet-option-${opt.value}`}
             aria-pressed={bet === opt.value}
@@ -267,12 +270,15 @@ export function SlotMachine({ title }: SlotMachineProps) {
       <Button
         onClick={spin}
         disabled={spinning}
-        className="w-full font-bold tracking-wide"
+        className="w-full font-bold tracking-wide transition-smooth"
         style={{
           background: spinning
-            ? undefined
-            : "linear-gradient(135deg, oklch(var(--primary)) 0%, oklch(0.55 0.28 280) 100%)",
-          color: "oklch(var(--primary-foreground))",
+            ? "oklch(0.18 0.02 45)"
+            : "linear-gradient(135deg, oklch(0.72 0.18 65) 0%, oklch(0.60 0.18 65) 50%, oklch(0.72 0.18 65) 100%)",
+          backgroundSize: spinning ? undefined : "200% 100%",
+          color: spinning ? "oklch(0.50 0.03 65)" : "oklch(0.07 0 0)",
+          border: "none",
+          fontWeight: 700,
         }}
         data-ocid="spin-btn"
         aria-label={spinning ? "Spinning…" : `Spin for ${bet} ICP`}

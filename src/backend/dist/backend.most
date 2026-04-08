@@ -1,9 +1,35 @@
 // Version: 1.0.0
+type ChatMessage__633304868 =
+  {
+    matchId : Text;
+    message : Text;
+    senderId : UserId__425322664;
+    timestamp : Timestamp__699095611
+  };
+type ChessMove__182411156 =
+  {
+    fromSquare : Text;
+    promotion : ?Text;
+    timestamp : Timestamp__699095611;
+    toSquare : Text
+  };
 type Data__791452850<K, V> =
   {var count : Nat__490723111; kvs : [var ?(K, V)]};
 type E8s__328334695 = Nat;
 type E8s__517071594 = E8s__328334695;
+type E8s__777423472 = E8s__328334695;
 type GameCategory__436682757 = {#CardGames; #Slots; #TableGames};
+type GameState__561844304 =
+  {
+    #Chess :
+      {
+        board : Text;
+        currentTurn : UserId__425322664;
+        moves : [ChessMove__182411156]
+      };
+    #DiceRoll : {player1Roll : ?Nat; player2Roll : ?Nat};
+    #RPS : {player1Choice : ?Text; player2Choice : ?Text}
+  };
 type Game__1071417069 =
   {
     category : GameCategory__436682757;
@@ -25,11 +51,45 @@ type List__790383201<T> =
     var blocks : [var [var ?T]];
     var elementIndex : Nat__490723111
   };
+type LobbyChatMessage__329849640 =
+  {
+    id : Text;
+    message : Text;
+    senderId : UserId__499747863;
+    senderName : Text;
+    timestamp : Timestamp__281808264
+  };
+type MatchPlayer__883469782 = {id : UserId__425322664; wagerAccepted : Bool};
+type MatchStatus__845997665 =
+  {#Active; #Cancelled; #Completed; #WagerPending; #WaitingForOpponent};
+type Match__272147183 =
+  {
+    createdAt : Timestamp__699095611;
+    gameState : GameState__561844304;
+    gameType : VersusGameType__530775574;
+    id : Text;
+    player1 : MatchPlayer__883469782;
+    player2 : ?MatchPlayer__883469782;
+    status : MatchStatus__845997665;
+    updatedAt : Timestamp__699095611;
+    wager : WagerAmount__738321631;
+    winnerId : ?UserId__425322664
+  };
 type Nat__490723111 = Nat__920180692;
 type Nat__920180692 = Nat;
 type Node__46230540<K, V> =
   {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type OnlinePlayer__54178836 =
+  {
+    balanceE8s : E8s__777423472;
+    id : UserId__425322664;
+    lastSeen : Timestamp__699095611;
+    status : PlayerStatus__991349361
+  };
+type PlayerStatus__991349361 = {#Offline; #Online; #Playing};
+type Timestamp__281808264 = Timestamp__301639476;
 type Timestamp__301639476 = Int;
+type Timestamp__699095611 = Timestamp__301639476;
 type Timestamp__982391923 = Timestamp__301639476;
 type TransactionType__952205645 = {#Bet; #Deposit; #Winning};
 type Transaction__26687421 =
@@ -44,19 +104,60 @@ type Transaction__26687421 =
     transactionType : TransactionType__952205645
   };
 type UserId__158757552 = Principal;
+type UserId__425322664 = UserId__158757552;
 type UserId__487301212 = UserId__158757552;
+type UserId__499747863 = UserId__158757552;
+type VersusGameType__530775574 = {#Chess; #DiceRoll; #RockPaperScissors};
+type WagerAmount__738321631 = {#OneHundred; #Ten; #Thirty};
 actor {
+  stable escrow :
+    {
+      var root : Node__46230540<Text, E8s__517071594>;
+      var size : Nat__490723111
+    };
   stable games :
     {
       var blockIndex : Nat__490723111;
       var blocks : [var [var ?Game__1071417069]];
       var elementIndex : Nat__490723111
     };
+  stable lobbyChat :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?LobbyChatMessage__329849640]];
+      var elementIndex : Nat__490723111
+    };
+  stable matchChats :
+    {
+      var root : Node__46230540<Text, List__415060402<ChatMessage__633304868>>;
+      var size : Nat__490723111
+    };
+  stable matchCounter :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Nat]];
+      var elementIndex : Nat__490723111
+    };
+  stable matches :
+    {
+      var root : Node__46230540<Text, Match__272147183>;
+      var size : Nat__490723111
+    };
   stable nextTxIdHolder :
     {
       var blockIndex : Nat__490723111;
       var blocks : [var [var ?Nat]];
       var elementIndex : Nat__490723111
+    };
+  stable onlinePlayers :
+    {
+      var root : Node__46230540<UserId__487301212, OnlinePlayer__54178836>;
+      var size : Nat__490723111
+    };
+  stable playerMatches :
+    {
+      var root : Node__46230540<UserId__487301212, Text>;
+      var size : Nat__490723111
     };
   stable transactions :
     {

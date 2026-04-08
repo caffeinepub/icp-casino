@@ -8,6 +8,73 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const MatchStatus = IDL.Variant({
+  'WagerPending' : IDL.Null,
+  'Active' : IDL.Null,
+  'WaitingForOpponent' : IDL.Null,
+  'Cancelled' : IDL.Null,
+  'Completed' : IDL.Null,
+});
+export const UserId = IDL.Principal;
+export const Timestamp = IDL.Int;
+export const MatchPlayer = IDL.Record({
+  'id' : UserId,
+  'wagerAccepted' : IDL.Bool,
+});
+export const ChessMove = IDL.Record({
+  'toSquare' : IDL.Text,
+  'promotion' : IDL.Opt(IDL.Text),
+  'fromSquare' : IDL.Text,
+  'timestamp' : Timestamp,
+});
+export const GameState = IDL.Variant({
+  'RPS' : IDL.Record({
+    'player1Choice' : IDL.Opt(IDL.Text),
+    'player2Choice' : IDL.Opt(IDL.Text),
+  }),
+  'DiceRoll' : IDL.Record({
+    'player2Roll' : IDL.Opt(IDL.Nat),
+    'player1Roll' : IDL.Opt(IDL.Nat),
+  }),
+  'Chess' : IDL.Record({
+    'moves' : IDL.Vec(ChessMove),
+    'currentTurn' : UserId,
+    'board' : IDL.Text,
+  }),
+});
+export const VersusGameType = IDL.Variant({
+  'DiceRoll' : IDL.Null,
+  'RockPaperScissors' : IDL.Null,
+  'Chess' : IDL.Null,
+});
+export const WagerAmount = IDL.Variant({
+  'Ten' : IDL.Null,
+  'OneHundred' : IDL.Null,
+  'Thirty' : IDL.Null,
+});
+export const Match = IDL.Record({
+  'id' : IDL.Text,
+  'status' : MatchStatus,
+  'winnerId' : IDL.Opt(UserId),
+  'createdAt' : Timestamp,
+  'updatedAt' : Timestamp,
+  'player1' : MatchPlayer,
+  'player2' : IDL.Opt(MatchPlayer),
+  'gameState' : GameState,
+  'gameType' : VersusGameType,
+  'wager' : WagerAmount,
+});
+export const JoinMatchResult = IDL.Variant({
+  'InsufficientBalance' : IDL.Null,
+  'NotFound' : IDL.Null,
+  'Success' : Match,
+  'AlreadyInMatch' : IDL.Null,
+  'AlreadyFull' : IDL.Null,
+});
+export const CreateMatchRequest = IDL.Record({
+  'gameType' : VersusGameType,
+  'wager' : WagerAmount,
+});
 export const E8s = IDL.Nat;
 export const DepositResult = IDL.Variant({ 'ok' : E8s, 'err' : IDL.Text });
 export const GameCategory = IDL.Variant({
@@ -25,12 +92,35 @@ export const Game = IDL.Record({
   'category' : GameCategory,
   'houseEdge' : IDL.Float64,
 });
+export const LobbyChatMessage = IDL.Record({
+  'id' : IDL.Text,
+  'message' : IDL.Text,
+  'timestamp' : Timestamp,
+  'senderName' : IDL.Text,
+  'senderId' : UserId,
+});
+export const ChatMessage = IDL.Record({
+  'matchId' : IDL.Text,
+  'message' : IDL.Text,
+  'timestamp' : Timestamp,
+  'senderId' : UserId,
+});
+export const PlayerStatus = IDL.Variant({
+  'Online' : IDL.Null,
+  'Playing' : IDL.Null,
+  'Offline' : IDL.Null,
+});
+export const OnlinePlayer = IDL.Record({
+  'id' : UserId,
+  'status' : PlayerStatus,
+  'balanceE8s' : E8s,
+  'lastSeen' : Timestamp,
+});
 export const TransactionType = IDL.Variant({
   'Bet' : IDL.Null,
   'Deposit' : IDL.Null,
   'Winning' : IDL.Null,
 });
-export const Timestamp = IDL.Int;
 export const Transaction = IDL.Record({
   'id' : IDL.Nat,
   'result' : IDL.Opt(IDL.Text),
@@ -41,33 +131,129 @@ export const Transaction = IDL.Record({
   'timestamp' : Timestamp,
   'gameName' : IDL.Opt(IDL.Text),
 });
+export const MakeMoveResult = IDL.Variant({
+  'NotFound' : IDL.Null,
+  'Success' : Match,
+  'InvalidMove' : IDL.Null,
+  'NotYourTurn' : IDL.Null,
+  'MatchNotActive' : IDL.Null,
+});
 export const PlaceBetRequest = IDL.Record({
   'betAmount' : E8s,
   'gameId' : IDL.Nat,
 });
 export const PlaceBetResult = IDL.Variant({
-  'ok' : Transaction,
+  'ok' : IDL.Record({ 'transaction' : Transaction, 'newBalance' : E8s }),
   'err' : IDL.Text,
 });
 
 export const idlService = IDL.Service({
+  'acceptWager' : IDL.Func([IDL.Text], [JoinMatchResult], []),
+  'createMatch' : IDL.Func([CreateMatchRequest], [Match], []),
   'deposit' : IDL.Func([E8s], [DepositResult], []),
   'getBalance' : IDL.Func([], [E8s], []),
   'getGame' : IDL.Func([IDL.Nat], [IDL.Opt(Game)], ['query']),
+  'getLobbyChatMessages' : IDL.Func([], [IDL.Vec(LobbyChatMessage)], ['query']),
+  'getMatch' : IDL.Func([IDL.Text], [IDL.Opt(Match)], ['query']),
+  'getMatchChat' : IDL.Func([IDL.Text], [IDL.Vec(ChatMessage)], ['query']),
+  'getOnlinePlayers' : IDL.Func([], [IDL.Vec(OnlinePlayer)], ['query']),
   'getTransactions' : IDL.Func(
       [IDL.Opt(TransactionType)],
       [IDL.Vec(Transaction)],
       [],
     ),
+  'heartbeat' : IDL.Func([], [OnlinePlayer], []),
+  'joinMatch' : IDL.Func([IDL.Text], [JoinMatchResult], []),
+  'leaveMatch' : IDL.Func([IDL.Text], [IDL.Opt(Match)], []),
   'listFeaturedGames' : IDL.Func([], [IDL.Vec(Game)], ['query']),
   'listGames' : IDL.Func([], [IDL.Vec(Game)], ['query']),
   'listGamesByCategory' : IDL.Func([GameCategory], [IDL.Vec(Game)], ['query']),
+  'listOpenMatches' : IDL.Func([], [IDL.Vec(Match)], ['query']),
+  'makeChessMove' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+      [MakeMoveResult],
+      [],
+    ),
+  'makeDiceRoll' : IDL.Func([IDL.Text], [MakeMoveResult], []),
+  'makeRPSChoice' : IDL.Func([IDL.Text, IDL.Text], [MakeMoveResult], []),
   'placeBet' : IDL.Func([PlaceBetRequest], [PlaceBetResult], []),
+  'placeLuckySevensBet' : IDL.Func([E8s], [PlaceBetResult], []),
+  'placeMidnightDragonsBet' : IDL.Func([E8s], [PlaceBetResult], []),
+  'sendChatMessage' : IDL.Func([IDL.Text, IDL.Text], [ChatMessage], []),
+  'sendLobbyChatMessage' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [LobbyChatMessage],
+      [],
+    ),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const MatchStatus = IDL.Variant({
+    'WagerPending' : IDL.Null,
+    'Active' : IDL.Null,
+    'WaitingForOpponent' : IDL.Null,
+    'Cancelled' : IDL.Null,
+    'Completed' : IDL.Null,
+  });
+  const UserId = IDL.Principal;
+  const Timestamp = IDL.Int;
+  const MatchPlayer = IDL.Record({ 'id' : UserId, 'wagerAccepted' : IDL.Bool });
+  const ChessMove = IDL.Record({
+    'toSquare' : IDL.Text,
+    'promotion' : IDL.Opt(IDL.Text),
+    'fromSquare' : IDL.Text,
+    'timestamp' : Timestamp,
+  });
+  const GameState = IDL.Variant({
+    'RPS' : IDL.Record({
+      'player1Choice' : IDL.Opt(IDL.Text),
+      'player2Choice' : IDL.Opt(IDL.Text),
+    }),
+    'DiceRoll' : IDL.Record({
+      'player2Roll' : IDL.Opt(IDL.Nat),
+      'player1Roll' : IDL.Opt(IDL.Nat),
+    }),
+    'Chess' : IDL.Record({
+      'moves' : IDL.Vec(ChessMove),
+      'currentTurn' : UserId,
+      'board' : IDL.Text,
+    }),
+  });
+  const VersusGameType = IDL.Variant({
+    'DiceRoll' : IDL.Null,
+    'RockPaperScissors' : IDL.Null,
+    'Chess' : IDL.Null,
+  });
+  const WagerAmount = IDL.Variant({
+    'Ten' : IDL.Null,
+    'OneHundred' : IDL.Null,
+    'Thirty' : IDL.Null,
+  });
+  const Match = IDL.Record({
+    'id' : IDL.Text,
+    'status' : MatchStatus,
+    'winnerId' : IDL.Opt(UserId),
+    'createdAt' : Timestamp,
+    'updatedAt' : Timestamp,
+    'player1' : MatchPlayer,
+    'player2' : IDL.Opt(MatchPlayer),
+    'gameState' : GameState,
+    'gameType' : VersusGameType,
+    'wager' : WagerAmount,
+  });
+  const JoinMatchResult = IDL.Variant({
+    'InsufficientBalance' : IDL.Null,
+    'NotFound' : IDL.Null,
+    'Success' : Match,
+    'AlreadyInMatch' : IDL.Null,
+    'AlreadyFull' : IDL.Null,
+  });
+  const CreateMatchRequest = IDL.Record({
+    'gameType' : VersusGameType,
+    'wager' : WagerAmount,
+  });
   const E8s = IDL.Nat;
   const DepositResult = IDL.Variant({ 'ok' : E8s, 'err' : IDL.Text });
   const GameCategory = IDL.Variant({
@@ -85,12 +271,35 @@ export const idlFactory = ({ IDL }) => {
     'category' : GameCategory,
     'houseEdge' : IDL.Float64,
   });
+  const LobbyChatMessage = IDL.Record({
+    'id' : IDL.Text,
+    'message' : IDL.Text,
+    'timestamp' : Timestamp,
+    'senderName' : IDL.Text,
+    'senderId' : UserId,
+  });
+  const ChatMessage = IDL.Record({
+    'matchId' : IDL.Text,
+    'message' : IDL.Text,
+    'timestamp' : Timestamp,
+    'senderId' : UserId,
+  });
+  const PlayerStatus = IDL.Variant({
+    'Online' : IDL.Null,
+    'Playing' : IDL.Null,
+    'Offline' : IDL.Null,
+  });
+  const OnlinePlayer = IDL.Record({
+    'id' : UserId,
+    'status' : PlayerStatus,
+    'balanceE8s' : E8s,
+    'lastSeen' : Timestamp,
+  });
   const TransactionType = IDL.Variant({
     'Bet' : IDL.Null,
     'Deposit' : IDL.Null,
     'Winning' : IDL.Null,
   });
-  const Timestamp = IDL.Int;
   const Transaction = IDL.Record({
     'id' : IDL.Nat,
     'result' : IDL.Opt(IDL.Text),
@@ -101,18 +310,41 @@ export const idlFactory = ({ IDL }) => {
     'timestamp' : Timestamp,
     'gameName' : IDL.Opt(IDL.Text),
   });
+  const MakeMoveResult = IDL.Variant({
+    'NotFound' : IDL.Null,
+    'Success' : Match,
+    'InvalidMove' : IDL.Null,
+    'NotYourTurn' : IDL.Null,
+    'MatchNotActive' : IDL.Null,
+  });
   const PlaceBetRequest = IDL.Record({ 'betAmount' : E8s, 'gameId' : IDL.Nat });
-  const PlaceBetResult = IDL.Variant({ 'ok' : Transaction, 'err' : IDL.Text });
+  const PlaceBetResult = IDL.Variant({
+    'ok' : IDL.Record({ 'transaction' : Transaction, 'newBalance' : E8s }),
+    'err' : IDL.Text,
+  });
   
   return IDL.Service({
+    'acceptWager' : IDL.Func([IDL.Text], [JoinMatchResult], []),
+    'createMatch' : IDL.Func([CreateMatchRequest], [Match], []),
     'deposit' : IDL.Func([E8s], [DepositResult], []),
     'getBalance' : IDL.Func([], [E8s], []),
     'getGame' : IDL.Func([IDL.Nat], [IDL.Opt(Game)], ['query']),
+    'getLobbyChatMessages' : IDL.Func(
+        [],
+        [IDL.Vec(LobbyChatMessage)],
+        ['query'],
+      ),
+    'getMatch' : IDL.Func([IDL.Text], [IDL.Opt(Match)], ['query']),
+    'getMatchChat' : IDL.Func([IDL.Text], [IDL.Vec(ChatMessage)], ['query']),
+    'getOnlinePlayers' : IDL.Func([], [IDL.Vec(OnlinePlayer)], ['query']),
     'getTransactions' : IDL.Func(
         [IDL.Opt(TransactionType)],
         [IDL.Vec(Transaction)],
         [],
       ),
+    'heartbeat' : IDL.Func([], [OnlinePlayer], []),
+    'joinMatch' : IDL.Func([IDL.Text], [JoinMatchResult], []),
+    'leaveMatch' : IDL.Func([IDL.Text], [IDL.Opt(Match)], []),
     'listFeaturedGames' : IDL.Func([], [IDL.Vec(Game)], ['query']),
     'listGames' : IDL.Func([], [IDL.Vec(Game)], ['query']),
     'listGamesByCategory' : IDL.Func(
@@ -120,7 +352,23 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(Game)],
         ['query'],
       ),
+    'listOpenMatches' : IDL.Func([], [IDL.Vec(Match)], ['query']),
+    'makeChessMove' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+        [MakeMoveResult],
+        [],
+      ),
+    'makeDiceRoll' : IDL.Func([IDL.Text], [MakeMoveResult], []),
+    'makeRPSChoice' : IDL.Func([IDL.Text, IDL.Text], [MakeMoveResult], []),
     'placeBet' : IDL.Func([PlaceBetRequest], [PlaceBetResult], []),
+    'placeLuckySevensBet' : IDL.Func([E8s], [PlaceBetResult], []),
+    'placeMidnightDragonsBet' : IDL.Func([E8s], [PlaceBetResult], []),
+    'sendChatMessage' : IDL.Func([IDL.Text, IDL.Text], [ChatMessage], []),
+    'sendLobbyChatMessage' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [LobbyChatMessage],
+        [],
+      ),
   });
 };
 

@@ -11,12 +11,14 @@ import {
   TrendingDown,
   TrendingUp,
   Users,
+  Wallet,
   Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { createActor } from "../backend";
 import type { Game, PlaceBetRequest, Transaction } from "../backend";
 import { GameCategory } from "../backend";
+import { useIcpWallet } from "../hooks/use-icp-wallet";
 import { formatICP, useWallet } from "../hooks/use-wallet";
 import { getGameImage, isPicsumUrl } from "../utils/gameImages";
 
@@ -106,8 +108,8 @@ function StatBadge({
 type OutcomeState =
   | { status: "idle" }
   | { status: "spinning" }
-  | { status: "won"; tx: Transaction }
-  | { status: "lost"; tx: Transaction };
+  | { status: "won"; tx: Transaction; newBalance: bigint }
+  | { status: "lost"; tx: Transaction; newBalance: bigint };
 
 function GameCanvas({ outcome }: { outcome: OutcomeState }) {
   if (outcome.status === "idle") {
@@ -129,9 +131,6 @@ function GameCanvas({ outcome }: { outcome: OutcomeState }) {
             <div
               key={emoji}
               className="w-14 h-14 bg-card border border-border rounded-lg flex items-center justify-center text-2xl animate-pulse"
-              style={{
-                animationDelay: `${Math.random() * 0.4}s`,
-              }}
             >
               {emoji}
             </div>
@@ -182,6 +181,75 @@ function GameCanvas({ outcome }: { outcome: OutcomeState }) {
   );
 }
 
+// ── Wallet gate overlay ───────────────────────────────────────────────────────
+
+function WalletGate({
+  isConnecting,
+  onConnect,
+  connectError,
+}: {
+  isConnecting: boolean;
+  onConnect: () => Promise<void>;
+  connectError: string | null;
+}) {
+  return (
+    <div
+      className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 rounded-xl"
+      style={{
+        background:
+          "linear-gradient(160deg, rgba(26,7,64,0.96) 0%, rgba(15,6,32,0.97) 100%)",
+        backdropFilter: "blur(4px)",
+        border: "2px solid rgba(212,175,55,0.25)",
+      }}
+    >
+      <div
+        className="flex items-center justify-center w-14 h-14 rounded-full"
+        style={{
+          background: "rgba(212,175,55,0.1)",
+          border: "2px solid rgba(212,175,55,0.4)",
+        }}
+      >
+        <Wallet className="w-7 h-7" style={{ color: "#D4AF37" }} />
+      </div>
+      <div className="text-center px-6">
+        <p
+          className="font-display font-bold text-lg mb-1"
+          style={{ color: "#D4AF37" }}
+        >
+          Connect Your Plug Wallet to Play
+        </p>
+        <p className="text-sm" style={{ color: "#C4B5FD" }}>
+          Real ICP bets only — connect to place wagers
+        </p>
+      </div>
+      {connectError && (
+        <p
+          className="text-xs text-center px-4 max-w-xs"
+          style={{ color: "#9333EA" }}
+        >
+          {connectError}
+        </p>
+      )}
+      <button
+        type="button"
+        onClick={onConnect}
+        disabled={isConnecting}
+        data-ocid="wallet-gate-connect-btn"
+        className="px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+        style={{
+          background: isConnecting
+            ? "rgba(212,175,55,0.4)"
+            : "linear-gradient(135deg, #D4AF37 0%, #d4a843 100%)",
+          color: "#1a0740",
+          boxShadow: isConnecting ? "none" : "0 4px 20px rgba(212,175,55,0.4)",
+        }}
+      >
+        {isConnecting ? "Connecting…" : "Connect Wallet"}
+      </button>
+    </div>
+  );
+}
+
 // ── main page ─────────────────────────────────────────────────────────────────
 
 interface GameDetailProps {
@@ -192,12 +260,16 @@ interface GameDetailProps {
 export default function GameDetail({ gameId, onBack }: GameDetailProps) {
   const { actor, isFetching } = useActor(createActor);
   const queryClient = useQueryClient();
-  const { balance, isLoading: walletLoading } = useWallet();
+  const { balance: rawBalance, isLoading: walletLoading } = useWallet();
+  const { isConnected, isConnecting, connectError, connect } = useIcpWallet();
 
   const [selectedBet, setSelectedBet] = useState<bigint>(PRESET_BETS[0].value);
   const [customInput, setCustomInput] = useState<string>("");
   const [customError, setCustomError] = useState<string>("");
   const [outcome, setOutcome] = useState<OutcomeState>({ status: "idle" });
+  const [localBalance, setLocalBalance] = useState<bigint | null>(null);
+
+  const balance = localBalance ?? rawBalance;
 
   // ── data fetching ─────────────────────────────────────────────────────────
 
@@ -222,9 +294,10 @@ export default function GameDetail({ gameId, onBack }: GameDetailProps) {
     },
     onSuccess: (result) => {
       if (result.__kind__ === "ok") {
-        const tx = result.ok;
+        const { transaction: tx, newBalance } = result.ok;
         const isWin = tx.netAmount >= 0n;
-        setOutcome({ status: isWin ? "won" : "lost", tx });
+        setLocalBalance(newBalance);
+        setOutcome({ status: isWin ? "won" : "lost", tx, newBalance });
         queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
         queryClient.invalidateQueries({ queryKey: ["transactions"] });
       } else {
@@ -262,6 +335,7 @@ export default function GameDetail({ gameId, onBack }: GameDetailProps) {
   }
 
   function handleLaunch() {
+    if (!isConnected) return;
     const betAmount = activeBet;
     if (betAmount < MIN_BET_E8S) {
       setCustomError("Minimum bet is 0.01 ICP");
@@ -398,18 +472,29 @@ export default function GameDetail({ gameId, onBack }: GameDetailProps) {
       <div className="grid md:grid-cols-5 gap-6">
         {/* Game canvas */}
         <div
-          className="md:col-span-3 bg-card border border-border rounded-xl overflow-hidden"
+          className="md:col-span-3 bg-card border border-border rounded-xl overflow-hidden relative"
           data-ocid="game-canvas"
         >
           <div className="border-b border-border px-4 py-2.5 flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <div
+              className="w-2 h-2 rounded-full animate-pulse"
+              style={{ background: isConnected ? "#D4AF37" : "#6B21A8" }}
+            />
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Game Screen
+              {isConnected ? "Live · Real ICP" : "Wallet Required"}
             </span>
           </div>
           <div className="h-64 md:h-80">
             <GameCanvas outcome={outcome} />
           </div>
+          {/* Wallet gate overlay */}
+          {!isConnected && (
+            <WalletGate
+              isConnecting={isConnecting}
+              onConnect={() => connect("plug")}
+              connectError={connectError}
+            />
+          )}
         </div>
 
         {/* Bet panel */}
@@ -443,7 +528,8 @@ export default function GameDetail({ gameId, onBack }: GameDetailProps) {
             <div className="grid grid-cols-3 gap-2">
               {PRESET_BETS.map((preset) => {
                 const isActive = !customInput && selectedBet === preset.value;
-                const isDisabled = preset.value > balance && balance > 0n;
+                const isDisabled =
+                  !isConnected || (preset.value > balance && balance > 0n);
                 return (
                   <button
                     key={preset.label}
@@ -483,6 +569,7 @@ export default function GameDetail({ gameId, onBack }: GameDetailProps) {
               value={customInput}
               onChange={(e) => handleCustomChange(e.target.value)}
               className="bg-input border-border font-mono text-sm"
+              disabled={!isConnected}
               data-ocid="custom-bet-input"
             />
             {betError && (
@@ -506,6 +593,7 @@ export default function GameDetail({ gameId, onBack }: GameDetailProps) {
             className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-md transition-smooth"
             onClick={handleLaunch}
             disabled={
+              !isConnected ||
               isLaunching ||
               !!betError ||
               activeBet < MIN_BET_E8S ||
@@ -513,7 +601,11 @@ export default function GameDetail({ gameId, onBack }: GameDetailProps) {
             }
             data-ocid="launch-game-btn"
           >
-            {isLaunching ? (
+            {!isConnected ? (
+              <>
+                <Wallet className="w-4 h-4" /> Connect Wallet to Play
+              </>
+            ) : isLaunching ? (
               <>
                 <Zap className="w-4 h-4 animate-spin" /> Spinning…
               </>
@@ -548,6 +640,15 @@ export default function GameDetail({ gameId, onBack }: GameDetailProps) {
                   {formatICP(outcome.tx.netAmount)} ICP
                 </span>
               </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Balance:{" "}
+                <span
+                  className="font-mono font-semibold"
+                  style={{ color: "#D4AF37" }}
+                >
+                  {formatICP(outcome.newBalance)} ICP
+                </span>
+              </p>
               <Button
                 variant="ghost"
                 size="sm"
@@ -559,6 +660,15 @@ export default function GameDetail({ gameId, onBack }: GameDetailProps) {
               </Button>
             </div>
           )}
+
+          {/* House edge fine print */}
+          <p
+            className="text-center text-xs font-medium pt-1"
+            style={{ color: "rgba(212,175,55,0.5)" }}
+            data-ocid="house-edge-note"
+          >
+            House edge: ~8%
+          </p>
         </div>
       </div>
     </div>

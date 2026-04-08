@@ -6,6 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import type React from "react";
 import { TransactionType } from "../backend";
 import { useAuth } from "../hooks/use-auth";
 import { formatICP } from "../hooks/use-wallet";
@@ -35,35 +36,43 @@ function typeLabel(type: TransactionType): string {
   }
 }
 
-function typeBadgeClass(type: TransactionType): string {
+function typeBadgeStyle(type: TransactionType): React.CSSProperties {
   switch (type) {
     case TransactionType.Bet:
-      return "bg-primary/20 text-primary border-primary/30";
+      return {
+        background: "oklch(0.72 0.18 65 / 0.15)",
+        color: "oklch(0.82 0.18 65)",
+        borderColor: "oklch(0.72 0.18 65 / 0.35)",
+      };
     case TransactionType.Winning:
-      return "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
+      return {
+        background: "oklch(0.72 0.18 65 / 0.18)",
+        color: "oklch(0.85 0.20 65)",
+        borderColor: "oklch(0.72 0.18 65 / 0.45)",
+      };
     case TransactionType.Deposit:
-      return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+      return {
+        background: "oklch(0.55 0.18 300 / 0.18)",
+        color: "oklch(0.78 0.15 300)",
+        borderColor: "oklch(0.55 0.18 300 / 0.40)",
+      };
   }
 }
 
 interface ReceiptRowProps {
   label: string;
   value: string;
-  valueClass?: string;
+  valueStyle?: React.CSSProperties;
   mono?: boolean;
 }
 
-function ReceiptRow({
-  label,
-  value,
-  valueClass = "text-foreground",
-  mono,
-}: ReceiptRowProps) {
+function ReceiptRow({ label, value, valueStyle, mono }: ReceiptRowProps) {
   return (
     <div className="flex justify-between items-start gap-4 py-2.5">
       <span className="text-sm text-muted-foreground shrink-0">{label}</span>
       <span
-        className={`text-sm text-right break-all ${mono ? "font-mono" : ""} ${valueClass}`}
+        className={`text-sm text-right break-all ${mono ? "font-mono" : ""}`}
+        style={valueStyle}
       >
         {value}
       </span>
@@ -88,11 +97,11 @@ export function TransactionModal({
 
   const isWin = transaction.netAmount > 0n;
   const isNeutral = transaction.netAmount === 0n;
-  const amountClass = isNeutral
-    ? "text-muted-foreground"
+  const amountStyle: React.CSSProperties = isNeutral
+    ? {}
     : isWin
-      ? "text-emerald-400 font-semibold"
-      : "text-red-400 font-semibold";
+      ? { color: "oklch(0.82 0.18 65)", fontWeight: 600 }
+      : { color: "oklch(0.55 0.18 300)", fontWeight: 600 };
   const sign = isWin ? "+" : isNeutral ? "" : "-";
   const absAmount =
     transaction.netAmount < 0n ? -transaction.netAmount : transaction.netAmount;
@@ -110,7 +119,8 @@ export function TransactionModal({
             </DialogTitle>
             <Badge
               variant="outline"
-              className={`text-xs font-semibold uppercase tracking-wide border ${typeBadgeClass(transaction.transactionType)}`}
+              className="text-xs font-semibold uppercase tracking-wide border"
+              style={typeBadgeStyle(transaction.transactionType)}
             >
               {typeLabel(transaction.transactionType)}
             </Badge>
@@ -132,7 +142,7 @@ export function TransactionModal({
           <ReceiptRow
             label="Net Amount"
             value={`${sign}${formatICP(absAmount)} ICP`}
-            valueClass={amountClass}
+            valueStyle={amountStyle}
           />
           <Separator className="bg-border/60 my-1" />
           <ReceiptRow
@@ -150,13 +160,13 @@ export function TransactionModal({
           <ReceiptRow
             label="Principal"
             value={principal}
-            valueClass="text-xs text-muted-foreground"
+            valueStyle={{ fontSize: "0.75rem", color: "oklch(0.55 0.03 65)" }}
             mono
           />
           <ReceiptRow
             label="Confirmation"
             value={confirmationHash(transaction.id)}
-            valueClass="text-xs text-muted-foreground"
+            valueStyle={{ fontSize: "0.75rem", color: "oklch(0.55 0.03 65)" }}
             mono
           />
         </div>

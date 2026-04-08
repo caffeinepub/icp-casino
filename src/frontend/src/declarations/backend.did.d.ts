@@ -10,6 +10,22 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface ChatMessage {
+  'matchId' : string,
+  'message' : string,
+  'timestamp' : Timestamp,
+  'senderId' : UserId,
+}
+export interface ChessMove {
+  'toSquare' : string,
+  'promotion' : [] | [string],
+  'fromSquare' : string,
+  'timestamp' : Timestamp,
+}
+export interface CreateMatchRequest {
+  'gameType' : VersusGameType,
+  'wager' : WagerAmount,
+}
 export type DepositResult = { 'ok' : E8s } |
   { 'err' : string };
 export type E8s = bigint;
@@ -26,9 +42,71 @@ export interface Game {
 export type GameCategory = { 'Slots' : null } |
   { 'CardGames' : null } |
   { 'TableGames' : null };
+export type GameState = {
+    'RPS' : { 'player1Choice' : [] | [string], 'player2Choice' : [] | [string] }
+  } |
+  {
+    'DiceRoll' : {
+      'player2Roll' : [] | [bigint],
+      'player1Roll' : [] | [bigint],
+    }
+  } |
+  {
+    'Chess' : {
+      'moves' : Array<ChessMove>,
+      'currentTurn' : UserId,
+      'board' : string,
+    }
+  };
+export type JoinMatchResult = { 'InsufficientBalance' : null } |
+  { 'NotFound' : null } |
+  { 'Success' : Match } |
+  { 'AlreadyInMatch' : null } |
+  { 'AlreadyFull' : null };
+export interface LobbyChatMessage {
+  'id' : string,
+  'message' : string,
+  'timestamp' : Timestamp,
+  'senderName' : string,
+  'senderId' : UserId,
+}
+export type MakeMoveResult = { 'NotFound' : null } |
+  { 'Success' : Match } |
+  { 'InvalidMove' : null } |
+  { 'NotYourTurn' : null } |
+  { 'MatchNotActive' : null };
+export interface Match {
+  'id' : string,
+  'status' : MatchStatus,
+  'winnerId' : [] | [UserId],
+  'createdAt' : Timestamp,
+  'updatedAt' : Timestamp,
+  'player1' : MatchPlayer,
+  'player2' : [] | [MatchPlayer],
+  'gameState' : GameState,
+  'gameType' : VersusGameType,
+  'wager' : WagerAmount,
+}
+export interface MatchPlayer { 'id' : UserId, 'wagerAccepted' : boolean }
+export type MatchStatus = { 'WagerPending' : null } |
+  { 'Active' : null } |
+  { 'WaitingForOpponent' : null } |
+  { 'Cancelled' : null } |
+  { 'Completed' : null };
+export interface OnlinePlayer {
+  'id' : UserId,
+  'status' : PlayerStatus,
+  'balanceE8s' : E8s,
+  'lastSeen' : Timestamp,
+}
 export interface PlaceBetRequest { 'betAmount' : E8s, 'gameId' : bigint }
-export type PlaceBetResult = { 'ok' : Transaction } |
+export type PlaceBetResult = {
+    'ok' : { 'transaction' : Transaction, 'newBalance' : E8s }
+  } |
   { 'err' : string };
+export type PlayerStatus = { 'Online' : null } |
+  { 'Playing' : null } |
+  { 'Offline' : null };
 export type Timestamp = bigint;
 export interface Transaction {
   'id' : bigint,
@@ -43,15 +121,42 @@ export interface Transaction {
 export type TransactionType = { 'Bet' : null } |
   { 'Deposit' : null } |
   { 'Winning' : null };
+export type UserId = Principal;
+export type VersusGameType = { 'DiceRoll' : null } |
+  { 'RockPaperScissors' : null } |
+  { 'Chess' : null };
+export type WagerAmount = { 'Ten' : null } |
+  { 'OneHundred' : null } |
+  { 'Thirty' : null };
 export interface _SERVICE {
+  'acceptWager' : ActorMethod<[string], JoinMatchResult>,
+  'createMatch' : ActorMethod<[CreateMatchRequest], Match>,
   'deposit' : ActorMethod<[E8s], DepositResult>,
   'getBalance' : ActorMethod<[], E8s>,
   'getGame' : ActorMethod<[bigint], [] | [Game]>,
+  'getLobbyChatMessages' : ActorMethod<[], Array<LobbyChatMessage>>,
+  'getMatch' : ActorMethod<[string], [] | [Match]>,
+  'getMatchChat' : ActorMethod<[string], Array<ChatMessage>>,
+  'getOnlinePlayers' : ActorMethod<[], Array<OnlinePlayer>>,
   'getTransactions' : ActorMethod<[[] | [TransactionType]], Array<Transaction>>,
+  'heartbeat' : ActorMethod<[], OnlinePlayer>,
+  'joinMatch' : ActorMethod<[string], JoinMatchResult>,
+  'leaveMatch' : ActorMethod<[string], [] | [Match]>,
   'listFeaturedGames' : ActorMethod<[], Array<Game>>,
   'listGames' : ActorMethod<[], Array<Game>>,
   'listGamesByCategory' : ActorMethod<[GameCategory], Array<Game>>,
+  'listOpenMatches' : ActorMethod<[], Array<Match>>,
+  'makeChessMove' : ActorMethod<
+    [string, string, string, [] | [string]],
+    MakeMoveResult
+  >,
+  'makeDiceRoll' : ActorMethod<[string], MakeMoveResult>,
+  'makeRPSChoice' : ActorMethod<[string, string], MakeMoveResult>,
   'placeBet' : ActorMethod<[PlaceBetRequest], PlaceBetResult>,
+  'placeLuckySevensBet' : ActorMethod<[E8s], PlaceBetResult>,
+  'placeMidnightDragonsBet' : ActorMethod<[E8s], PlaceBetResult>,
+  'sendChatMessage' : ActorMethod<[string, string], ChatMessage>,
+  'sendLobbyChatMessage' : ActorMethod<[string, string], LobbyChatMessage>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

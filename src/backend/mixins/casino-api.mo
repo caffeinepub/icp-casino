@@ -80,4 +80,26 @@ mixin (
     };
     result
   };
+
+  // --- Lucky Sevens ---
+
+  public shared ({ caller }) func placeLuckySevensBet(betAmount : Types.E8s) : async Types.PlaceBetResult {
+    let txId = nextTxIdHolder.size();
+    let (result, newTxId) = CasinoLib.placeLuckySevensBet(games, wallets, transactions, txId, caller, betAmount);
+    if (newTxId > txId) {
+      nextTxIdHolder.add(newTxId);
+    };
+    result
+  };
+
+  // --- Midnight Dragons ---
+
+  public shared ({ caller }) func placeMidnightDragonsBet(betAmount : Types.E8s) : async Types.PlaceBetResult {
+    let txId = nextTxIdHolder.size();
+    let (result, newTxId) = CasinoLib.placeMidnightDragonsBet(games, wallets, transactions, txId, caller, betAmount);
+    if (newTxId > txId) {
+      nextTxIdHolder.add(newTxId);
+    };
+    result
+  };
 };

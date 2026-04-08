@@ -42,7 +42,12 @@ function GameImage({ game, className }: { game: Game; className?: string }) {
 export function GameCard({ game, onPlay }: GameCardProps) {
   return (
     <div
-      className="rounded-lg overflow-hidden bg-card border border-border hover:border-primary/50 shadow-card shadow-hover cursor-pointer transition-smooth group"
+      className="rounded-lg overflow-hidden bg-card border border-border hover:border-primary/60 shadow-card shadow-hover cursor-pointer transition-smooth group"
+      style={
+        {
+          "--tw-shadow-color": "oklch(0.72 0.18 65 / 0.12)",
+        } as React.CSSProperties
+      }
       data-ocid="game-card"
     >
       {/* Thumbnail */}
@@ -63,7 +68,7 @@ export function GameCard({ game, onPlay }: GameCardProps) {
           </span>
         </div>
         {/* Player count overlay */}
-        <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-background/70 backdrop-blur-sm rounded-full px-2 py-0.5">
+        <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-background/80 backdrop-blur-sm rounded-full px-2 py-0.5 border border-border">
           <Users className="w-3 h-3 text-muted-foreground" />
           <span className="text-xs text-muted-foreground font-medium">
             {Number(game.playerCount).toLocaleString()}
@@ -87,7 +92,22 @@ export function GameCard({ game, onPlay }: GameCardProps) {
         <Button
           size="sm"
           variant="outline"
-          className="w-full text-xs gap-1.5 hover:bg-primary/10 hover:border-primary/60 hover:text-primary transition-smooth"
+          className="w-full text-xs gap-1.5 transition-smooth"
+          style={{
+            borderColor: "oklch(0.72 0.18 65 / 0.30)",
+            color: "oklch(0.72 0.18 65)",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.background =
+              "oklch(0.72 0.18 65 / 0.12)";
+            (e.currentTarget as HTMLButtonElement).style.borderColor =
+              "oklch(0.72 0.18 65 / 0.65)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.background = "";
+            (e.currentTarget as HTMLButtonElement).style.borderColor =
+              "oklch(0.72 0.18 65 / 0.30)";
+          }}
           data-ocid="play-btn"
           onClick={(e) => {
             e.stopPropagation();

@@ -1,3 +1,16 @@
+type WagerAmount = 
+ variant {
+   OneHundred;
+   Ten;
+   Thirty;
+ };
+type VersusGameType = 
+ variant {
+   Chess;
+   DiceRoll;
+   RockPaperScissors;
+ };
+type UserId = principal;
 type TransactionType = 
  variant {
    Bet;
@@ -16,15 +29,97 @@ type Transaction =
    transactionType: TransactionType;
  };
 type Timestamp = int;
+type PlayerStatus = 
+ variant {
+   Offline;
+   Online;
+   Playing;
+ };
 type PlaceBetResult = 
  variant {
    err: text;
-   ok: Transaction;
+   ok: record {
+         newBalance: E8s;
+         transaction: Transaction;
+       };
  };
 type PlaceBetRequest = 
  record {
    betAmount: E8s;
    gameId: nat;
+ };
+type OnlinePlayer = 
+ record {
+   balanceE8s: E8s;
+   id: UserId;
+   lastSeen: Timestamp;
+   status: PlayerStatus;
+ };
+type MatchStatus = 
+ variant {
+   Active;
+   Cancelled;
+   Completed;
+   WagerPending;
+   WaitingForOpponent;
+ };
+type MatchPlayer = 
+ record {
+   id: UserId;
+   wagerAccepted: bool;
+ };
+type Match = 
+ record {
+   createdAt: Timestamp;
+   gameState: GameState;
+   gameType: VersusGameType;
+   id: text;
+   player1: MatchPlayer;
+   player2: opt MatchPlayer;
+   status: MatchStatus;
+   updatedAt: Timestamp;
+   wager: WagerAmount;
+   winnerId: opt UserId;
+ };
+type MakeMoveResult = 
+ variant {
+   InvalidMove;
+   MatchNotActive;
+   NotFound;
+   NotYourTurn;
+   Success: Match;
+ };
+type LobbyChatMessage = 
+ record {
+   id: text;
+   message: text;
+   senderId: UserId;
+   senderName: text;
+   timestamp: Timestamp;
+ };
+type JoinMatchResult = 
+ variant {
+   AlreadyFull;
+   AlreadyInMatch;
+   InsufficientBalance;
+   NotFound;
+   Success: Match;
+ };
+type GameState = 
+ variant {
+   Chess: record {
+            board: text;
+            currentTurn: UserId;
+            moves: vec ChessMove;
+          };
+   DiceRoll: record {
+               player1Roll: opt nat;
+               player2Roll: opt nat;
+             };
+   RPS: record {
+          player1Choice: opt text;
+          player2Choice: opt text;
+        };
  };
 type GameCategory = 
  variant {
@@ -49,13 +144,51 @@ type DepositResult =
    err: text;
    ok: E8s;
  };
+type CreateMatchRequest = 
+ record {
+   gameType: VersusGameType;
+   wager: WagerAmount;
+ };
+type ChessMove = 
+ record {
+   fromSquare: text;
+   promotion: opt text;
+   timestamp: Timestamp;
+   toSquare: text;
+ };
+type ChatMessage = 
+ record {
+   matchId: text;
+   message: text;
+   senderId: UserId;
+   timestamp: Timestamp;
+ };
 service : {
+  acceptWager: (matchId: text) -> (JoinMatchResult);
+  createMatch: (req: CreateMatchRequest) -> (Match);
   deposit: (amount: E8s) -> (DepositResult);
   getBalance: () -> (E8s);
   getGame: (gameId: nat) -> (opt Game) query;
+  getLobbyChatMessages: () -> (vec LobbyChatMessage) query;
+  getMatch: (matchId: text) -> (opt Match) query;
+  getMatchChat: (matchId: text) -> (vec ChatMessage) query;
+  getOnlinePlayers: () -> (vec OnlinePlayer) query;
   getTransactions: (typeFilter: opt TransactionType) -> (vec Transaction);
+  heartbeat: () -> (OnlinePlayer);
+  joinMatch: (matchId: text) -> (JoinMatchResult);
+  leaveMatch: (matchId: text) -> (opt Match);
   listFeaturedGames: () -> (vec Game) query;
   listGames: () -> (vec Game) query;
   listGamesByCategory: (category: GameCategory) -> (vec Game) query;
+  listOpenMatches: () -> (vec Match) query;
+  makeChessMove: (matchId: text, fromSquare: text, toSquare: text, promotion:
+   opt text) -> (MakeMoveResult);
+  makeDiceRoll: (matchId: text) -> (MakeMoveResult);
+  makeRPSChoice: (matchId: text, choice: text) -> (MakeMoveResult);
   placeBet: (req: PlaceBetRequest) -> (PlaceBetResult);
+  placeLuckySevensBet: (betAmount: E8s) -> (PlaceBetResult);
+  placeMidnightDragonsBet: (betAmount: E8s) -> (PlaceBetResult);
+  sendChatMessage: (matchId: text, message: text) -> (ChatMessage);
+  sendLobbyChatMessage: (message: text, senderName: text) ->
+   (LobbyChatMessage);
 }

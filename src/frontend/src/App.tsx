@@ -6,9 +6,12 @@ import { useAuth } from "./hooks/use-auth";
 const LoginPage = lazy(() => import("./pages/Login"));
 const LobbyPage = lazy(() => import("./pages/Lobby"));
 const GameDetailPage = lazy(() => import("./pages/GameDetail"));
+const LuckySevensPage = lazy(() => import("./pages/LuckySevens"));
 const TransactionsPage = lazy(() => import("./pages/Transactions"));
+const VersusLobbyPage = lazy(() => import("./pages/VersusLobby"));
+const VersusMatchPage = lazy(() => import("./pages/VersusMatch"));
 
-type View = "lobby" | "game" | "transactions";
+type View = "lobby" | "game" | "transactions" | "versusLobby" | "versusMatch";
 
 function PageLoader() {
   return (
@@ -27,6 +30,7 @@ export default function App() {
   const { isAuthenticated, isInitializing } = useAuth();
   const [view, setView] = useState<View>("lobby");
   const [gameId, setGameId] = useState<bigint>(0n);
+  const [matchId, setMatchId] = useState<string>("");
 
   function navigateToGame(id: bigint) {
     setGameId(id);
@@ -41,11 +45,21 @@ export default function App() {
     setView("transactions");
   }
 
+  function navigateToVersusLobby() {
+    setView("versusLobby");
+  }
+
+  function navigateToVersusMatch(id: string) {
+    setMatchId(id);
+    setView("versusMatch");
+  }
+
   if (isInitializing) {
     return (
       <Layout
         onNavigate={navigateToLobby}
         onTransactions={navigateToTransactions}
+        onVersusMode={navigateToVersusLobby}
       >
         <PageLoader />
       </Layout>
@@ -57,6 +71,7 @@ export default function App() {
       <Layout
         onNavigate={navigateToLobby}
         onTransactions={navigateToTransactions}
+        onVersusMode={navigateToVersusLobby}
       >
         <Suspense fallback={<PageLoader />}>
           <LoginPage />
@@ -69,9 +84,16 @@ export default function App() {
     <Layout
       onNavigate={navigateToLobby}
       onTransactions={navigateToTransactions}
+      onVersusMode={navigateToVersusLobby}
     >
       <Suspense fallback={<PageLoader />}>
-        {view === "game" ? (
+        {view === "versusMatch" ? (
+          <VersusMatchPage matchId={matchId} onBack={navigateToVersusLobby} />
+        ) : view === "versusLobby" ? (
+          <VersusLobbyPage onMatchStart={navigateToVersusMatch} />
+        ) : view === "game" && gameId === 1n ? (
+          <LuckySevensPage onBack={navigateToLobby} />
+        ) : view === "game" ? (
           <GameDetailPage gameId={gameId} onBack={navigateToLobby} />
         ) : view === "transactions" ? (
           <TransactionsPage />
@@ -79,6 +101,7 @@ export default function App() {
           <LobbyPage
             onPlay={navigateToGame}
             onTransactions={navigateToTransactions}
+            onVersusMode={navigateToVersusLobby}
           />
         )}
       </Suspense>

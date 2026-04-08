@@ -22,3 +22,11 @@ export interface NavLink {
   label: string;
   href: string;
 }
+
+// Shared wallet gate props used across game screens
+export interface WalletGateProps {
+  isConnected: boolean;
+  isConnecting: boolean;
+  onConnect: () => Promise<void>;
+  connectError: string | null;
+}

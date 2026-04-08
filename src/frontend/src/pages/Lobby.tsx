@@ -8,16 +8,17 @@ import type { Game } from "../backend";
 import { CategoryFilter } from "../components/CategoryFilter";
 import { FeaturedCarousel } from "../components/FeaturedCarousel";
 import { GameCard } from "../components/GameCard";
+import { MidnightDragons } from "../components/MidnightDragons";
 import { SkeletonCard } from "../components/SkeletonCard";
-import { SlotMachineSection } from "../components/SlotMachineSection";
 import type { CategoryFilter as CategoryFilterType } from "../types/casino";
 
 interface LobbyPageProps {
   onPlay: (gameId: bigint) => void;
   onTransactions?: () => void;
+  onVersusMode?: () => void;
 }
 
-export default function LobbyPage({ onPlay }: LobbyPageProps) {
+export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
   const { actor, isFetching } = useActor(createActor);
   const [categoryFilter, setCategoryFilter] =
     useState<CategoryFilterType>("All");
@@ -118,7 +119,11 @@ export default function LobbyPage({ onPlay }: LobbyPageProps) {
           </div>
         ) : filteredGames.length === 0 ? (
           <div
-            className="flex flex-col items-center justify-center py-24 bg-card border border-border rounded-xl"
+            className="flex flex-col items-center justify-center py-24 rounded-xl"
+            style={{
+              background: "oklch(0.10 0.01 45)",
+              border: "1px solid oklch(0.25 0.05 65 / 0.40)",
+            }}
             data-ocid="games-empty-state"
           >
             <Dices className="w-14 h-14 text-muted-foreground mb-4 opacity-60" />
@@ -162,8 +167,81 @@ export default function LobbyPage({ onPlay }: LobbyPageProps) {
         )}
       </section>
 
-      {/* Slot Machines */}
-      <SlotMachineSection />
+      {/* Versus Mode Banner */}
+      {onVersusMode && (
+        <section id="versus-mode" aria-label="Versus Mode">
+          <button
+            type="button"
+            onClick={onVersusMode}
+            className="w-full rounded-2xl p-6 border text-left transition-smooth hover:scale-[1.01] focus-visible:ring-2 focus-visible:ring-primary"
+            style={{
+              background:
+                "linear-gradient(135deg, oklch(0.13 0.01 45), oklch(0.09 0.01 300 / 0.4))",
+              borderColor: "oklch(0.45 0.15 300 / 0.5)",
+              boxShadow: "0 0 32px oklch(0.45 0.15 300 / 0.15)",
+            }}
+            data-ocid="versus-mode-banner"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-3xl">⚔️</span>
+                  <h2
+                    className="font-display text-2xl font-bold"
+                    style={{ color: "oklch(0.82 0.18 65)" }}
+                  >
+                    Versus Mode
+                  </h2>
+                  <span
+                    className="text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider"
+                    style={{
+                      background: "oklch(0.45 0.15 300 / 0.2)",
+                      color: "oklch(0.72 0.15 300)",
+                      border: "1px solid oklch(0.45 0.15 300 / 0.4)",
+                    }}
+                  >
+                    PvP
+                  </span>
+                </div>
+                <p className="text-sm" style={{ color: "oklch(0.60 0.03 65)" }}>
+                  Challenge real players in Chess, Dice Roll, and Rock Paper
+                  Scissors. Wager 10, 30, or 100 ICP — winner takes all.
+                </p>
+              </div>
+              <div
+                className="shrink-0 ml-6 px-5 py-2.5 rounded-xl font-semibold text-sm transition-smooth"
+                style={{
+                  background:
+                    "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
+                  color: "oklch(0.07 0 0)",
+                }}
+              >
+                Play Now →
+              </div>
+            </div>
+          </button>
+        </section>
+      )}
+
+      {/* Midnight Dragons — 8×8 Slot Machine */}
+      <section id="midnight-dragons" aria-label="Midnight Dragons slot machine">
+        <div className="flex items-center gap-3 mb-4">
+          <h2 className="font-display text-2xl font-bold text-foreground">
+            Midnight Dragons
+          </h2>
+          <span
+            className="text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider"
+            style={{
+              background: "rgba(212,175,55,0.15)",
+              color: "#D4AF37",
+              border: "1px solid rgba(212,175,55,0.35)",
+            }}
+          >
+            8×8 Slots
+          </span>
+        </div>
+        <MidnightDragons />
+      </section>
     </div>
   );
 }
