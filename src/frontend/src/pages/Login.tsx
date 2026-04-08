@@ -25,61 +25,181 @@ export default function LoginPage() {
 
   return (
     <div
-      className="flex flex-col items-center justify-center min-h-[80vh] px-4"
+      className="relative flex flex-col items-center justify-center min-h-[90vh] px-4 overflow-hidden"
+      style={{
+        background:
+          "radial-gradient(ellipse at 50% 35%, oklch(0.18 0.06 300 / 0.80) 0%, oklch(0.10 0.03 300 / 0.50) 40%, oklch(0.05 0 0) 80%)",
+      }}
       data-ocid="login-page"
     >
-      {/* Hero */}
-      <div className="text-center mb-12 max-w-lg">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 border border-primary/30 mb-6 shadow-lg">
-          <Coins className="w-8 h-8 text-primary" />
-        </div>
-        <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4 leading-tight">
-          Welcome to <span className="text-primary">ICP Casino</span>
-        </h1>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          The decentralized casino on the Internet Computer. Sign in with
-          Internet Identity to start playing.
-        </p>
-      </div>
+      {/* Background vignette */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 50%, transparent 30%, oklch(0 0 0 / 0.70) 100%)",
+        }}
+        aria-hidden="true"
+      />
 
-      {/* CTA */}
-      <Button
-        size="lg"
-        onClick={login}
-        disabled={isLoggingIn}
-        className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-base font-semibold shadow-lg transition-smooth mb-12"
-        data-ocid="hero-login-btn"
-      >
-        <Shield className="w-5 h-5" />
-        {isLoggingIn
-          ? "Connecting to Internet Identity…"
-          : "Sign in with Internet Identity"}
-      </Button>
+      {/* Decorative ambient glow */}
+      <div
+        className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full"
+        style={{
+          background:
+            "radial-gradient(circle, oklch(0.72 0.18 65 / 0.08) 0%, transparent 70%)",
+          filter: "blur(40px)",
+        }}
+        aria-hidden="true"
+      />
 
-      {/* Feature highlights */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl w-full">
-        {FEATURES.map((f) => (
+      <div className="relative z-10 flex flex-col items-center w-full max-w-md">
+        {/* Login card with glass treatment */}
+        <div
+          className="glass-card w-full rounded-3xl p-10 flex flex-col items-center relative overflow-hidden"
+          style={{
+            boxShadow: "var(--shadow-xl), 0 0 64px oklch(0.72 0.18 65 / 0.15)",
+            borderColor: "oklch(0.72 0.18 65 / 0.30)",
+          }}
+        >
+          {/* Cinematic top light */}
+          <div className="cinematic-top-light" aria-hidden="true" />
+
+          {/* Gold corner accents */}
+          <span
+            className="absolute top-3 left-3 w-6 h-6 pointer-events-none"
+            style={{
+              borderTop: "2px solid oklch(0.72 0.18 65 / 0.60)",
+              borderLeft: "2px solid oklch(0.72 0.18 65 / 0.60)",
+              borderRadius: "4px 0 0 0",
+            }}
+            aria-hidden="true"
+          />
+          <span
+            className="absolute top-3 right-3 w-6 h-6 pointer-events-none"
+            style={{
+              borderTop: "2px solid oklch(0.72 0.18 65 / 0.60)",
+              borderRight: "2px solid oklch(0.72 0.18 65 / 0.60)",
+              borderRadius: "0 4px 0 0",
+            }}
+            aria-hidden="true"
+          />
+          <span
+            className="absolute bottom-3 left-3 w-6 h-6 pointer-events-none"
+            style={{
+              borderBottom: "2px solid oklch(0.72 0.18 65 / 0.60)",
+              borderLeft: "2px solid oklch(0.72 0.18 65 / 0.60)",
+              borderRadius: "0 0 0 4px",
+            }}
+            aria-hidden="true"
+          />
+          <span
+            className="absolute bottom-3 right-3 w-6 h-6 pointer-events-none"
+            style={{
+              borderBottom: "2px solid oklch(0.72 0.18 65 / 0.60)",
+              borderRight: "2px solid oklch(0.72 0.18 65 / 0.60)",
+              borderRadius: "0 0 4px 0",
+            }}
+            aria-hidden="true"
+          />
+
+          {/* Logo icon */}
           <div
-            key={f.title}
-            className="bg-card border border-border rounded-lg p-5 text-center shadow-card hover:border-primary/40 transition-smooth"
+            className="inline-flex items-center justify-center w-18 h-18 rounded-2xl mb-6 shadow-xl"
+            style={{
+              background:
+                "linear-gradient(135deg, oklch(0.72 0.18 65 / 0.25), oklch(0.55 0.18 300 / 0.20))",
+              border: "1px solid oklch(0.72 0.18 65 / 0.45)",
+              padding: "1rem",
+            }}
           >
-            <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 mb-3">
-              <f.icon className="w-5 h-5 text-primary" />
-            </div>
-            <h3 className="font-semibold text-foreground mb-1.5 text-sm">
-              {f.title}
-            </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              {f.description}
-            </p>
+            <Coins
+              className="w-9 h-9"
+              style={{ color: "oklch(0.82 0.18 65)" }}
+            />
           </div>
-        ))}
-      </div>
 
-      <p className="mt-10 text-xs text-muted-foreground text-center max-w-sm">
-        By signing in, you agree to our Terms of Service and Privacy Policy.
-        Play responsibly. 18+ only.
-      </p>
+          {/* Title */}
+          <h1
+            className="heading-cinematic text-gold-glow font-display text-4xl md:text-5xl font-bold text-center mb-3 leading-tight"
+            style={{ color: "oklch(0.88 0.18 65)" }}
+          >
+            ICP Casino
+          </h1>
+
+          {/* Tagline */}
+          <p
+            className="text-premium text-center text-base mb-8 leading-relaxed"
+            style={{ color: "oklch(0.65 0.05 300)" }}
+          >
+            The decentralized casino on the Internet Computer.
+            <br />
+            Sign in to start playing.
+          </p>
+
+          {/* CTA Button */}
+          <Button
+            size="lg"
+            onClick={login}
+            disabled={isLoggingIn}
+            className="gap-2.5 btn-premium w-full py-6 text-base font-bold rounded-xl"
+            style={{
+              background:
+                "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
+              color: "oklch(0.07 0 0)",
+              border: "none",
+              boxShadow:
+                "0 6px 24px oklch(0.72 0.18 65 / 0.40), 0 2px 8px oklch(0 0 0 / 0.50)",
+            }}
+            data-ocid="hero-login-btn"
+          >
+            <Shield className="w-5 h-5" />
+            {isLoggingIn
+              ? "Connecting to Internet Identity…"
+              : "Sign in with Internet Identity"}
+          </Button>
+
+          <p
+            className="mt-6 text-xs text-center"
+            style={{ color: "oklch(0.45 0.02 65)" }}
+          >
+            By signing in, you agree to our Terms of Service. Play responsibly.
+            18+ only.
+          </p>
+        </div>
+
+        {/* Feature highlights */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl w-full mt-10">
+          {FEATURES.map((f) => (
+            <div
+              key={f.title}
+              className="glass-card card-shimmer rounded-xl p-5 text-center transition-smooth"
+            >
+              <div
+                className="inline-flex items-center justify-center w-10 h-10 rounded-xl mb-3"
+                style={{
+                  background: "oklch(0.72 0.18 65 / 0.15)",
+                  border: "1px solid oklch(0.72 0.18 65 / 0.30)",
+                }}
+              >
+                <f.icon
+                  className="w-5 h-5"
+                  style={{ color: "oklch(0.82 0.18 65)" }}
+                />
+              </div>
+              <h3
+                className="font-semibold mb-1.5 text-sm"
+                style={{ color: "oklch(0.88 0.02 65)" }}
+              >
+                {f.title}
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {f.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

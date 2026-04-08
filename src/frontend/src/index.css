@@ -1,12 +1,15 @@
+/* Premium fonts — Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --font-display: Fraunces, serif;
-    --font-body: DM Sans, sans-serif;
-    --font-mono: Geist Mono, monospace;
+    --font-display: Space Grotesk, sans-serif;
+    --font-body: Lora, serif;
+    --font-mono: JetBrains Mono, monospace;
     --radius: 0.5rem;
 
     /* Deep obsidian backgrounds */
@@ -123,6 +126,11 @@
     --versus-wager-active: 0.72 0.18 65;
   }
 
+  html,
+  body {
+    font-family: "Space Grotesk", var(--font-display), sans-serif;
+  }
+
   * {
     @apply border-border;
   }
@@ -133,25 +141,171 @@
 
 @layer base {
   @font-face {
-    font-family: Fraunces;
-    src: url("/assets/fonts/Fraunces.woff2") format("woff2");
+    font-family: Space Grotesk;
+    src: url("/assets/fonts/SpaceGrotesk.woff2") format("woff2");
     font-display: swap;
+    font-weight: 700;
   }
   @font-face {
-    font-family: DM Sans;
-    src: url("/assets/fonts/DMSans.woff2") format("woff2");
+    font-family: Lora;
+    src: url("/assets/fonts/Lora.woff2") format("woff2");
     font-display: swap;
+    font-weight: 400;
   }
   @font-face {
-    font-family: Geist Mono;
-    src: url("/assets/fonts/GeistMono.woff2") format("woff2");
+    font-family: JetBrains Mono;
+    src: url("/assets/fonts/JetBrainsMono.woff2") format("woff2");
     font-display: swap;
+    font-weight: 500;
   }
 }
 
 @layer utilities {
   .transition-smooth {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Premium glassmorphism effect */
+  .glass-effect {
+    background-color: oklch(0.1 0.01 45 / 0.4);
+    backdrop-filter: blur(12px);
+    border: 1px solid oklch(0.72 0.18 65 / 0.2);
+    box-shadow: 0 8px 32px oklch(0 0 0 / 0.12), inset 1px 1px 0
+      oklch(0.96 0.02 65 / 0.1);
+  }
+
+  /* Cinematic depth shadows */
+  .shadow-depth-sm {
+    box-shadow: 0 4px 12px oklch(0 0 0 / 0.15);
+  }
+
+  .shadow-depth-md {
+    box-shadow: 0 8px 24px oklch(0 0 0 / 0.2), 0 2px 6px oklch(0 0 0 / 0.1);
+  }
+
+  .shadow-depth-lg {
+    box-shadow: 0 16px 48px oklch(0 0 0 / 0.25), 0 4px 12px oklch(0 0 0 / 0.15);
+  }
+
+  /* Gold shimmer effect */
+  @keyframes shimmerGold {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  .shimmer-gold {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      oklch(0.72 0.18 65 / 0.4),
+      transparent
+    );
+    background-size: 1000px 100%;
+    animation: shimmerGold 3s infinite;
+  }
+
+  /* Staggered fade-in for grid items */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in-grid > * {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .fade-in-grid > :nth-child(1) {
+    animation-delay: 0.05s;
+  }
+  .fade-in-grid > :nth-child(2) {
+    animation-delay: 0.1s;
+  }
+  .fade-in-grid > :nth-child(3) {
+    animation-delay: 0.15s;
+  }
+  .fade-in-grid > :nth-child(4) {
+    animation-delay: 0.2s;
+  }
+  .fade-in-grid > :nth-child(5) {
+    animation-delay: 0.25s;
+  }
+  .fade-in-grid > :nth-child(6) {
+    animation-delay: 0.3s;
+  }
+  .fade-in-grid > :nth-child(7) {
+    animation-delay: 0.35s;
+  }
+  .fade-in-grid > :nth-child(8) {
+    animation-delay: 0.4s;
+  }
+  .fade-in-grid > :nth-child(9) {
+    animation-delay: 0.45s;
+  }
+  .fade-in-grid > :nth-child(10) {
+    animation-delay: 0.5s;
+  }
+  .fade-in-grid > :nth-child(11) {
+    animation-delay: 0.55s;
+  }
+  .fade-in-grid > :nth-child(12) {
+    animation-delay: 0.6s;
+  }
+  .fade-in-grid > :nth-child(13) {
+    animation-delay: 0.65s;
+  }
+  .fade-in-grid > :nth-child(14) {
+    animation-delay: 0.7s;
+  }
+  .fade-in-grid > :nth-child(15) {
+    animation-delay: 0.75s;
+  }
+
+  /* Cinematic scale + opacity on interaction */
+  .press-depth {
+    @apply transition-smooth;
+  }
+
+  .press-depth:active {
+    transform: scale(0.96);
+    opacity: 0.85;
+  }
+
+  /* Premium text shadow for headers */
+  .text-shadow-premium {
+    text-shadow: 0 2px 8px oklch(0 0 0 / 0.35);
+  }
+
+  /* Gradient lighting overlay effect (top-to-bottom) */
+  @keyframes cinematicLighting {
+    0% {
+      background-position: 0 -100%;
+    }
+    50% {
+      background-position: 0 100%;
+    }
+    100% {
+      background-position: 0 -100%;
+    }
+  }
+
+  .cinematic-overlay {
+    background: linear-gradient(
+      180deg,
+      oklch(0.72 0.18 65 / 0.08) 0%,
+      transparent 40%,
+      oklch(0 0 0 / 0.15) 100%
+    );
+    background-size: 100% 200%;
   }
 
   /* Slot machine reel spin animation */
@@ -437,5 +591,398 @@
     background-color: oklch(0.1 0.03 300 / 0.25);
     border-color: oklch(0.72 0.18 65 / 0.65);
     box-shadow: 0 0 28px oklch(0.72 0.18 65 / 0.12);
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     PREMIUM VISUAL SYSTEM — CINEMATIC CASINO UPGRADE
+  ───────────────────────────────────────────────────────────────────────── */
+
+  /* Depth shadow CSS custom properties */
+  :root {
+    --shadow-sm: 0 2px 8px oklch(0.72 0.18 65 / 0.1), 0 1px 2px
+      oklch(0 0 0 / 0.4);
+    --shadow-md: 0 4px 16px oklch(0.72 0.18 65 / 0.15), 0 2px 8px
+      oklch(0 0 0 / 0.5);
+    --shadow-lg: 0 8px 32px oklch(0.72 0.18 65 / 0.2), 0 4px 16px
+      oklch(0 0 0 / 0.6), inset 0 1px 0 oklch(0.72 0.18 65 / 0.15);
+    --shadow-xl: 0 16px 48px oklch(0.72 0.18 65 / 0.25), 0 8px 24px
+      oklch(0 0 0 / 0.7), inset 0 1px 0 oklch(0.72 0.18 65 / 0.2);
+  }
+
+  /* Tailwind-usable depth shadow classes */
+  .shadow-sm-premium {
+    box-shadow: var(--shadow-sm);
+  }
+  .shadow-md-premium {
+    box-shadow: var(--shadow-md);
+  }
+  .shadow-lg-premium {
+    box-shadow: var(--shadow-lg);
+  }
+  .shadow-xl-premium {
+    box-shadow: var(--shadow-xl);
+  }
+
+  /* Glassmorphism — gold-tinted card glass */
+  .glass-card {
+    background: oklch(0.72 0.18 65 / 0.08);
+    backdrop-filter: blur(12px) saturate(1.4);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+    border: 1px solid oklch(0.72 0.18 65 / 0.2);
+    box-shadow: var(--shadow-md);
+    transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-card:hover {
+    border-color: oklch(0.72 0.18 65 / 0.4);
+    box-shadow: var(--shadow-lg), 0 0 24px oklch(0.72 0.18 65 / 0.18);
+  }
+
+  /* Glassmorphism — dark purple modal/overlay variant */
+  .glass-dark {
+    background: oklch(0.4 0.15 300 / 0.12);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border: 1px solid oklch(0.4 0.15 300 / 0.25);
+    box-shadow: 0 8px 40px oklch(0 0 0 / 0.6), inset 0 1px 0
+      oklch(0.72 0.18 65 / 0.1);
+  }
+
+  /* Gold shimmer sweep animation */
+  @keyframes shimmer-gold {
+    0% {
+      background-position: -200% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
+
+  .shimmer-overlay {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      oklch(0.72 0.18 65 / 0.3) 45%,
+      oklch(0.82 0.18 65 / 0.45) 50%,
+      oklch(0.72 0.18 65 / 0.3) 55%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer-gold 2.5s ease-in-out infinite;
+  }
+
+  /* Card shimmer — activates the shimmer sweep on hover */
+  .card-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 35%,
+      oklch(0.72 0.18 65 / 0.22) 50%,
+      transparent 65%
+    );
+    background-size: 200% 100%;
+    background-position: -200% center;
+    transition: background-position 0s;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .card-shimmer:hover::after {
+    opacity: 1;
+    animation: shimmer-gold 1.6s ease-in-out infinite;
+  }
+
+  /* Staggered grid entrance animation */
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .game-grid-item {
+    animation: fade-in-up 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+    opacity: 0;
+  }
+
+  .game-grid-item:nth-child(1) {
+    animation-delay: calc(1 * 50ms);
+  }
+  .game-grid-item:nth-child(2) {
+    animation-delay: calc(2 * 50ms);
+  }
+  .game-grid-item:nth-child(3) {
+    animation-delay: calc(3 * 50ms);
+  }
+  .game-grid-item:nth-child(4) {
+    animation-delay: calc(4 * 50ms);
+  }
+  .game-grid-item:nth-child(5) {
+    animation-delay: calc(5 * 50ms);
+  }
+  .game-grid-item:nth-child(6) {
+    animation-delay: calc(6 * 50ms);
+  }
+  .game-grid-item:nth-child(7) {
+    animation-delay: calc(7 * 50ms);
+  }
+  .game-grid-item:nth-child(8) {
+    animation-delay: calc(8 * 50ms);
+  }
+  .game-grid-item:nth-child(9) {
+    animation-delay: calc(9 * 50ms);
+  }
+  .game-grid-item:nth-child(10) {
+    animation-delay: calc(10 * 50ms);
+  }
+  .game-grid-item:nth-child(11) {
+    animation-delay: calc(11 * 50ms);
+  }
+  .game-grid-item:nth-child(12) {
+    animation-delay: calc(12 * 50ms);
+  }
+
+  /* Premium button with micro-interactions */
+  .btn-premium {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-premium:hover {
+    box-shadow: 0 4px 16px oklch(0.72 0.18 65 / 0.3), 0 2px 8px
+      oklch(0 0 0 / 0.4);
+    transform: translateY(-1px);
+  }
+
+  .btn-premium:active {
+    transform: scale(0.97) translateY(0);
+    opacity: 0.92;
+    box-shadow: 0 1px 4px oklch(0.72 0.18 65 / 0.2);
+  }
+
+  /* Apply smooth transitions to all existing button variants */
+  button,
+  [role="button"],
+  .btn,
+  [class*="btn-"] {
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ─── Premium Text Styles ─────────────────────────────────────────────── */
+
+  .text-premium {
+    letter-spacing: 0.02em;
+    text-shadow: 0 1px 4px oklch(0.4 0.15 300 / 0.4);
+  }
+
+  .text-gold-glow {
+    text-shadow: 0 0 12px oklch(0.72 0.18 65 / 0.6), 0 0 24px
+      oklch(0.72 0.18 65 / 0.3), 0 1px 2px oklch(0 0 0 / 0.5);
+  }
+
+  .heading-cinematic {
+    font-family: "Space Grotesk", var(--font-display), sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 8px oklch(0.4 0.15 300 / 0.5), 0 1px 2px
+      oklch(0 0 0 / 0.6);
+  }
+
+  /* Mono font for all numeric / balance / bet data */
+  .font-numeric,
+  .wallet-balance,
+  .bet-amount,
+  .icp-value {
+    font-family: "JetBrains Mono", var(--font-mono), monospace;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ─── Cinematic Overlay Utilities ────────────────────────────────────── */
+
+  /* Thin gold rim-light at the top edge */
+  .cinematic-top-light {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      oklch(0.72 0.18 65 / 0.6) 40%,
+      oklch(0.82 0.18 65 / 0.8) 50%,
+      oklch(0.72 0.18 65 / 0.6) 60%,
+      transparent
+    );
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* Darkening vignette from edges inward */
+  .cinematic-vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 40%,
+      oklch(0 0 0 / 0.45) 100%
+    );
+    pointer-events: none;
+  }
+
+  /* Composite cinematic overlay (top gold + bottom shadow) */
+  .cinematic-overlay-full {
+    position: relative;
+  }
+
+  .cinematic-overlay-full::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      oklch(0.72 0.18 65 / 0.15) 0%,
+      transparent 30%,
+      transparent 70%,
+      oklch(0 0 0 / 0.4) 100%
+    );
+    pointer-events: none;
+    z-index: 1;
+    border-radius: inherit;
+  }
+
+  /* ─── Enhanced existing shadow utilities with gold tones ─────────────── */
+
+  .shadow-depth-sm {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .shadow-depth-md {
+    box-shadow: var(--shadow-md);
+  }
+
+  .shadow-depth-lg {
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* New: extra-large cinematic depth */
+  .shadow-depth-xl {
+    box-shadow: var(--shadow-xl);
+  }
+
+  /* ─── Neon border pulse for featured/active elements ─────────────────── */
+  @keyframes gold-border-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 8px oklch(0.72 0.18 65 / 0.25), inset 0 0 8px
+        oklch(0.72 0.18 65 / 0.08);
+    }
+    50% {
+      box-shadow: 0 0 20px oklch(0.72 0.18 65 / 0.5), inset 0 0 16px
+        oklch(0.72 0.18 65 / 0.15);
+    }
+  }
+
+  .border-gold-pulse {
+    animation: gold-border-pulse 2.5s ease-in-out infinite;
+  }
+
+  /* ─── Card surface shine on hover ────────────────────────────────────── */
+  @keyframes surface-shine {
+    0% {
+      transform: translateX(-100%) skewX(-15deg);
+    }
+    100% {
+      transform: translateX(300%) skewX(-15deg);
+    }
+  }
+
+  .card-surface-shine {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-surface-shine::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      oklch(0.72 0.18 65 / 0.15),
+      transparent
+    );
+    opacity: 0;
+    transition: opacity 0.1s ease;
+    pointer-events: none;
+  }
+
+  .card-surface-shine:hover::before {
+    opacity: 1;
+    animation: surface-shine 0.7s ease-out forwards;
+  }
+
+  /* Active filter gold glow shadow */
+  .gold-glow {
+    box-shadow: 0 0 12px oklch(0.72 0.18 65 / 0.4), 0 0 4px
+      oklch(0.72 0.18 65 / 0.22);
+  }
+
+  /* Gold-direction skeleton shimmer */
+  @keyframes skeletonGoldShimmer {
+    0% {
+      background-position: -400px 0;
+    }
+    100% {
+      background-position: 400px 0;
+    }
+  }
+
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      oklch(0.16 0.01 45) 0%,
+      oklch(0.72 0.18 65 / 0.08) 40%,
+      oklch(0.72 0.18 65 / 0.18) 50%,
+      oklch(0.72 0.18 65 / 0.08) 60%,
+      oklch(0.16 0.01 45) 100%
+    );
+    background-size: 800px 100%;
+    animation: skeletonGoldShimmer 1.8s ease-in-out infinite;
+  }
+
+  /* ─── Reduced motion override ────────────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .shimmer-overlay,
+    .card-shimmer::after,
+    .game-grid-item,
+    .border-gold-pulse,
+    .card-surface-shine::before,
+    .btn-premium {
+      animation: none !important;
+      transition: none !important;
+    }
+    .game-grid-item {
+      opacity: 1;
+      transform: none;
+    }
   }
 }

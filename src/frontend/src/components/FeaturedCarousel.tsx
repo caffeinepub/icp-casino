@@ -58,7 +58,7 @@ export function FeaturedCarousel({
 
   return (
     <div
-      className="relative rounded-xl overflow-hidden bg-card border border-border group select-none"
+      className="relative rounded-xl overflow-hidden bg-card border border-border group select-none transition-all duration-500"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       data-ocid="featured-carousel"
@@ -70,37 +70,68 @@ export function FeaturedCarousel({
             key={game.id.toString()}
             src={imageSrc}
             alt={game.name}
-            className="w-full h-full object-cover transition-smooth group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-secondary to-muted" />
         )}
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/55 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent" />
+
+        {/* Cinematic vignette overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, transparent 40%, oklch(0.07 0 0 / 0.65) 100%)",
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Bottom dark-purple gradient for text readability */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to right, oklch(0.07 0.01 300 / 0.92) 0%, oklch(0.07 0.01 300 / 0.5) 50%, transparent 100%)",
+          }}
+        />
+        {/* Top-edge subtle gold accent */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, oklch(0.72 0.18 65 / 0.06) 0%, transparent 20%, oklch(0.07 0 0 / 0.5) 100%)",
+          }}
+        />
       </div>
 
       {/* Content overlay */}
       <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10">
-        <span className={`${CATEGORY_BADGE[game.category]} mb-2 w-fit`}>
+        <span
+          className={`${CATEGORY_BADGE[game.category]} mb-2 w-fit backdrop-blur-sm`}
+          style={{ border: "1px solid oklch(0.72 0.18 65 / 0.35)" }}
+        >
           {CATEGORY_LABEL[game.category]}
         </span>
-        <h2 className="font-display text-2xl md:text-4xl lg:text-5xl font-bold text-foreground mb-2 leading-tight max-w-lg">
+        <h2 className="heading-cinematic text-2xl md:text-4xl lg:text-5xl mb-2 leading-tight max-w-lg">
           {game.name}
         </h2>
         <div className="flex items-center gap-4 text-sm text-muted-foreground mb-5">
-          <span className="flex items-center gap-1.5">
+          <span className="flex items-center gap-1.5 font-mono">
             <Users className="w-3.5 h-3.5" />
             {Number(game.playerCount).toLocaleString()} playing
           </span>
-          <span className="flex items-center gap-1.5 text-primary font-semibold">
+          <span className="flex items-center gap-1.5 text-primary font-semibold font-mono">
             <TrendingUp className="w-3.5 h-3.5" />
             {(game.rtp * 100).toFixed(1)}% RTP
           </span>
         </div>
         <Button
           size="lg"
-          className="w-fit gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg transition-smooth"
+          className="btn-premium w-fit gap-2 shadow-gold-glow"
+          style={{
+            background: "oklch(0.72 0.18 65)",
+            color: "oklch(0.07 0 0)",
+          }}
           onClick={() => onPlay?.(game)}
           data-ocid="carousel-play-btn"
         >
@@ -116,7 +147,8 @@ export function FeaturedCarousel({
             type="button"
             onClick={prev}
             aria-label="Previous game"
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/60 backdrop-blur-sm border border-border flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-card transition-smooth focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full glass-dark flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 hover:border-[oklch(0.72_0.18_65/_0.6)] focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            style={{ border: "1px solid oklch(0.72 0.18 65 / 0.25)" }}
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -124,7 +156,8 @@ export function FeaturedCarousel({
             type="button"
             onClick={next}
             aria-label="Next game"
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/60 backdrop-blur-sm border border-border flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-card transition-smooth focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full glass-dark flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 hover:border-[oklch(0.72_0.18_65/_0.6)] focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            style={{ border: "1px solid oklch(0.72 0.18 65 / 0.25)" }}
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -137,11 +170,15 @@ export function FeaturedCarousel({
                 type="button"
                 onClick={() => setCurrent(i)}
                 aria-label={`Go to slide ${i + 1}`}
-                className={`h-2 rounded-full transition-smooth focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${
-                  i === current
-                    ? "bg-primary w-5"
-                    : "bg-foreground/30 w-2 hover:bg-foreground/60"
+                className={`h-2 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${
+                  i === current ? "w-5" : "w-2 hover:opacity-80"
                 }`}
+                style={{
+                  background:
+                    i === current
+                      ? "oklch(0.72 0.18 65)"
+                      : "oklch(0.4 0.05 300 / 0.5)",
+                }}
               />
             ))}
           </div>

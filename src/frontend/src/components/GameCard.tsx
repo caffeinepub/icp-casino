@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Play, Users } from "lucide-react";
+import type React from "react";
 import { GameCategory } from "../backend";
 import type { Game } from "../backend";
 import { getGameImage, isPicsumUrl } from "../utils/gameImages";
@@ -19,16 +20,27 @@ export const CATEGORY_LABEL: Record<GameCategory, string> = {
 interface GameCardProps {
   game: Game;
   onPlay?: (game: Game) => void;
+  index?: number;
 }
 
-function GameImage({ game, className }: { game: Game; className?: string }) {
+function GameImage({
+  game,
+  className,
+  style,
+}: { game: Game; className?: string; style?: React.CSSProperties }) {
   const svgImage = getGameImage(Number(game.id));
   const useSvg = svgImage && (!game.imageUrl || isPicsumUrl(game.imageUrl));
   const src = useSvg ? svgImage : game.imageUrl;
 
   if (src) {
     return (
-      <img src={src} alt={game.name} className={className} loading="lazy" />
+      <img
+        src={src}
+        alt={game.name}
+        className={className}
+        style={style}
+        loading="lazy"
+      />
     );
   }
 
@@ -39,17 +51,19 @@ function GameImage({ game, className }: { game: Game; className?: string }) {
   );
 }
 
-export function GameCard({ game, onPlay }: GameCardProps) {
+export function GameCard({ game, onPlay, index }: GameCardProps) {
   return (
     <div
-      className="rounded-lg overflow-hidden bg-card border border-border hover:border-primary/60 shadow-card shadow-hover cursor-pointer transition-smooth group"
-      style={
-        {
-          "--tw-shadow-color": "oklch(0.72 0.18 65 / 0.12)",
-        } as React.CSSProperties
-      }
+      className="glass-card card-shimmer game-grid-item rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-[var(--shadow-lg)] group relative"
+      style={{
+        animationDelay: `${(index ?? 0) * 50}ms`,
+        transitionTimingFunction: "cubic-bezier(0.4,0,0.2,1)",
+      }}
       data-ocid="game-card"
     >
+      {/* Cinematic top-light highlight */}
+      <div className="cinematic-top-light" aria-hidden="true" />
+
       {/* Thumbnail */}
       <button
         type="button"
@@ -59,18 +73,22 @@ export function GameCard({ game, onPlay }: GameCardProps) {
       >
         <GameImage
           game={game}
-          className="w-full h-full object-cover group-hover:scale-105 transition-smooth"
+          className="w-full h-full object-cover group-hover:scale-110"
+          style={{ transition: "transform 0.4s cubic-bezier(0.4,0,0.2,1)" }}
         />
         {/* Category badge */}
         <div className="absolute top-2 left-2">
-          <span className={CATEGORY_BADGE[game.category]}>
+          <span
+            className={`${CATEGORY_BADGE[game.category]} backdrop-blur-sm`}
+            style={{ border: "1px solid oklch(0.72 0.18 65 / 0.35)" }}
+          >
             {CATEGORY_LABEL[game.category]}
           </span>
         </div>
         {/* Player count overlay */}
         <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-background/80 backdrop-blur-sm rounded-full px-2 py-0.5 border border-border">
           <Users className="w-3 h-3 text-muted-foreground" />
-          <span className="text-xs text-muted-foreground font-medium">
+          <span className="text-xs text-muted-foreground font-medium font-mono">
             {Number(game.playerCount).toLocaleString()}
           </span>
         </div>
@@ -78,21 +96,21 @@ export function GameCard({ game, onPlay }: GameCardProps) {
 
       {/* Info */}
       <div className="p-3">
-        <h3 className="font-semibold text-sm text-foreground truncate mb-0.5 min-w-0">
+        <h3 className="heading-cinematic text-sm truncate mb-0.5 min-w-0">
           {game.name}
         </h3>
         <div className="flex items-center justify-between mb-2.5">
-          <span className="text-xs text-muted-foreground">
+          <span className="text-xs text-muted-foreground font-mono">
             {Number(game.playerCount).toLocaleString()} playing
           </span>
-          <span className="text-xs font-semibold text-primary">
+          <span className="text-xs font-semibold font-mono text-primary">
             {(game.rtp * 100).toFixed(1)}% RTP
           </span>
         </div>
         <Button
           size="sm"
           variant="outline"
-          className="w-full text-xs gap-1.5 transition-smooth"
+          className="btn-premium w-full text-xs gap-1.5"
           style={{
             borderColor: "oklch(0.72 0.18 65 / 0.30)",
             color: "oklch(0.72 0.18 65)",

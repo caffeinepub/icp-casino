@@ -1,30 +1,22 @@
+import { c as createLucideIcon } from "./index-l8klBg70.js";
 /**
- * Game-specific SVG illustrations as data URIs.
- * Each SVG is themed for its game with a deep gold & royal purple casino aesthetic.
- * All hex colors use the casino palette:
- *   Gold primary:    #C9A84C
- *   Gold highlight:  #F5D78A
- *   Gold shadow:     #8B6914
- *   Deep purple bg:  #1A0D2E
- *   Mid purple:      #3D1F6B
- *   Royal purple:    #6B3FA0
- *   Light purple:    #9B6DD0
- *   Warm white:      #F8F4E8
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
  */
-
-function svgToDataUri(svg: string): string {
+const __iconNode = [
+  ["path", { d: "M16 7h6v6", key: "box55l" }],
+  ["path", { d: "m22 7-8.5 8.5-5-5L2 17", key: "1t1m79" }]
+];
+const TrendingUp = createLucideIcon("trending-up", __iconNode);
+function svgToDataUri(svg) {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
-
-/** Returns true if the URL is a picsum placeholder */
-export function isPicsumUrl(url: string): boolean {
+function isPicsumUrl(url) {
   return url.includes("picsum.photos");
 }
-
-// ── Individual game SVGs ──────────────────────────────────────────────────────
-
-const LUCKY_SEVENS =
-  svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+const LUCKY_SEVENS = svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#0E0720"/>
@@ -98,9 +90,7 @@ const LUCKY_SEVENS =
   <rect x="52" y="257" width="296" height="30" rx="0" fill="#1A0D2E"/>
   <text x="200" y="277" font-family="Georgia,serif" font-size="14" font-weight="bold" fill="#F5D78A" text-anchor="middle" letter-spacing="5">LUCKY SEVENS</text>
 </svg>`);
-
-const GOLDEN_FORTUNE =
-  svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+const GOLDEN_FORTUNE = svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#0E0720"/>
@@ -176,9 +166,7 @@ const GOLDEN_FORTUNE =
   <!-- Title -->
   <text x="200" y="290" font-family="Georgia,serif" font-size="14" font-weight="bold" fill="#F5D78A" text-anchor="middle" letter-spacing="3">GOLDEN FORTUNE</text>
 </svg>`);
-
-const NEON_NIGHTS =
-  svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+const NEON_NIGHTS = svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
   <defs>
     <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#06031A"/>
@@ -257,9 +245,7 @@ const NEON_NIGHTS =
   <text x="200" y="88" font-family="Georgia,serif" font-size="24" font-weight="bold" fill="#9B6DD0" text-anchor="middle" filter="url(#neon-purple)" opacity="0.55">NEON NIGHTS</text>
   <text x="200" y="88" font-family="Georgia,serif" font-size="24" font-weight="bold" fill="#9B6DD0" text-anchor="middle">NEON NIGHTS</text>
 </svg>`);
-
-const DIAMOND_RUSH =
-  svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+const DIAMOND_RUSH = svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#0E0720"/>
@@ -328,9 +314,7 @@ const DIAMOND_RUSH =
   <!-- Title -->
   <text x="200" y="287" font-family="Georgia,serif" font-size="14" font-weight="bold" fill="#F5D78A" text-anchor="middle" letter-spacing="3" filter="url(#sparkle)">DIAMOND RUSH</text>
 </svg>`);
-
-const WILD_SAFARI =
-  svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+const WILD_SAFARI = svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
   <defs>
     <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#0A0420"/>
@@ -412,9 +396,7 @@ const WILD_SAFARI =
   <!-- Title -->
   <text x="200" y="288" font-family="Georgia,serif" font-size="14" font-weight="bold" fill="#F5D78A" text-anchor="middle" letter-spacing="4">WILD SAFARI</text>
 </svg>`);
-
-const SPACE_ODYSSEY =
-  svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+const SPACE_ODYSSEY = svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
   <defs>
     <radialGradient id="space-bg" cx="50%" cy="40%" r="70%">
       <stop offset="0%" stop-color="#1A0D2E"/>
@@ -493,9 +475,7 @@ const SPACE_ODYSSEY =
   <!-- Title -->
   <text x="200" y="288" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#9B6DD0" text-anchor="middle" letter-spacing="3" filter="url(#glow)">SPACE ODYSSEY</text>
 </svg>`);
-
-const ROULETTE_ROYALE =
-  svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+const ROULETTE_ROYALE = svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
   <defs>
     <radialGradient id="bg" cx="50%" cy="50%" r="70%">
       <stop offset="0%" stop-color="#1A0D2E"/>
@@ -579,9 +559,7 @@ const ROULETTE_ROYALE =
   <!-- Title -->
   <text x="200" y="294" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#F5D78A" text-anchor="middle" letter-spacing="3">ROULETTE ROYALE</text>
 </svg>`);
-
-const BACCARAT_CLASSIC =
-  svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+const BACCARAT_CLASSIC = svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
   <defs>
     <linearGradient id="felt" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#1A0D2E"/>
@@ -648,9 +626,7 @@ const BACCARAT_CLASSIC =
   <!-- Title -->
   <text x="200" y="293" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#F5D78A" text-anchor="middle" letter-spacing="3">BACCARAT CLASSIC</text>
 </svg>`);
-
-const CRAPS_DELUXE =
-  svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+const CRAPS_DELUXE = svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
   <defs>
     <linearGradient id="felt" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#1A0D2E"/>
@@ -716,9 +692,7 @@ const CRAPS_DELUXE =
   <!-- Title -->
   <text x="200" y="293" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#F5D78A" text-anchor="middle" letter-spacing="3">CRAPS DELUXE</text>
 </svg>`);
-
-const BLACKJACK_PRO =
-  svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+const BLACKJACK_PRO = svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
   <defs>
     <linearGradient id="felt" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#1A0D2E"/>
@@ -778,9 +752,7 @@ const BLACKJACK_PRO =
   <!-- Title -->
   <text x="200" y="292" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#F5D78A" text-anchor="middle" letter-spacing="3">BLACKJACK PRO</text>
 </svg>`);
-
-const TEXAS_HOLDEM =
-  svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+const TEXAS_HOLDEM = svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
   <defs>
     <radialGradient id="felt" cx="50%" cy="50%" r="60%">
       <stop offset="0%" stop-color="#2A1545"/>
@@ -846,9 +818,7 @@ const TEXAS_HOLDEM =
   <!-- Title -->
   <text x="200" y="293" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#F5D78A" text-anchor="middle" letter-spacing="3">TEXAS HOLD'EM</text>
 </svg>`);
-
-const THREE_CARD_POKER =
-  svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+const THREE_CARD_POKER = svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#1A0D2E"/>
@@ -912,11 +882,7 @@ const THREE_CARD_POKER =
   <text x="200" y="50" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#9B6DD0" text-anchor="middle" letter-spacing="2">THREE CARD POKER</text>
   <text x="200" y="289" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#F5D78A" text-anchor="middle" letter-spacing="2">THREE CARD POKER</text>
 </svg>`);
-
-// ── Midnight Dragons thumbnail ───────────────────────────────────────────────
-
-const MIDNIGHT_DRAGONS =
-  svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+const MIDNIGHT_DRAGONS = svgToDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
   <defs>
     <radialGradient id="sky-bg" cx="50%" cy="40%" r="70%">
       <stop offset="0%" stop-color="#1A0D2E"/>
@@ -1022,10 +988,7 @@ const MIDNIGHT_DRAGONS =
   <rect x="162" y="275" width="76" height="18" rx="4" fill="#C9A84C" opacity="0.12" stroke="#C9A84C" stroke-width="0.8"/>
   <text x="200" y="288" font-family="Georgia,serif" font-size="9" fill="#C9A84C" text-anchor="middle" letter-spacing="2">8×8 REELS</text>
 </svg>`);
-
-// ── Lookup maps ──────────────────────────────────────────────────────────────
-
-const GAME_IMAGES_BY_ID: Record<number, string> = {
+const GAME_IMAGES_BY_ID = {
   1: LUCKY_SEVENS,
   2: GOLDEN_FORTUNE,
   3: NEON_NIGHTS,
@@ -1038,44 +1001,14 @@ const GAME_IMAGES_BY_ID: Record<number, string> = {
   10: BLACKJACK_PRO,
   11: TEXAS_HOLDEM,
   12: THREE_CARD_POKER,
-  13: MIDNIGHT_DRAGONS,
+  13: MIDNIGHT_DRAGONS
 };
-
-const GAME_GRADIENTS_BY_ID: Record<number, string> = {
-  1: "from-purple-950 via-purple-950 to-purple-950",
-  2: "from-purple-950 via-purple-900 to-purple-950",
-  3: "from-purple-950 via-purple-900 to-purple-950",
-  4: "from-purple-950 via-purple-900 to-zinc-950",
-  5: "from-purple-950 via-zinc-950 to-purple-900",
-  6: "from-purple-950 via-purple-900 to-zinc-950",
-  7: "from-purple-950 via-zinc-950 to-purple-950",
-  8: "from-purple-950 via-purple-900 to-zinc-950",
-  9: "from-zinc-950 via-purple-950 to-zinc-950",
-  10: "from-purple-950 via-zinc-950 to-purple-900",
-  11: "from-zinc-950 via-purple-950 to-zinc-950",
-  12: "from-purple-950 via-purple-900 to-purple-950",
-};
-
-/**
- * Returns an SVG data URI for the given game.
- * Falls back to a gradient class string if no SVG is found.
- */
-export function getGameImage(gameId: number): string | null {
+function getGameImage(gameId) {
   const id = Number(gameId);
   return GAME_IMAGES_BY_ID[id] ?? null;
 }
-
-/**
- * Returns a Tailwind gradient string for fallback backgrounds.
- */
-export function getGameGradient(gameId: number): string {
-  const id = Number(gameId);
-  return GAME_GRADIENTS_BY_ID[id] ?? "from-muted to-secondary";
-}
-
-/**
- * Returns the Midnight Dragons SVG thumbnail data URI.
- */
-export function getMidnightDragonsImage(): string {
-  return MIDNIGHT_DRAGONS;
-}
+export {
+  TrendingUp as T,
+  getGameImage as g,
+  isPicsumUrl as i
+};

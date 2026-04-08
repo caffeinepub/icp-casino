@@ -1,7 +1,7 @@
 # Design Brief
 
 ## Direction
-Premium ICP casino platform with luxurious dark gaming aesthetic, sophisticated gold/purple accents, and vibrant category badges. High-contrast gaming focus without gauche neon effects. Versus Mode is a separate competitive gaming section featuring real-time PvP skill games (chess, dice, rock-paper-scissors) with live chat and active player roster.
+Premium ICP casino platform with cinematic depth, glassmorphism effects, and premium typography. Luxurious dark gaming aesthetic with sophisticated gold/purple accents. Versus Mode is a separate competitive gaming section featuring real-time PvP skill games with live chat and player roster. CSS-only micro-transitions maintain premium feel throughout.
 
 ## Palette
 | Token | OKLCH | Usage |
@@ -30,14 +30,14 @@ Premium ICP casino platform with luxurious dark gaming aesthetic, sophisticated 
 | dragon-midnight | `0.05 0 0` | Ultra-dark midnight navy machine background |
 
 ## Typography
-| Layer | Font | Usage |
-|-------|------|-------|
-| Display | Fraunces (Serif) | Headlines, game titles, premium branding, player names |
-| Body | DM Sans (Sans-serif) | Body text, UI labels, navigation, game labels, chat |
-| Mono | Geist Mono | Wallet addresses, transaction IDs, bet amounts |
+| Layer | Font | Usage | Weight |
+|-------|------|-------|--------|
+| Display | Space Grotesk (Sans-serif) | Bold headers, game titles, player names, premium branding | 700 |
+| Body | Lora (Serif) | Body text, UI labels, navigation, game descriptions, chat | 400 |
+| Mono | JetBrains Mono | Wallet addresses, transaction IDs, bet amounts, balances | 500 |
 
 ## Elevation & Depth
-Card-stacked surfaces: background → card → popover. Gold accent bar on nav. Semi-transparent overlays on game imagery. Versus Mode: game board 70% left, chat panel 30% right. Winner cards use gold glow, loser cards use purple dim.
+Multi-layer glassmorphic surfaces: background → glass-card (semi-transparent blur) → popover. Cinematic depth via layered shadows (depth-sm/md/lg). Gold shimmer on hover. Gradient lighting overlays (top highlight, bottom shadow) on game cards. Versus Mode: game board 70% left, chat panel 30% right with glass-effect treatment.
 
 ## Structural Zones
 | Zone | Treatment | Notes |
@@ -56,13 +56,13 @@ Card-stacked surfaces: background → card → popover. Gold accent bar on nav. 
 - **Waiting State**: Gold spinner (32px) with pulsing text "Waiting for opponent..."
 - **Wager Selection**: 3 gold buttons (10/30/100 ICP), currently active is `versus-wager-button.active`
 
-## Component Patterns — Midnight Dragons Game
-- **8x8 Reel Grid**: 64 visible symbols, 120px per symbol height, smooth scroll animation over 1.2s
-- **Symbol Design**: SVG-based dragon artwork (fire, scales, eyes, rubies, crowns, moons, claws, wild dragon)
-- **Symbol Colors**: Royal blue (#2952c4) and ruby red (#c41e3a) with gold accents on treasure
-- **Win Animation**: Dramatic glow pulse on winning reels using `.shadow-dragon-ruby` or `.shadow-dragon-blue`
-- **Machine Frame**: Dark midnight navy background with gold and purple beveled border
-- **Bet Controls**: Gold and purple buttons below reels, responsive to 1/3/5 ICP selections
+## Component Patterns — Game Cards (Glassmorphism)
+- **Glass Surface**: Semi-transparent blur (12px) with subtle gold border glow and inset highlight
+- **Cinematic Overlay**: Gradient lighting effect (gold highlight top 40%, shadow bottom 100%)
+- **Depth Shadows**: depth-md on default, depth-lg on hover
+- **Hover Animation**: Scale 1.02 + shimmer gold overlay + shadow upgrade + cubic-bezier easing
+- **Typography**: Space Grotesk bold for title, Lora for description, text-shadow-premium on headers
+- **3D Asset Appearance**: Beveled borders, gradient overlays, layered shadows create depth illusion
 
 ## Component Patterns — Versus Mode
 - **Game Board Canvas**: Centered 2D game (chess board grid, dice viewport, or RPS arena) with OKLCH gold/purple theme
@@ -76,13 +76,17 @@ Card-stacked surfaces: background → card → popover. Gold accent bar on nav. 
 Grid-based spacing (0.25rem, 0.5rem, 1rem, 1.5rem units). Card padding: 1.5rem. Gap between grid items: 1rem. Versus Mode: game board left 70%, chat right 30%, padding 1rem all sides. Chat messages 0.75rem gap, input 50px fixed height.
 
 ## Motion
-- **Smooth Transition**: 0.3s cubic-bezier(0.4, 0, 0.2, 1) on hover/focus states
+- **Smooth Transition**: 0.3s cubic-bezier(0.4, 0, 0.2, 1) on all hover/focus/active states
+- **Staggered Grid Load**: Fade-in-up animation (0.6s) with 50ms stagger per item (12 game cards load sequentially)
+- **Glass Hover**: Scale 1.02 + shimmer overlay on card hover, depth shadow upgrade (sm → md)
+- **Button Press**: 0.96 scale + 0.85 opacity on active (press-depth class)
 - **Reel Spin**: 1.2s staggered spin animation per reel column; 8x8 reels move down with dramatic stop
 - **Win Glow**: 0.6s pulse animation on ruby/blue symbols when matched
 - **Carousel**: 0.3s fade + slide for hero games
 - **Versus Spinner**: 0.8s linear infinite rotation on waiting state
 - **Versus Chat**: Smooth scroll, fade-in on new messages, no bounce
-- **No bounce or playful animations — premium feel maintained throughout**
+- **Shimmer Effect**: Gold shimmer (3s infinite) on game cards on hover
+- **No bounce or playful animations — premium cinematic feel maintained throughout**
 
 ## Constraints
 - No gradients on text. No opacity stacking for readability. AA+ contrast on all text. Dark mode only.

@@ -64,33 +64,38 @@ export function ChatBox() {
   return (
     <div
       data-ocid="chatbox"
-      className="w-full border-b"
+      className="w-full glass-dark border-b"
       style={{
-        background: "oklch(0.09 0.01 45)",
-        borderColor: "oklch(0.72 0.18 65 / 0.25)",
-        borderTop: "1px solid oklch(0.72 0.18 65 / 0.20)",
+        borderTop: "2px solid oklch(0.72 0.18 65 / 0.35)",
+        borderBottomColor: "oklch(0.72 0.18 65 / 0.15)",
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 py-2">
+      <div className="max-w-7xl mx-auto px-4 py-3">
         {/* Header */}
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-2 mb-2.5">
           <MessageCircle
             className="w-4 h-4"
             style={{ color: "oklch(0.72 0.18 65)" }}
             aria-hidden="true"
           />
           <span
-            className="text-xs font-semibold uppercase tracking-widest"
-            style={{ color: "oklch(0.80 0.18 65)" }}
+            className="text-xs font-bold uppercase tracking-widest text-gold-glow"
+            style={{ color: "oklch(0.82 0.18 65)" }}
           >
             Live Casino Chat
           </span>
           <span className="ml-auto flex items-center gap-1.5">
             <span
-              className="w-1.5 h-1.5 rounded-full animate-pulse"
-              style={{ background: "oklch(0.72 0.20 65)" }}
+              className="w-2 h-2 rounded-full animate-pulse"
+              style={{
+                background: "oklch(0.72 0.20 65)",
+                boxShadow: "0 0 6px oklch(0.72 0.20 65 / 0.80)",
+              }}
             />
-            <span className="text-[10px] text-muted-foreground">
+            <span
+              className="text-[10px] font-mono"
+              style={{ color: "oklch(0.55 0.03 65)" }}
+            >
               {isLoading ? "…" : `${messages.length} messages`}
             </span>
           </span>
@@ -100,17 +105,15 @@ export function ChatBox() {
         <ScrollArea className="h-24 w-full pr-2" data-ocid="chat-messages">
           <div className="flex flex-col gap-0.5">
             {isLoading ? (
-              // Loading skeleton
               <>
                 <Skeleton className="h-3 w-3/4 rounded" />
                 <Skeleton className="h-3 w-1/2 rounded" />
                 <Skeleton className="h-3 w-2/3 rounded" />
               </>
             ) : messages.length === 0 ? (
-              // Empty state
               <div
                 className="flex items-center justify-center h-16 text-xs text-center"
-                style={{ color: "oklch(0.72 0.18 65 / 0.70)" }}
+                style={{ color: "oklch(0.72 0.18 65 / 0.65)" }}
                 data-ocid="chat-empty"
               >
                 No messages yet — be the first to say hello! 👋
@@ -119,18 +122,30 @@ export function ChatBox() {
               messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className="flex items-baseline gap-1.5 text-xs leading-relaxed min-w-0"
+                  className="flex items-baseline gap-1.5 text-xs leading-relaxed min-w-0 px-1.5 py-0.5 rounded"
+                  style={{
+                    background:
+                      msg.senderName === displayName
+                        ? "oklch(0.72 0.18 65 / 0.08)"
+                        : "transparent",
+                  }}
                 >
-                  <span className="text-muted-foreground shrink-0 tabular-nums">
+                  <span
+                    className="font-mono text-[10px] shrink-0 tabular-nums"
+                    style={{ color: "oklch(0.45 0.02 65)" }}
+                  >
                     {formatTime(msg.timestamp)}
                   </span>
                   <span
-                    className="font-semibold shrink-0"
+                    className="font-bold shrink-0 text-premium"
                     style={{ color: getUserColor(msg.senderName) }}
                   >
                     {msg.senderName}:
                   </span>
-                  <span className="text-foreground/80 break-words min-w-0">
+                  <span
+                    className="break-words min-w-0"
+                    style={{ color: "oklch(0.82 0.02 65)" }}
+                  >
                     {msg.message}
                   </span>
                 </div>
@@ -141,17 +156,26 @@ export function ChatBox() {
         </ScrollArea>
 
         {/* Input */}
-        <div className="flex gap-2 mt-2" data-ocid="chat-input-row">
+        <div className="flex gap-2 mt-2.5" data-ocid="chat-input-row">
           <Input
             data-ocid="chat-input"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Say something to the table…"
-            className="flex-1 h-8 text-xs placeholder:text-muted-foreground"
+            className="flex-1 h-8 text-xs glass-dark transition-smooth"
             style={{
-              background: "oklch(0.13 0.01 45)",
-              borderColor: "oklch(0.25 0.05 65 / 0.50)",
+              borderColor: "oklch(0.4 0.15 300 / 0.30)",
+              color: "oklch(0.88 0.02 65)",
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = "oklch(0.72 0.18 65 / 0.65)";
+              e.currentTarget.style.boxShadow =
+                "0 0 0 1px oklch(0.72 0.18 65 / 0.20)";
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = "oklch(0.4 0.15 300 / 0.30)";
+              e.currentTarget.style.boxShadow = "none";
             }}
             aria-label="Chat message input"
             maxLength={200}
@@ -161,12 +185,13 @@ export function ChatBox() {
             data-ocid="chat-send"
             onClick={handleSend}
             size="sm"
-            className="h-8 px-3 font-semibold transition-smooth"
+            className="h-8 px-3 font-bold btn-premium"
             style={{
               background:
                 "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
               color: "oklch(0.07 0 0)",
               border: "none",
+              boxShadow: "0 2px 10px oklch(0.72 0.18 65 / 0.35)",
             }}
             disabled={sendMessage.isPending || !input.trim()}
             aria-label="Send message"

@@ -7,7 +7,7 @@ import type { Transaction } from "../backend";
 import { useIcpWallet } from "../hooks/use-icp-wallet";
 import { formatICP, useWallet } from "../hooks/use-wallet";
 
-// ── Symbol definitions ────────────────────────────────────────────────────────
+// ── Symbol definitions ─────────────────────────────────────────────────────────
 
 const SYMBOL_NAMES = [
   "fire-breath",
@@ -25,7 +25,7 @@ type SymbolName = (typeof SYMBOL_NAMES)[number];
 interface SymbolDef {
   id: SymbolName;
   label: string;
-  weight: number; // relative frequency
+  weight: number;
   svg: string;
 }
 
@@ -231,7 +231,7 @@ function getSymbolDef(id: SymbolName): SymbolDef {
   return SYMBOLS.find((s) => s.id === id) ?? SYMBOLS[0];
 }
 
-// ── Win detection ─────────────────────────────────────────────────────────────
+// ── Win detection ──────────────────────────────────────────────────────────────
 
 const MULTIPLIERS: Record<number, number> = {
   3: 2,
@@ -286,9 +286,17 @@ function detectWins(grid: SymbolName[][]): WinLine[] {
   return wins;
 }
 
-// ── Symbol Cell Component ────────────────────────────────────────────────────
+// ── Symbol Cell Component ──────────────────────────────────────────────────────
 
-function SymbolCell({ id, isWinning }: { id: SymbolName; isWinning: boolean }) {
+function SymbolCell({
+  id,
+  isWinning,
+  isSpinning,
+}: {
+  id: SymbolName;
+  isWinning: boolean;
+  isSpinning: boolean;
+}) {
   const def = getSymbolDef(id);
   return (
     <div
@@ -299,19 +307,38 @@ function SymbolCell({ id, isWinning }: { id: SymbolName; isWinning: boolean }) {
         width: 72,
         height: 72,
         background: isWinning
-          ? "radial-gradient(ellipse at center, oklch(0.35 0.18 300 / 0.6) 0%, oklch(0.18 0.1 300 / 0.4) 100%)"
-          : "radial-gradient(ellipse at center, oklch(0.12 0.05 240 / 0.6) 0%, oklch(0.06 0.02 240 / 0.3) 100%)",
+          ? "radial-gradient(ellipse at center, oklch(0.35 0.18 300 / 0.7) 0%, oklch(0.18 0.12 300 / 0.5) 100%)"
+          : "radial-gradient(ellipse at 40% 35%, oklch(0.14 0.07 240 / 0.7) 0%, oklch(0.07 0.04 240 / 0.4) 100%)",
         border: isWinning
-          ? "1.5px solid oklch(0.72 0.18 65 / 0.9)"
-          : "1px solid oklch(0.25 0.1 240 / 0.3)",
-        borderRadius: 6,
+          ? "1.5px solid oklch(0.72 0.18 65 / 0.95)"
+          : "1px solid oklch(0.22 0.08 240 / 0.35)",
+        borderRadius: 8,
         boxShadow: isWinning
-          ? "0 0 16px oklch(0.72 0.18 65 / 0.6), inset 0 0 8px oklch(0.72 0.18 65 / 0.3)"
-          : "none",
+          ? "0 0 20px oklch(0.72 0.18 65 / 0.7), 0 0 40px oklch(0.72 0.18 65 / 0.35), inset 0 0 10px oklch(0.72 0.18 65 / 0.25)"
+          : isSpinning
+            ? "none"
+            : "inset 0 1px 0 oklch(1 0 0 / 0.04), inset 0 -1px 0 oklch(0 0 0 / 0.3)",
+        filter: isSpinning ? "blur(1px)" : "none",
+        opacity: isSpinning ? 0.65 : 1,
+        animation: isWinning
+          ? "cellWinPulse 1.4s ease-in-out infinite"
+          : undefined,
       }}
     >
+      {/* Winning shimmer */}
+      {isWinning && (
+        <div
+          className="absolute inset-0 shimmer-overlay rounded-lg pointer-events-none"
+          style={{ opacity: 0.5 }}
+        />
+      )}
       <div
         className="w-14 h-14"
+        style={{
+          filter: isWinning
+            ? "drop-shadow(0 0 5px oklch(0.72 0.18 65 / 0.9))"
+            : "drop-shadow(0 2px 3px oklch(0 0 0 / 0.6))",
+        }}
         // biome-ignore lint/security/noDangerouslySetInnerHtml: controlled SVG string from SYMBOLS const
         dangerouslySetInnerHTML={{ __html: def.svg }}
       />
@@ -319,7 +346,7 @@ function SymbolCell({ id, isWinning }: { id: SymbolName; isWinning: boolean }) {
   );
 }
 
-// ── Reel Component ───────────────────────────────────────────────────────────
+// ── Reel Component ─────────────────────────────────────────────────────────────
 
 interface ReelProps {
   symbols: SymbolName[];
@@ -340,11 +367,31 @@ function Reel({ symbols, isSpinning, winningRows, spinDuration }: ReelProps) {
       style={{
         width: 80,
         height: 8 * 80,
-        background: "oklch(0.06 0.04 240 / 0.8)",
-        borderLeft: "1px solid oklch(0.25 0.1 240 / 0.2)",
-        borderRight: "1px solid oklch(0.25 0.1 240 / 0.2)",
+        background:
+          "linear-gradient(180deg, oklch(0.05 0.04 240 / 0.95), oklch(0.07 0.05 240 / 0.9))",
+        borderLeft: "1px solid oklch(0.18 0.08 240 / 0.25)",
+        borderRight: "1px solid oklch(0.18 0.08 240 / 0.25)",
       }}
     >
+      {/* Top reel shadow — glass pane illusion */}
+      <div
+        className="absolute inset-x-0 top-0 z-20 pointer-events-none"
+        style={{
+          height: 24,
+          background:
+            "linear-gradient(180deg, oklch(0.04 0.03 240 / 0.9) 0%, transparent 100%)",
+        }}
+      />
+      {/* Bottom reel shadow */}
+      <div
+        className="absolute inset-x-0 bottom-0 z-20 pointer-events-none"
+        style={{
+          height: 24,
+          background:
+            "linear-gradient(0deg, oklch(0.04 0.03 240 / 0.9) 0%, transparent 100%)",
+        }}
+      />
+
       <div
         style={{
           display: "flex",
@@ -353,8 +400,8 @@ function Reel({ symbols, isSpinning, winningRows, spinDuration }: ReelProps) {
           animation: isSpinning
             ? `dragonReelSpin ${spinDuration}ms linear infinite`
             : "none",
-          filter: isSpinning ? "blur(2px)" : "none",
-          transition: isSpinning ? "none" : "filter 0.2s ease",
+          filter: isSpinning ? "blur(2.5px)" : "none",
+          transition: isSpinning ? "none" : "filter 0.25s ease",
         }}
       >
         {strip.map(({ sym, key }) => {
@@ -369,6 +416,7 @@ function Reel({ symbols, isSpinning, winningRows, spinDuration }: ReelProps) {
               <SymbolCell
                 id={sym}
                 isWinning={!isSpinning && winningRows.has(rowInGrid)}
+                isSpinning={isSpinning}
               />
             </div>
           );
@@ -378,7 +426,7 @@ function Reel({ symbols, isSpinning, winningRows, spinDuration }: ReelProps) {
   );
 }
 
-// ── Dragon Banner SVG ────────────────────────────────────────────────────────
+// ── Dragon Banner SVG ──────────────────────────────────────────────────────────
 
 function DragonBanner() {
   return (
@@ -548,7 +596,7 @@ function DragonBanner() {
   );
 }
 
-// ── Wallet Gate ───────────────────────────────────────────────────────────────
+// ── Wallet Gate ────────────────────────────────────────────────────────────────
 
 function WalletGateOverlay({
   isConnecting,
@@ -564,27 +612,26 @@ function WalletGateOverlay({
       className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-4 rounded-2xl"
       style={{
         background:
-          "linear-gradient(160deg, rgba(4,8,26,0.97) 0%, rgba(6,4,20,0.98) 100%)",
-        backdropFilter: "blur(8px)",
-        border: "2px solid rgba(212,175,55,0.25)",
+          "linear-gradient(160deg, rgba(8,3,24,0.97) 0%, rgba(4,2,14,0.98) 100%)",
+        backdropFilter: "blur(10px)",
+        border: "2px solid rgba(212,175,55,0.3)",
+        boxShadow: "inset 0 1px 0 rgba(212,175,55,0.15)",
       }}
     >
       <div
         className="flex items-center justify-center w-16 h-16 rounded-full"
         style={{
-          background: "rgba(212,175,55,0.08)",
-          border: "2px solid rgba(212,175,55,0.4)",
+          background: "rgba(212,175,55,0.09)",
+          border: "2px solid rgba(212,175,55,0.55)",
+          boxShadow: "0 0 24px rgba(212,175,55,0.3)",
         }}
       >
         <Wallet className="w-8 h-8" style={{ color: "#D4AF37" }} />
       </div>
       <div className="text-center px-8">
         <p
-          className="font-display font-black text-xl mb-1"
-          style={{
-            color: "#D4AF37",
-            textShadow: "0 0 20px rgba(212,175,55,0.6)",
-          }}
+          className="heading-cinematic text-xl mb-1 text-gold-glow"
+          style={{ color: "#D4AF37" }}
         >
           Connect Your Plug Wallet to Play
         </p>
@@ -605,13 +652,15 @@ function WalletGateOverlay({
         onClick={onConnect}
         disabled={isConnecting}
         data-ocid="wallet-gate-connect-btn"
-        className="px-10 py-3.5 rounded-2xl font-black text-base uppercase tracking-widest transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+        className="btn-premium px-10 py-3.5 rounded-2xl font-black text-base uppercase tracking-widest disabled:opacity-60 disabled:cursor-not-allowed"
         style={{
           background: isConnecting
             ? "rgba(212,175,55,0.4)"
-            : "linear-gradient(135deg, #D4AF37 0%, #a07830 100%)",
+            : "linear-gradient(135deg, #e8c96a 0%, #D4AF37 40%, #a07830 100%)",
           color: "#1a0d3a",
-          boxShadow: isConnecting ? "none" : "0 4px 20px rgba(212,175,55,0.5)",
+          boxShadow: isConnecting
+            ? "none"
+            : "0 4px 24px rgba(212,175,55,0.55), 0 2px 0 rgba(140,100,20,0.6), inset 0 1px 0 rgba(255,230,120,0.35)",
         }}
       >
         {isConnecting ? "Connecting…" : "Connect Wallet"}
@@ -620,7 +669,7 @@ function WalletGateOverlay({
   );
 }
 
-// ── Main Component ────────────────────────────────────────────────────────────
+// ── Main Component ─────────────────────────────────────────────────────────────
 
 const REELS_COUNT = 8;
 const ROWS_COUNT = 8;
@@ -669,7 +718,7 @@ export function MidnightDragons() {
 
   const betE8s = BigInt(Math.round(betIcp * 100_000_000));
 
-  // ── Backend bet mutation ──────────────────────────────────────────────────
+  // ── Backend bet mutation ────────────────────────────────────────────────────
 
   const betMutation = useMutation({
     mutationFn: async (amountE8s: bigint) => {
@@ -692,12 +741,10 @@ export function MidnightDragons() {
       const { transaction: tx, newBalance } = result.ok;
       const isWin = tx.netAmount >= 0n;
 
-      // Generate new grid for animation
       const newGrid = Array.from({ length: REELS_COUNT }, () =>
         Array.from({ length: ROWS_COUNT }, () => randomSymbol()),
       );
 
-      // Stop reels staggered
       for (let i = 0; i < REELS_COUNT; i++) {
         const t = setTimeout(
           () => {
@@ -751,7 +798,6 @@ export function MidnightDragons() {
     betMutation.mutate(betE8s);
   }, [isSpinning, isConnected, betE8s, balance, betMutation]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       spinTimeouts.current.forEach(clearTimeout);
@@ -760,126 +806,249 @@ export function MidnightDragons() {
 
   return (
     <section
-      className="w-full py-10"
-      style={{ background: "oklch(0.04 0.03 240)" }}
+      className="w-full py-12"
+      style={{
+        /* Deep purple radial vignette for dramatic atmosphere */
+        background:
+          "radial-gradient(ellipse at 50% 20%, rgba(10,6,30,1) 0%, rgba(4,2,14,0.98) 60%, rgba(2,1,8,1) 100%)",
+      }}
       data-ocid="midnight-dragons"
       aria-label="Midnight Dragons slot machine"
     >
       <div className="container mx-auto px-4 max-w-5xl">
+        {/* ── Section title ── */}
+        <div className="text-center mb-8">
+          <h2
+            className="heading-cinematic text-gold-glow"
+            style={{
+              fontSize: "clamp(1.8rem, 4vw, 3rem)",
+              background:
+                "linear-gradient(135deg, #4a7ae8 0%, #8aadff 30%, #D4AF37 65%, #e8c76a 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
+            🐉 Midnight Dragons 🐉
+          </h2>
+          <p
+            className="mt-2 text-sm font-semibold uppercase tracking-widest"
+            style={{ color: "rgba(164,128,255,0.65)", letterSpacing: "0.2em" }}
+          >
+            8×8 Premium Dragon Slot · Up to 25× Multiplier
+          </p>
+        </div>
+
         {/* Dragon Banner */}
-        <div className="mb-6 rounded-xl overflow-hidden shadow-dragon-blue">
+        <div
+          className="mb-6 rounded-xl overflow-hidden"
+          style={{
+            boxShadow:
+              "0 0 40px oklch(0.45 0.25 240 / 0.5), 0 0 80px oklch(0.72 0.18 65 / 0.15)",
+          }}
+        >
           <DragonBanner />
         </div>
 
-        {/* Main game frame */}
+        {/* ── Main game cabinet ── */}
         <div
-          className="rounded-2xl overflow-hidden relative"
+          className="rounded-3xl overflow-hidden relative"
           style={{
-            background: "oklch(0.06 0.04 240)",
-            border: "2px solid oklch(0.3 0.15 240 / 0.6)",
-            boxShadow:
-              "0 0 60px oklch(0.3 0.2 240 / 0.3), 0 0 20px oklch(0.72 0.18 65 / 0.15), inset 0 0 40px oklch(0.04 0.03 240 / 0.8)",
+            /* Premium metallic cabinet */
+            borderTop: "2px solid rgba(212,175,55,0.5)",
+            borderLeft: "2px solid rgba(212,175,55,0.3)",
+            borderRight: "1px solid rgba(60,40,10,0.5)",
+            borderBottom: "1px solid rgba(40,20,5,0.6)",
+            boxShadow: [
+              "0 0 60px 8px rgba(74,122,232,0.2)",
+              "0 0 30px 2px rgba(212,175,55,0.12)",
+              "0 24px 80px rgba(0,0,0,0.85)",
+              "inset 0 2px 0 rgba(255,220,100,0.18)",
+              "inset 0 -2px 0 rgba(30,15,60,0.5)",
+            ].join(", "),
           }}
         >
-          {/* Corner decorations */}
-          <div className="relative p-2">
-            <div
-              className="absolute top-2 left-2 w-6 h-6 rounded-tl-lg"
-              style={{
-                border: "2px solid oklch(0.72 0.18 65 / 0.7)",
-                borderRight: "none",
-                borderBottom: "none",
-              }}
-            />
-            <div
-              className="absolute top-2 right-2 w-6 h-6 rounded-tr-lg"
-              style={{
-                border: "2px solid oklch(0.45 0.25 240 / 0.7)",
-                borderLeft: "none",
-                borderBottom: "none",
-              }}
-            />
+          {/* Top gold light strip */}
+          <div className="cinematic-top-light" />
 
-            {/* Reel grid */}
-            <div
-              className="overflow-hidden mx-auto rounded-lg"
-              style={{
-                width: REELS_COUNT * 80,
-                height: ROWS_COUNT * 80,
-                background: "oklch(0.05 0.04 240)",
-                border: "1px solid oklch(0.2 0.1 240 / 0.4)",
-                position: "relative",
-              }}
-            >
-              {/* Win row highlights */}
-              {winLines.map((win) => (
-                <div
-                  key={win.row}
-                  className="absolute left-0 right-0 pointer-events-none z-20"
-                  style={{
-                    top: win.row * 80,
-                    height: 80,
-                    background:
-                      "linear-gradient(90deg, oklch(0.72 0.18 65 / 0.10) 0%, oklch(0.72 0.18 65 / 0.25) 50%, oklch(0.72 0.18 65 / 0.10) 100%)",
-                    border: "1px solid oklch(0.72 0.18 65 / 0.55)",
-                    boxShadow: "0 0 20px oklch(0.72 0.18 65 / 0.35)",
-                    animation: "goldShimmer 1.2s ease-in-out infinite",
-                  }}
-                />
-              ))}
-
-              {/* Reels */}
-              <div className="flex">
-                {grid.map((reelSymbols, reelIdx) => (
-                  <Reel
-                    key={REEL_IDS[reelIdx]}
-                    symbols={reelSymbols}
-                    isSpinning={spinningReels[reelIdx]}
-                    winningRows={winningRows}
-                    spinDuration={300 + reelIdx * 30}
+          {/* Cabinet header strip */}
+          <div
+            className="px-6 py-3 flex items-center justify-between"
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(10,6,30,0.98) 0%, rgba(8,4,22,0.95) 100%)",
+              borderBottom: "1px solid rgba(212,175,55,0.15)",
+            }}
+          >
+            <div className="flex items-center gap-3">
+              {/* Corner accent dots */}
+              {(["gold-a", "blue-a", "gold-b", "blue-b"] as const).map(
+                (id, i) => (
+                  <div
+                    key={id}
+                    className="w-2 h-2 rounded-full"
+                    style={{
+                      background:
+                        i % 2 === 0
+                          ? "rgba(212,175,55,0.7)"
+                          : "rgba(74,122,232,0.6)",
+                      boxShadow:
+                        i % 2 === 0
+                          ? "0 0 6px rgba(212,175,55,0.8)"
+                          : "0 0 6px rgba(74,122,232,0.8)",
+                    }}
                   />
-                ))}
-              </div>
+                ),
+              )}
             </div>
-
-            {/* Bottom corners */}
-            <div
-              className="absolute bottom-2 left-2 w-6 h-6 rounded-bl-lg"
-              style={{
-                border: "2px solid oklch(0.45 0.25 240 / 0.7)",
-                borderRight: "none",
-                borderTop: "none",
-              }}
-            />
-            <div
-              className="absolute bottom-2 right-2 w-6 h-6 rounded-br-lg"
-              style={{
-                border: "2px solid oklch(0.72 0.18 65 / 0.7)",
-                borderLeft: "none",
-                borderTop: "none",
-              }}
-            />
+            <span
+              className="text-xs font-black uppercase tracking-widest"
+              style={{ color: "rgba(212,175,55,0.5)", letterSpacing: "0.22em" }}
+            >
+              ⬦ DRAGON REELS ⬦
+            </span>
+            <div className="flex items-center gap-3">
+              {(["blue-c", "gold-c", "blue-d", "gold-d"] as const).map(
+                (id, i) => (
+                  <div
+                    key={id}
+                    className="w-2 h-2 rounded-full"
+                    style={{
+                      background:
+                        i % 2 === 0
+                          ? "rgba(74,122,232,0.6)"
+                          : "rgba(212,175,55,0.7)",
+                      boxShadow:
+                        i % 2 === 0
+                          ? "0 0 6px rgba(74,122,232,0.8)"
+                          : "0 0 6px rgba(212,175,55,0.8)",
+                    }}
+                  />
+                ),
+              )}
+            </div>
           </div>
 
-          {/* Controls bar */}
+          {/* Reel grid container */}
           <div
-            className="px-6 py-4"
             style={{
-              background: "oklch(0.08 0.05 240)",
-              borderTop: "1px solid oklch(0.25 0.12 240 / 0.4)",
+              background:
+                "linear-gradient(180deg, rgba(6,3,18,0.98) 0%, rgba(8,4,22,0.95) 100%)",
+              borderBottom: "1px solid rgba(74,122,232,0.2)",
+            }}
+          >
+            <div className="relative p-3">
+              {/* Frame corner accents */}
+              <div
+                className="absolute top-2 left-2 w-7 h-7 pointer-events-none"
+                style={{
+                  border: "2px solid rgba(212,175,55,0.65)",
+                  borderRight: "none",
+                  borderBottom: "none",
+                  borderRadius: 4,
+                }}
+              />
+              <div
+                className="absolute top-2 right-2 w-7 h-7 pointer-events-none"
+                style={{
+                  border: "2px solid rgba(212,175,55,0.65)",
+                  borderLeft: "none",
+                  borderBottom: "none",
+                  borderRadius: 4,
+                }}
+              />
+              <div
+                className="absolute bottom-2 left-2 w-7 h-7 pointer-events-none"
+                style={{
+                  border: "2px solid rgba(74,122,232,0.6)",
+                  borderRight: "none",
+                  borderTop: "none",
+                  borderRadius: 4,
+                }}
+              />
+              <div
+                className="absolute bottom-2 right-2 w-7 h-7 pointer-events-none"
+                style={{
+                  border: "2px solid rgba(74,122,232,0.6)",
+                  borderLeft: "none",
+                  borderTop: "none",
+                  borderRadius: 4,
+                }}
+              />
+
+              {/* Reel viewport with inset depth */}
+              <div
+                className="overflow-hidden mx-auto rounded-xl"
+                style={{
+                  width: REELS_COUNT * 80,
+                  height: ROWS_COUNT * 80,
+                  background: "oklch(0.04 0.03 240)",
+                  border: "1px solid oklch(0.15 0.06 240 / 0.5)",
+                  boxShadow:
+                    "inset 0 4px 20px rgba(0,0,0,0.9), inset 0 -4px 12px rgba(30,15,60,0.5)",
+                  position: "relative",
+                }}
+              >
+                {/* Win row highlights */}
+                {winLines.map((win) => (
+                  <div
+                    key={win.row}
+                    className="absolute left-0 right-0 pointer-events-none z-20"
+                    style={{
+                      top: win.row * 80,
+                      height: 80,
+                      background:
+                        "linear-gradient(90deg, oklch(0.72 0.18 65 / 0.05) 0%, oklch(0.72 0.18 65 / 0.22) 30%, oklch(0.72 0.18 65 / 0.30) 50%, oklch(0.72 0.18 65 / 0.22) 70%, oklch(0.72 0.18 65 / 0.05) 100%)",
+                      borderTop: "1px solid oklch(0.72 0.18 65 / 0.6)",
+                      borderBottom: "1px solid oklch(0.72 0.18 65 / 0.6)",
+                      boxShadow: "0 0 24px oklch(0.72 0.18 65 / 0.4)",
+                      animation: "goldShimmer 1.6s ease-in-out infinite",
+                    }}
+                  />
+                ))}
+
+                {/* Reels */}
+                <div className="flex">
+                  {grid.map((reelSymbols, reelIdx) => (
+                    <Reel
+                      key={REEL_IDS[reelIdx]}
+                      symbols={reelSymbols}
+                      isSpinning={spinningReels[reelIdx]}
+                      winningRows={winningRows}
+                      spinDuration={300 + reelIdx * 30}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Controls bar ── */}
+          <div
+            className="px-6 py-5"
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(8,4,22,0.98) 0%, rgba(10,5,26,0.95) 100%)",
+              borderTop: "1px solid rgba(74,122,232,0.2)",
             }}
           >
             <div className="flex flex-wrap items-center justify-between gap-4">
               {/* Balance display */}
-              <div className="flex items-center gap-2">
+              <div
+                className="flex items-center gap-2.5 px-4 py-2 rounded-full"
+                style={{
+                  background: "rgba(212,175,55,0.08)",
+                  border: "1px solid rgba(212,175,55,0.3)",
+                }}
+              >
                 <span
-                  className="text-xs font-semibold uppercase tracking-widest"
-                  style={{ color: "oklch(0.6 0.1 240)" }}
+                  className="text-xs font-bold uppercase tracking-widest"
+                  style={{ color: "rgba(164,128,255,0.7)" }}
                 >
-                  Balance
+                  BAL
                 </span>
                 <span
-                  className="font-mono font-bold text-sm"
+                  className="font-mono font-bold text-sm text-gold-glow wallet-balance"
                   style={{ color: "#D4AF37" }}
                   data-ocid="wallet-balance"
                 >
@@ -890,10 +1059,13 @@ export function MidnightDragons() {
               {/* Bet selector */}
               <div className="flex items-center gap-3">
                 <span
-                  className="text-xs font-semibold uppercase tracking-widest"
-                  style={{ color: "oklch(0.6 0.1 240)" }}
+                  className="text-xs font-bold uppercase tracking-widest"
+                  style={{
+                    color: "rgba(164,128,255,0.65)",
+                    letterSpacing: "0.18em",
+                  }}
                 >
-                  Bet
+                  BET
                 </span>
                 <div className="flex gap-2">
                   {BET_OPTIONS_ICP.map((b) => (
@@ -902,21 +1074,23 @@ export function MidnightDragons() {
                       type="button"
                       onClick={() => !isSpinning && setBetIcp(b)}
                       disabled={isSpinning || !isConnected}
-                      className="px-3 py-1.5 rounded-md text-sm font-bold transition-all duration-200 disabled:opacity-50"
+                      className="px-3 py-1.5 rounded-lg text-sm font-black btn-premium disabled:opacity-50"
                       style={{
                         background:
                           betIcp === b
-                            ? "oklch(0.72 0.18 65 / 0.25)"
-                            : "oklch(0.12 0.06 240)",
-                        color: betIcp === b ? "#D4AF37" : "oklch(0.65 0.1 240)",
+                            ? "linear-gradient(135deg, rgba(212,175,55,0.25), rgba(180,130,40,0.12))"
+                            : "rgba(20,10,45,0.7)",
+                        color:
+                          betIcp === b ? "#D4AF37" : "rgba(164,128,255,0.7)",
                         border:
                           betIcp === b
-                            ? "1.5px solid oklch(0.72 0.18 65 / 0.8)"
-                            : "1px solid oklch(0.25 0.1 240 / 0.5)",
+                            ? "1.5px solid rgba(212,175,55,0.85)"
+                            : "1px solid rgba(74,122,232,0.35)",
                         boxShadow:
                           betIcp === b
-                            ? "0 0 12px oklch(0.72 0.18 65 / 0.4)"
-                            : "none",
+                            ? "0 0 14px rgba(212,175,55,0.45), inset 0 1px 0 rgba(255,220,100,0.2)"
+                            : "inset 0 1px 0 rgba(255,255,255,0.04)",
+                        transform: betIcp === b ? "scale(1.05)" : "scale(1)",
                       }}
                       data-ocid={`bet-${b}`}
                       aria-label={`Bet ${b} ICP`}
@@ -929,29 +1103,35 @@ export function MidnightDragons() {
               </div>
 
               {/* Win display */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center min-w-[120px] justify-center">
                 {outcome.status === "won" && (
                   <div
-                    className="px-4 py-1.5 rounded-lg text-sm font-bold"
+                    className="relative overflow-hidden px-4 py-1.5 rounded-xl text-sm font-black"
                     style={{
-                      background: "oklch(0.72 0.18 65 / 0.15)",
-                      border: "1px solid oklch(0.72 0.18 65 / 0.6)",
+                      background: "rgba(212,175,55,0.12)",
+                      border: "1px solid rgba(212,175,55,0.65)",
                       color: "#D4AF37",
-                      boxShadow: "0 0 16px oklch(0.72 0.18 65 / 0.35)",
-                      animation: "goldShimmer 1.5s ease-in-out infinite",
+                      boxShadow:
+                        "0 0 20px rgba(212,175,55,0.4), inset 0 1px 0 rgba(255,220,100,0.2)",
                     }}
                     data-ocid="win-display"
                   >
-                    🏆 +{outcome.payout.toFixed(2)} ICP
+                    <div
+                      className="absolute inset-0 shimmer-overlay pointer-events-none"
+                      style={{ opacity: 0.5 }}
+                    />
+                    <span className="relative z-10 text-gold-glow">
+                      🏆 +{outcome.payout.toFixed(2)} ICP
+                    </span>
                   </div>
                 )}
                 {outcome.status === "lost" && (
                   <div
-                    className="px-4 py-1.5 rounded-lg text-sm font-medium"
+                    className="px-4 py-1.5 rounded-xl text-sm font-semibold"
                     style={{
-                      background: "oklch(0.1 0.04 240 / 0.6)",
-                      border: "1px solid oklch(0.3 0.1 240 / 0.4)",
-                      color: "oklch(0.5 0.1 240)",
+                      background: "rgba(60,30,100,0.25)",
+                      border: "1px solid rgba(74,122,232,0.3)",
+                      color: "rgba(164,128,255,0.65)",
                     }}
                     data-ocid="loss-display"
                   >
@@ -965,58 +1145,121 @@ export function MidnightDragons() {
                 type="button"
                 onClick={spin}
                 disabled={isSpinning || !isConnected || betE8s > balance}
-                className="relative px-8 py-3 rounded-xl font-display font-bold text-lg uppercase tracking-wider transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="relative px-8 py-3.5 rounded-xl font-black text-lg uppercase tracking-wider overflow-hidden"
                 style={{
+                  letterSpacing: "0.18em",
                   background: isSpinning
-                    ? "oklch(0.40 0.15 300 / 0.5)"
-                    : "linear-gradient(135deg, #D4AF37 0%, #a07830 60%, #D4AF37 100%)",
-                  color: "#1a0d3a",
-                  border: "2px solid oklch(0.72 0.18 65 / 0.8)",
+                    ? "rgba(212,175,55,0.25)"
+                    : "linear-gradient(135deg, #e8c76a 0%, #D4AF37 35%, #c0980e 65%, #a07830 100%)",
+                  color: "#1a0740",
+                  borderTop: "2px solid rgba(255,230,120,0.5)",
+                  borderLeft: "2px solid rgba(255,220,100,0.35)",
+                  borderRight: "1px solid rgba(120,80,10,0.5)",
+                  borderBottom: "2px solid rgba(100,60,5,0.6)",
                   boxShadow: isSpinning
                     ? "none"
-                    : "0 0 24px oklch(0.72 0.18 65 / 0.45), 0 4px 12px oklch(0.2 0.1 45 / 0.5)",
+                    : [
+                        "inset 0 2px 0 rgba(255,235,120,0.4)",
+                        "inset 0 -3px 0 rgba(100,60,0,0.45)",
+                        "0 0 32px rgba(212,175,55,0.5)",
+                        "0 0 60px rgba(212,175,55,0.2)",
+                        "0 6px 24px rgba(0,0,0,0.7)",
+                      ].join(", "),
                   minWidth: 140,
+                  cursor:
+                    isSpinning || !isConnected || betE8s > balance
+                      ? "not-allowed"
+                      : "pointer",
+                  opacity:
+                    isSpinning || !isConnected || betE8s > balance ? 0.6 : 1,
+                  transition: "all 0.15s cubic-bezier(0.4,0,0.2,1)",
                 }}
                 onMouseEnter={(e) => {
                   if (!isSpinning && isConnected) {
-                    (e.currentTarget as HTMLButtonElement).style.boxShadow =
-                      "0 0 32px oklch(0.72 0.18 65 / 0.6), 0 0 24px oklch(0.45 0.25 240 / 0.3), 0 4px 12px oklch(0.2 0.1 45 / 0.5)";
+                    const el = e.currentTarget as HTMLButtonElement;
+                    el.style.transform = "translateY(-2px)";
+                    el.style.boxShadow = [
+                      "inset 0 2px 0 rgba(255,235,120,0.4)",
+                      "inset 0 -3px 0 rgba(100,60,0,0.45)",
+                      "0 0 48px rgba(212,175,55,0.65)",
+                      "0 0 80px rgba(212,175,55,0.3)",
+                      "0 10px 32px rgba(0,0,0,0.75)",
+                    ].join(", ");
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (!isSpinning && isConnected) {
-                    (e.currentTarget as HTMLButtonElement).style.boxShadow =
-                      "0 0 24px oklch(0.72 0.18 65 / 0.45), 0 4px 12px oklch(0.2 0.1 45 / 0.5)";
-                  }
+                  const el = e.currentTarget as HTMLButtonElement;
+                  el.style.transform = "";
+                  el.style.boxShadow = isSpinning
+                    ? "none"
+                    : [
+                        "inset 0 2px 0 rgba(255,235,120,0.4)",
+                        "inset 0 -3px 0 rgba(100,60,0,0.45)",
+                        "0 0 32px rgba(212,175,55,0.5)",
+                        "0 0 60px rgba(212,175,55,0.2)",
+                        "0 6px 24px rgba(0,0,0,0.7)",
+                      ].join(", ");
+                }}
+                onMouseDown={(e) => {
+                  const el = e.currentTarget as HTMLButtonElement;
+                  el.style.transform = "scale(0.97) translateY(1px)";
+                }}
+                onMouseUp={(e) => {
+                  const el = e.currentTarget as HTMLButtonElement;
+                  el.style.transform = "";
                 }}
                 data-ocid="spin-btn"
                 aria-label={isSpinning ? "Spinning…" : "Spin the reels"}
               >
-                {isSpinning ? "SPINNING…" : "SPIN"}
+                {isSpinning ? (
+                  <span className="flex items-center gap-2">
+                    <span
+                      className="inline-block w-4 h-4 rounded-full border-2 border-current border-t-transparent"
+                      style={{ animation: "spin 0.7s linear infinite" }}
+                    />
+                    SPINNING…
+                  </span>
+                ) : (
+                  "SPIN 🐉"
+                )}
               </button>
             </div>
 
             {/* Win details */}
             {winLines.length > 0 && (
               <div
-                className="mt-3 pt-3 flex flex-wrap gap-2"
-                style={{ borderTop: "1px solid oklch(0.72 0.18 65 / 0.2)" }}
+                className="mt-4 pt-3 flex flex-wrap gap-2"
+                style={{ borderTop: "1px solid rgba(212,175,55,0.2)" }}
               >
+                <span
+                  className="text-xs font-black uppercase tracking-widest self-center mr-2"
+                  style={{
+                    color: "rgba(212,175,55,0.55)",
+                    letterSpacing: "0.18em",
+                  }}
+                >
+                  Winning Rows:
+                </span>
                 {winLines.map((win) => (
                   <div
                     key={win.row}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold"
                     style={{
-                      background: "oklch(0.72 0.18 65 / 0.12)",
-                      border: "1px solid oklch(0.72 0.18 65 / 0.4)",
+                      background: "rgba(212,175,55,0.1)",
+                      border: "1px solid rgba(212,175,55,0.45)",
                       color: "#D4AF37",
                     }}
                   >
                     <span>Row {win.row + 1}</span>
-                    <span style={{ color: "oklch(0.6 0.08 240)" }}>·</span>
-                    <span>{getSymbolDef(win.symbol).label}</span>
-                    <span style={{ color: "oklch(0.6 0.08 240)" }}>·</span>
-                    <span style={{ color: "oklch(0.85 0.18 65)" }}>
+                    <span style={{ color: "rgba(164,128,255,0.5)" }}>·</span>
+                    <span style={{ color: "rgba(196,181,253,0.85)" }}>
+                      {getSymbolDef(win.symbol).label}
+                    </span>
+                    <span style={{ color: "rgba(164,128,255,0.5)" }}>·</span>
+                    <span
+                      className="text-gold-glow"
+                      style={{ color: "oklch(0.85 0.18 65)" }}
+                    >
                       {win.count}× = {win.multiplier}x
                     </span>
                   </div>
@@ -1028,7 +1271,7 @@ export function MidnightDragons() {
             {(outcome.status === "won" || outcome.status === "lost") && (
               <p
                 className="mt-2 text-xs text-center font-mono"
-                style={{ color: "rgba(212,175,55,0.55)" }}
+                style={{ color: "rgba(212,175,55,0.5)" }}
               >
                 New balance: {formatICP(outcome.newBalance)} ICP
               </p>
@@ -1036,15 +1279,15 @@ export function MidnightDragons() {
 
             {/* House edge fine print */}
             <p
-              className="mt-2 text-center text-xs"
-              style={{ color: "oklch(0.35 0.06 240)" }}
+              className="mt-2 text-center text-xs font-mono"
+              style={{ color: "rgba(74,122,232,0.3)" }}
               data-ocid="house-edge-note"
             >
               House edge: ~8% · Real ICP bets · RTP 92%
             </p>
           </div>
 
-          {/* Wallet gate overlay — covers entire game frame */}
+          {/* Wallet gate overlay */}
           {!isConnected && (
             <WalletGateOverlay
               isConnecting={isConnecting}
@@ -1054,45 +1297,66 @@ export function MidnightDragons() {
           )}
         </div>
 
-        {/* Paytable */}
+        {/* ── Paytable ── */}
         <div
-          className="mt-4 rounded-xl p-4 grid grid-cols-4 gap-2"
+          className="mt-5 rounded-2xl p-5"
           style={{
-            background: "oklch(0.06 0.04 240 / 0.8)",
-            border: "1px solid oklch(0.2 0.1 240 / 0.3)",
+            background:
+              "linear-gradient(135deg, rgba(8,4,22,0.9), rgba(5,2,14,0.95))",
+            border: "1px solid rgba(74,122,232,0.2)",
+            boxShadow: "inset 0 1px 0 rgba(212,175,55,0.08)",
           }}
         >
           <div
-            className="col-span-4 text-center text-xs font-semibold uppercase tracking-widest mb-2"
-            style={{ color: "oklch(0.55 0.15 240)" }}
+            className="text-center text-xs font-black uppercase tracking-widest mb-4"
+            style={{ color: "rgba(164,128,255,0.55)", letterSpacing: "0.2em" }}
           >
-            Paytable — Win Multipliers
+            ⬦ Paytable — Win Multipliers ⬦
           </div>
-          {Object.entries(MULTIPLIERS).map(([count, mult]) => (
-            <div
-              key={count}
-              className="text-center py-1.5 rounded-lg"
-              style={{
-                background: "oklch(0.08 0.05 240 / 0.6)",
-                border: "1px solid oklch(0.2 0.08 240 / 0.3)",
-              }}
-            >
+          <div className="grid grid-cols-4 gap-3">
+            {Object.entries(MULTIPLIERS).map(([count, mult]) => (
               <div
-                className="text-base font-bold"
-                style={{ color: "oklch(0.7 0.15 65)" }}
+                key={count}
+                className="text-center py-2.5 rounded-xl"
+                style={{
+                  background:
+                    "radial-gradient(ellipse at center, rgba(212,175,55,0.08) 0%, rgba(8,4,22,0.6) 100%)",
+                  border: "1px solid rgba(212,175,55,0.18)",
+                }}
               >
-                {mult}x
+                <div
+                  className="text-lg font-black text-gold-glow"
+                  style={{ color: "oklch(0.75 0.18 65)" }}
+                >
+                  {mult}x
+                </div>
+                <div
+                  className="text-xs font-semibold mt-0.5"
+                  style={{ color: "rgba(164,128,255,0.55)" }}
+                >
+                  {count} match
+                </div>
               </div>
-              <div
-                className="text-xs"
-                style={{ color: "oklch(0.45 0.08 240)" }}
-              >
-                {count} match
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
+
+      {/* CSS animations */}
+      <style>{`
+        @keyframes cellWinPulse {
+          0%, 100% {
+            box-shadow: 0 0 20px oklch(0.72 0.18 65 / 0.65),
+                        0 0 40px oklch(0.72 0.18 65 / 0.30),
+                        inset 0 0 10px oklch(0.72 0.18 65 / 0.20);
+          }
+          50% {
+            box-shadow: 0 0 32px oklch(0.72 0.18 65 / 0.90),
+                        0 0 64px oklch(0.72 0.18 65 / 0.50),
+                        inset 0 0 18px oklch(0.72 0.18 65 / 0.35);
+          }
+        }
+      `}</style>
     </section>
   );
 }

@@ -61,15 +61,15 @@ function GameCard({
     <button
       type="button"
       onClick={onSelect}
-      className="text-left rounded-xl p-5 border transition-smooth focus-visible:ring-2 focus-visible:ring-primary"
+      className={`text-left rounded-xl p-5 border transition-smooth focus-visible:ring-2 focus-visible:ring-primary card-shimmer ${selected ? "glass-card border-gold-pulse" : "glass-dark"}`}
       style={{
-        background: selected
-          ? "oklch(0.72 0.18 65 / 0.12)"
-          : "oklch(0.11 0.01 45)",
         borderColor: selected
-          ? "oklch(0.72 0.18 65 / 0.7)"
-          : "oklch(0.25 0.05 65 / 0.4)",
-        boxShadow: selected ? "0 0 20px oklch(0.72 0.18 65 / 0.2)" : "none",
+          ? "oklch(0.72 0.18 65 / 0.70)"
+          : "oklch(0.4 0.15 300 / 0.30)",
+        boxShadow: selected
+          ? "0 0 28px oklch(0.72 0.18 65 / 0.25), var(--shadow-md)"
+          : "none",
+        transform: selected ? "translateY(-2px)" : undefined,
       }}
       data-ocid={`game-select-${type.toLowerCase()}`}
     >
@@ -77,7 +77,7 @@ function GameCard({
       <p
         className="font-display font-semibold text-base mb-1"
         style={{
-          color: selected ? "oklch(0.82 0.18 65)" : "oklch(0.88 0.02 65)",
+          color: selected ? "oklch(0.88 0.18 65)" : "oklch(0.82 0.02 65)",
         }}
       >
         {label}
@@ -90,10 +90,17 @@ function GameCard({
       </p>
       {selected && (
         <div
-          className="mt-3 text-xs font-semibold"
-          style={{ color: "oklch(0.72 0.18 65)" }}
+          className="mt-3 text-xs font-bold flex items-center gap-1.5"
+          style={{ color: "oklch(0.82 0.18 65)" }}
         >
-          ✓ Selected
+          <span
+            className="w-2 h-2 rounded-full inline-block"
+            style={{
+              background: "oklch(0.82 0.18 65)",
+              boxShadow: "0 0 6px oklch(0.72 0.18 65 / 0.80)",
+            }}
+          />
+          Selected
         </div>
       )}
     </button>
@@ -121,10 +128,9 @@ function OpenMatchRow({
 
   return (
     <div
-      className="flex items-center justify-between px-4 py-3 rounded-lg border transition-smooth"
+      className="glass-card flex items-center justify-between px-4 py-3 rounded-xl border transition-smooth hover:border-primary/50"
       style={{
-        background: "oklch(0.11 0.01 45)",
-        borderColor: "oklch(0.25 0.05 65 / 0.4)",
+        borderColor: "oklch(0.72 0.18 65 / 0.25)",
       }}
       data-ocid="open-match-row"
     >
@@ -144,7 +150,7 @@ function OpenMatchRow({
       </div>
       <div className="flex items-center gap-3 shrink-0">
         <span
-          className="font-mono text-sm font-bold"
+          className="font-mono text-sm font-bold icp-value"
           style={{ color: "oklch(0.82 0.18 65)" }}
         >
           {wagerToICP(match.wager)} ICP
@@ -153,12 +159,13 @@ function OpenMatchRow({
           size="sm"
           onClick={() => onJoin(match.id)}
           disabled={isJoining}
-          className="font-semibold transition-smooth"
+          className="font-bold btn-premium"
           style={{
             background:
               "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
             color: "oklch(0.07 0 0)",
             border: "none",
+            boxShadow: "0 2px 10px oklch(0.72 0.18 65 / 0.30)",
           }}
           data-ocid="join-match-btn"
         >
@@ -173,11 +180,10 @@ function OpenMatchRow({
 function PlugWalletFullBanner() {
   return (
     <div
-      className="flex items-start gap-4 px-5 py-4 rounded-2xl border-2"
+      className="glass-card flex items-start gap-4 px-5 py-4 rounded-2xl border-2"
       style={{
-        background: "oklch(0.10 0.03 300 / 0.25)",
         borderColor: "oklch(0.72 0.18 65 / 0.65)",
-        boxShadow: "0 0 28px oklch(0.72 0.18 65 / 0.12)",
+        boxShadow: "0 0 36px oklch(0.72 0.18 65 / 0.15), var(--shadow-md)",
       }}
       data-ocid="plug-wallet-full-banner"
     >
@@ -215,10 +221,9 @@ function PlugWalletFullBanner() {
 function PlugWalletInfoStrip() {
   return (
     <div
-      className="flex items-center gap-2 px-4 py-2.5 rounded-xl border"
+      className="glass-dark flex items-center gap-2 px-4 py-2.5 rounded-xl border"
       style={{
-        background: "oklch(0.45 0.15 300 / 0.08)",
-        borderColor: "oklch(0.45 0.15 300 / 0.35)",
+        borderColor: "oklch(0.45 0.15 300 / 0.40)",
       }}
       data-ocid="plug-wallet-strip"
     >
@@ -227,8 +232,8 @@ function PlugWalletInfoStrip() {
         style={{ color: "oklch(0.72 0.15 300)" }}
       />
       <span
-        className="text-xs font-semibold"
-        style={{ color: "oklch(0.72 0.15 300)" }}
+        className="text-xs font-bold"
+        style={{ color: "oklch(0.78 0.15 300)" }}
       >
         Plug Wallet required
       </span>
@@ -291,34 +296,61 @@ export default function VersusLobby({ onMatchStart }: VersusLobbyProps) {
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)]" data-ocid="versus-lobby">
+    <div
+      className="flex h-[calc(100vh-4rem)]"
+      style={{
+        background:
+          "radial-gradient(ellipse at 50% 0%, oklch(0.13 0.03 300 / 0.45) 0%, oklch(0.07 0 0) 65%)",
+      }}
+      data-ocid="versus-lobby"
+    >
       {/* Main content */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+      <div className="flex-1 overflow-y-auto px-6 py-8 space-y-8">
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="space-y-3"
+          className="space-y-4"
         >
-          <div className="flex items-center gap-3 mb-1">
+          <div className="flex items-center gap-4 mb-1">
+            {/* Crown decorative SVG */}
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 18h18M4 18L2 7l5 4 5-7 5 7 5-4-2 11H4z"
+                stroke="oklch(0.72 0.18 65)"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="oklch(0.72 0.18 65 / 0.15)"
+              />
+            </svg>
             <h1
-              className="font-display text-3xl font-bold"
-              style={{ color: "oklch(0.82 0.18 65)" }}
+              className="heading-cinematic text-gold-glow font-display text-3xl font-bold"
+              style={{ color: "oklch(0.88 0.18 65)" }}
             >
               Versus Mode
             </h1>
             <Badge
-              className="text-xs font-mono"
+              className="text-xs font-mono font-bold"
               style={{
-                background: "oklch(0.45 0.15 300 / 0.2)",
-                color: "oklch(0.72 0.15 300)",
-                border: "1px solid oklch(0.45 0.15 300 / 0.4)",
+                background: "oklch(0.45 0.15 300 / 0.25)",
+                color: "oklch(0.78 0.15 300)",
+                border: "1px solid oklch(0.45 0.15 300 / 0.45)",
               }}
             >
               PvP
             </Badge>
           </div>
-          <p className="text-sm" style={{ color: "oklch(0.55 0.03 65)" }}>
+          <p
+            className="text-premium text-sm"
+            style={{ color: "oklch(0.55 0.03 65)" }}
+          >
             Challenge real players. Agree on a wager. Winner takes all.
           </p>
           {/* Always-visible Plug Wallet info strip */}
@@ -330,22 +362,23 @@ export default function VersusLobby({ onMatchStart }: VersusLobbyProps) {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="rounded-2xl p-6 border space-y-6"
+          className="glass-card rounded-2xl p-6 border space-y-6 relative overflow-hidden"
           style={{
-            background: "oklch(0.10 0.01 45)",
-            borderColor: "oklch(0.25 0.05 65 / 0.45)",
+            borderColor: "oklch(0.72 0.18 65 / 0.25)",
+            boxShadow: "var(--shadow-md)",
           }}
         >
+          <div className="cinematic-top-light" aria-hidden="true" />
           <h2
             className="font-display text-lg font-semibold"
-            style={{ color: "oklch(0.78 0.03 65)" }}
+            style={{ color: "oklch(0.82 0.03 65)" }}
           >
             Create a Match
           </h2>
 
           <div>
             <p
-              className="text-xs font-semibold uppercase tracking-widest mb-3"
+              className="text-xs font-bold uppercase tracking-widest mb-4"
               style={{ color: "oklch(0.50 0.03 65)" }}
             >
               Choose Game
@@ -367,7 +400,7 @@ export default function VersusLobby({ onMatchStart }: VersusLobbyProps) {
 
           <div>
             <p
-              className="text-xs font-semibold uppercase tracking-widest mb-3"
+              className="text-xs font-bold uppercase tracking-widest mb-4"
               style={{ color: "oklch(0.50 0.03 65)" }}
             >
               Wager Amount
@@ -385,12 +418,13 @@ export default function VersusLobby({ onMatchStart }: VersusLobbyProps) {
           <Button
             onClick={handleCreate}
             disabled={isCreating}
-            className="w-full sm:w-auto font-semibold transition-smooth"
+            className="w-full sm:w-auto font-bold btn-premium px-8"
             style={{
               background:
                 "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
               color: "oklch(0.07 0 0)",
               border: "none",
+              boxShadow: "0 4px 20px oklch(0.72 0.18 65 / 0.40)",
             }}
             data-ocid="create-match-btn"
           >
@@ -415,15 +449,14 @@ export default function VersusLobby({ onMatchStart }: VersusLobbyProps) {
           {matchesLoading ? (
             <div className="space-y-3">
               {[1, 2].map((n) => (
-                <Skeleton key={n} className="h-14 w-full rounded-lg" />
+                <Skeleton key={n} className="h-14 w-full rounded-xl" />
               ))}
             </div>
           ) : openMatches.length === 0 ? (
             <div
-              className="rounded-xl p-8 border text-center"
+              className="glass-dark rounded-xl p-8 border text-center"
               style={{
-                background: "oklch(0.09 0 0)",
-                borderColor: "oklch(0.20 0.04 65 / 0.35)",
+                borderColor: "oklch(0.4 0.15 300 / 0.25)",
               }}
               data-ocid="no-open-matches"
             >
@@ -448,10 +481,9 @@ export default function VersusLobby({ onMatchStart }: VersusLobbyProps) {
 
       {/* Right sidebar: Online Players */}
       <div
-        className="w-72 border-l flex flex-col overflow-y-auto shrink-0"
+        className="w-72 glass-dark border-l flex flex-col overflow-y-auto shrink-0"
         style={{
-          background: "oklch(0.10 0.01 45)",
-          borderColor: "oklch(0.25 0.05 65 / 0.4)",
+          borderColor: "oklch(0.72 0.18 65 / 0.20)",
         }}
       >
         <OnlinePlayersList

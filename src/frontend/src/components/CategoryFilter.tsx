@@ -17,7 +17,7 @@ interface CategoryFilterProps {
 export function CategoryFilter({ active, onChange }: CategoryFilterProps) {
   return (
     <fieldset
-      className="flex items-center gap-2 flex-wrap border-0 p-0 m-0"
+      className="flex items-center gap-2 flex-wrap border-0 p-0 m-0 backdrop-blur-sm"
       aria-label="Filter games by category"
       data-ocid="category-filters"
     >
@@ -27,9 +27,9 @@ export function CategoryFilter({ active, onChange }: CategoryFilterProps) {
           key={f.value}
           type="button"
           onClick={() => onChange(f.value)}
-          className={`px-3 py-1.5 rounded-md text-xs font-medium transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+          className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:scale-105 ${
             active === f.value
-              ? "bg-primary text-primary-foreground shadow"
+              ? "bg-primary text-primary-foreground text-premium gold-glow"
               : "bg-muted text-muted-foreground hover:text-foreground hover:bg-secondary"
           }`}
           aria-pressed={active === f.value}

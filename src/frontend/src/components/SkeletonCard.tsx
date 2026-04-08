@@ -7,7 +7,7 @@ interface SkeletonCardProps {
 export function SkeletonCard({ variant = "game" }: SkeletonCardProps) {
   if (variant === "carousel") {
     return (
-      <div className="relative rounded-xl overflow-hidden bg-card border border-border aspect-[16/9] w-full animate-pulse">
+      <div className="relative rounded-xl overflow-hidden glass-card border aspect-[16/9] w-full animate-pulse">
         <Skeleton className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 p-6">
           <Skeleton className="h-8 w-48 mb-2" />
@@ -32,13 +32,16 @@ export function SkeletonCard({ variant = "game" }: SkeletonCardProps) {
     );
   }
 
-  // game card skeleton
+  // game card skeleton — matches glass-card style
   return (
     <div
-      className="rounded-lg overflow-hidden bg-card border border-border"
+      className="glass-card rounded-xl overflow-hidden"
       data-ocid="skeleton-game-card"
     >
-      <Skeleton className="aspect-[4/3] w-full" />
+      {/* Gold shimmer image area */}
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+        <div className="skeleton-shimmer absolute inset-0" />
+      </div>
       <div className="p-3 space-y-2">
         <Skeleton className="h-4 w-3/4" />
         <Skeleton className="h-3 w-1/2" />

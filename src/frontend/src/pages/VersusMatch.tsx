@@ -38,11 +38,11 @@ function PlugWalletBanner({ compact = false }: { compact?: boolean }) {
   if (compact) {
     return (
       <div
-        className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold"
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold"
         style={{
-          background: "oklch(0.45 0.15 300 / 0.15)",
-          border: "1px solid oklch(0.45 0.15 300 / 0.4)",
-          color: "oklch(0.72 0.15 300)",
+          background: "oklch(0.45 0.15 300 / 0.20)",
+          border: "1px solid oklch(0.45 0.15 300 / 0.45)",
+          color: "oklch(0.78 0.15 300)",
         }}
         data-ocid="plug-wallet-badge"
       >
@@ -53,10 +53,10 @@ function PlugWalletBanner({ compact = false }: { compact?: boolean }) {
   }
   return (
     <div
-      className="flex items-center gap-3 px-4 py-3 rounded-xl border"
+      className="glass-card flex items-center gap-3 px-4 py-3 rounded-xl border"
       style={{
-        background: "oklch(0.13 0.03 300 / 0.2)",
-        borderColor: "oklch(0.72 0.18 65 / 0.5)",
+        borderColor: "oklch(0.72 0.18 65 / 0.50)",
+        boxShadow: "0 0 20px oklch(0.72 0.18 65 / 0.12)",
       }}
       data-ocid="plug-wallet-notice"
     >
@@ -101,20 +101,21 @@ function WagerPanel({
 
   return (
     <div
-      className={`rounded-2xl border-2 p-5 flex flex-col gap-4${!pending ? " versus-wager-panel-active" : ""}`}
+      className={`rounded-2xl border-2 p-6 flex flex-col gap-5${!pending ? " versus-wager-panel-active" : ""}`}
       style={{
-        background: "oklch(0.10 0.02 300 / 0.3)",
+        background:
+          "linear-gradient(135deg, oklch(0.12 0.04 300 / 0.50), oklch(0.10 0.02 65 / 0.40))",
         borderColor: "oklch(0.72 0.18 65 / 0.65)",
         boxShadow:
-          "0 0 28px oklch(0.72 0.18 65 / 0.18), 0 0 8px oklch(0.72 0.18 65 / 0.1)",
+          "0 0 32px oklch(0.72 0.18 65 / 0.20), 0 0 10px oklch(0.72 0.18 65 / 0.12), var(--shadow-xl)",
       }}
       data-ocid="wager-panel"
     >
       {/* Header row */}
       <div className="flex items-center justify-between">
         <span
-          className="text-xs font-semibold uppercase tracking-widest"
-          style={{ color: "oklch(0.50 0.03 65)" }}
+          className="text-xs font-bold uppercase tracking-widest"
+          style={{ color: "oklch(0.55 0.03 65)" }}
         >
           {pending ? "Proposed Wager" : "Active Wager"}
         </span>
@@ -122,36 +123,47 @@ function WagerPanel({
       </div>
 
       {/* Amounts row */}
-      <div className="flex items-center gap-6 flex-wrap">
+      <div className="flex items-center gap-8 flex-wrap">
         <div className="flex flex-col items-center">
           <span
-            className="font-mono text-3xl font-bold leading-none"
-            style={{ color: "oklch(0.88 0.18 65)" }}
+            className="font-mono text-4xl font-bold leading-none icp-value"
+            style={{
+              color: "oklch(0.90 0.18 65)",
+              textShadow:
+                "0 0 20px oklch(0.72 0.18 65 / 0.50), 0 2px 4px oklch(0 0 0 / 0.60)",
+            }}
           >
             {wagerICP}
           </span>
           <span
-            className="text-xs font-semibold mt-1"
+            className="text-xs font-semibold mt-1.5"
             style={{ color: "oklch(0.55 0.03 65)" }}
           >
             ICP each
           </span>
         </div>
         <div
-          className="text-xl font-bold"
-          style={{ color: "oklch(0.45 0.15 300 / 0.7)" }}
+          className="text-2xl font-black"
+          style={{
+            color: "oklch(0.45 0.15 300 / 0.80)",
+            textShadow: "0 0 12px oklch(0.45 0.15 300 / 0.40)",
+          }}
         >
           ×2
         </div>
         <div className="flex flex-col items-center">
           <span
-            className="font-mono text-3xl font-bold leading-none"
-            style={{ color: "oklch(0.82 0.18 65)" }}
+            className="font-mono text-4xl font-bold leading-none icp-value"
+            style={{
+              color: "oklch(0.88 0.18 65)",
+              textShadow:
+                "0 0 24px oklch(0.72 0.18 65 / 0.55), 0 2px 4px oklch(0 0 0 / 0.60)",
+            }}
           >
             {potICP}
           </span>
           <span
-            className="text-xs font-semibold mt-1"
+            className="text-xs font-bold mt-1.5"
             style={{ color: "oklch(0.72 0.15 300)" }}
           >
             Total Pot
@@ -163,11 +175,11 @@ function WagerPanel({
       {pending && (
         <div
           className="space-y-3 border-t pt-4"
-          style={{ borderColor: "oklch(0.25 0.05 65 / 0.3)" }}
+          style={{ borderColor: "oklch(0.72 0.18 65 / 0.20)" }}
         >
           <p
             className="text-xs font-semibold"
-            style={{ color: "oklch(0.72 0.18 65)" }}
+            style={{ color: "oklch(0.78 0.18 65)" }}
           >
             Wager proposed by opponent — confirm amount to start:
           </p>
@@ -176,12 +188,13 @@ function WagerPanel({
             <Button
               onClick={() => acceptWager(matchId)}
               disabled={isAccepting}
-              className="w-full font-semibold transition-smooth"
+              className="w-full font-bold btn-premium"
               style={{
                 background:
                   "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
                 color: "oklch(0.07 0 0)",
                 border: "none",
+                boxShadow: "0 4px 20px oklch(0.72 0.18 65 / 0.40)",
               }}
               data-ocid="accept-wager-btn"
             >
@@ -202,14 +215,15 @@ function WagerPanel({
       {/* Active indicator */}
       {!pending && (
         <div
-          className="flex items-center gap-2 text-xs font-semibold"
-          style={{ color: "oklch(0.72 0.18 65)" }}
+          className="flex items-center gap-2 text-xs font-bold"
+          style={{ color: "oklch(0.78 0.18 65)" }}
         >
           <span
-            className="w-2 h-2 rounded-full inline-block"
+            className="w-2.5 h-2.5 rounded-full inline-block animate-pulse"
             style={{
-              background: "oklch(0.72 0.18 65)",
-              boxShadow: "0 0 6px oklch(0.72 0.18 65 / 0.8)",
+              background: "oklch(0.78 0.18 65)",
+              boxShadow:
+                "0 0 8px oklch(0.72 0.18 65 / 0.90), 0 0 16px oklch(0.72 0.18 65 / 0.45)",
             }}
           />
           Wager locked — winner takes {potICP} ICP
@@ -284,7 +298,11 @@ function ChessBoard({
 
   return (
     <div
-      className="w-full max-w-lg mx-auto select-none"
+      className="glass-card w-full max-w-lg mx-auto select-none rounded-2xl p-4"
+      style={{
+        borderColor: "oklch(0.72 0.18 65 / 0.30)",
+        boxShadow: "var(--shadow-xl), 0 0 40px oklch(0.72 0.18 65 / 0.10)",
+      }}
       data-ocid="chess-board"
     >
       {/* Files labels */}
@@ -315,7 +333,10 @@ function ChessBoard({
         {/* Board */}
         <div
           className="grid grid-cols-8 flex-1 rounded-lg overflow-hidden border"
-          style={{ borderColor: "oklch(0.25 0.05 65 / 0.4)" }}
+          style={{
+            borderColor: "oklch(0.72 0.18 65 / 0.25)",
+            boxShadow: "0 0 0 1px oklch(0.72 0.18 65 / 0.10)",
+          }}
         >
           {RANKS.flatMap((rank) =>
             FILES.map((file) => {
@@ -331,11 +352,14 @@ function ChessBoard({
                   className="h-12 flex items-center justify-center text-2xl transition-smooth focus-visible:ring-2 focus-visible:ring-primary"
                   style={{
                     background: isSelected
-                      ? "oklch(0.72 0.18 65 / 0.45)"
+                      ? "oklch(0.72 0.18 65 / 0.50)"
                       : isLight
-                        ? "oklch(0.22 0.03 65 / 0.6)"
-                        : "oklch(0.12 0.01 45)",
+                        ? "oklch(0.24 0.04 300 / 0.70)"
+                        : "oklch(0.12 0.02 300 / 0.60)",
                     cursor: myTurn ? "pointer" : "default",
+                    boxShadow: isSelected
+                      ? "inset 0 0 12px oklch(0.72 0.18 65 / 0.30)"
+                      : undefined,
                   }}
                   aria-label={`${sq}${piece ? ` ${PIECE_SYMBOLS[piece] ?? piece}` : ""}`}
                 >
@@ -344,12 +368,12 @@ function ChessBoard({
                       style={{
                         color:
                           piece === piece.toUpperCase()
-                            ? "oklch(0.82 0.18 65)"
-                            : "oklch(0.45 0.15 300)",
+                            ? "oklch(0.88 0.18 65)"
+                            : "oklch(0.50 0.18 300)",
                         textShadow:
                           piece === piece.toUpperCase()
-                            ? "0 1px 4px oklch(0 0 0 / 0.6)"
-                            : "0 1px 4px oklch(0 0 0 / 0.6)",
+                            ? "0 1px 6px oklch(0 0 0 / 0.70), 0 0 10px oklch(0.72 0.18 65 / 0.30)"
+                            : "0 1px 6px oklch(0 0 0 / 0.70)",
                         lineHeight: 1,
                       }}
                     >
@@ -392,38 +416,60 @@ function DiceGame({
       className="flex flex-col items-center justify-center gap-8 py-8"
       data-ocid="dice-game"
     >
-      <div className="flex gap-8">
+      <div className="flex gap-10">
         <div className="text-center">
           <div
-            className="w-20 h-20 rounded-xl flex items-center justify-center text-4xl font-mono font-bold border-2"
+            className="w-24 h-24 rounded-2xl flex items-center justify-center text-4xl font-mono font-black border-2 card-shimmer"
             style={{
-              background: "oklch(0.13 0.01 45)",
-              borderColor: "oklch(0.72 0.18 65 / 0.5)",
-              color: "oklch(0.82 0.18 65)",
+              background:
+                "linear-gradient(135deg, oklch(0.14 0.02 65 / 0.80), oklch(0.10 0.01 45))",
+              borderColor: "oklch(0.72 0.18 65 / 0.55)",
+              color: "oklch(0.88 0.18 65)",
+              boxShadow:
+                "0 0 20px oklch(0.72 0.18 65 / 0.20), var(--shadow-md)",
+              textShadow: "0 0 12px oklch(0.72 0.18 65 / 0.50)",
             }}
           >
             {diceState?.player1Roll != null
               ? String(diceState.player1Roll)
               : "?"}
           </div>
-          <p className="text-xs mt-2" style={{ color: "oklch(0.50 0.03 65)" }}>
+          <p
+            className="text-xs font-semibold mt-2"
+            style={{ color: "oklch(0.55 0.03 65)" }}
+          >
             Player 1
           </p>
         </div>
+        <div
+          className="self-center text-3xl font-black"
+          style={{
+            color: "oklch(0.72 0.18 65 / 0.60)",
+            textShadow: "0 0 12px oklch(0.72 0.18 65 / 0.30)",
+          }}
+        >
+          VS
+        </div>
         <div className="text-center">
           <div
-            className="w-20 h-20 rounded-xl flex items-center justify-center text-4xl font-mono font-bold border-2"
+            className="w-24 h-24 rounded-2xl flex items-center justify-center text-4xl font-mono font-black border-2 card-shimmer"
             style={{
-              background: "oklch(0.13 0.01 45)",
-              borderColor: "oklch(0.45 0.15 300 / 0.5)",
-              color: "oklch(0.72 0.15 300)",
+              background:
+                "linear-gradient(135deg, oklch(0.14 0.04 300 / 0.60), oklch(0.10 0.02 300 / 0.50))",
+              borderColor: "oklch(0.45 0.15 300 / 0.55)",
+              color: "oklch(0.78 0.15 300)",
+              boxShadow:
+                "0 0 20px oklch(0.45 0.15 300 / 0.20), var(--shadow-md)",
             }}
           >
             {diceState?.player2Roll != null
               ? String(diceState.player2Roll)
               : "?"}
           </div>
-          <p className="text-xs mt-2" style={{ color: "oklch(0.50 0.03 65)" }}>
+          <p
+            className="text-xs font-semibold mt-2"
+            style={{ color: "oklch(0.55 0.03 65)" }}
+          >
             Player 2
           </p>
         </div>
@@ -432,12 +478,13 @@ function DiceGame({
         <Button
           onClick={() => roll(matchId)}
           disabled={isPending}
-          className="font-semibold transition-smooth px-8"
+          className="font-bold btn-premium px-10 py-3 text-base"
           style={{
             background:
               "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
             color: "oklch(0.07 0 0)",
             border: "none",
+            boxShadow: "0 4px 20px oklch(0.72 0.18 65 / 0.40)",
           }}
           data-ocid="roll-dice-btn"
         >
@@ -487,15 +534,18 @@ function RPSGame({
                 ?.emoji ?? "🤔"}
             </div>
             <p
-              className="text-xs mt-2"
-              style={{ color: "oklch(0.50 0.03 65)" }}
+              className="text-xs mt-2 font-semibold"
+              style={{ color: "oklch(0.55 0.03 65)" }}
             >
               {rpsState.player1Choice ?? "Choosing…"}
             </p>
           </div>
           <div
-            className="text-4xl self-center font-bold"
-            style={{ color: "oklch(0.72 0.18 65)" }}
+            className="text-4xl self-center font-black"
+            style={{
+              color: "oklch(0.72 0.18 65)",
+              textShadow: "0 0 16px oklch(0.72 0.18 65 / 0.50)",
+            }}
           >
             VS
           </div>
@@ -505,8 +555,8 @@ function RPSGame({
                 ?.emoji ?? "🤔"}
             </div>
             <p
-              className="text-xs mt-2"
-              style={{ color: "oklch(0.50 0.03 65)" }}
+              className="text-xs mt-2 font-semibold"
+              style={{ color: "oklch(0.55 0.03 65)" }}
             >
               {rpsState.player2Choice ?? "Choosing…"}
             </p>
@@ -521,10 +571,12 @@ function RPSGame({
               type="button"
               onClick={() => handleChoice(value)}
               disabled={isPending}
-              className="w-20 h-20 rounded-xl text-4xl flex items-center justify-center border-2 transition-smooth hover:scale-105"
+              className="w-24 h-24 rounded-2xl text-4xl flex items-center justify-center border-2 transition-smooth hover:scale-110 card-shimmer"
               style={{
-                background: "oklch(0.13 0.01 45)",
-                borderColor: "oklch(0.72 0.18 65 / 0.4)",
+                background:
+                  "linear-gradient(135deg, oklch(0.14 0.02 65 / 0.70), oklch(0.10 0.01 45))",
+                borderColor: "oklch(0.72 0.18 65 / 0.45)",
+                boxShadow: "0 4px 16px oklch(0 0 0 / 0.50)",
               }}
               data-ocid={`rps-choice-${value.toLowerCase()}`}
               aria-label={value}
@@ -535,7 +587,10 @@ function RPSGame({
         </div>
       )}
       {myChoice && (
-        <p className="text-sm" style={{ color: "oklch(0.55 0.03 65)" }}>
+        <p
+          className="text-sm text-premium"
+          style={{ color: "oklch(0.55 0.03 65)" }}
+        >
           You chose {myChoice}. Waiting for opponent…
         </p>
       )}
@@ -611,23 +666,29 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
   return (
     <div
       className="flex h-[calc(100vh-4rem)] overflow-hidden"
+      style={{
+        background:
+          "radial-gradient(ellipse at 50% 20%, oklch(0.13 0.03 300 / 0.45) 0%, oklch(0.07 0 0) 65%)",
+      }}
       data-ocid="versus-match"
     >
-      {/* Left: game board (70%) */}
-      <div
-        className="flex-1 flex flex-col overflow-hidden"
-        style={{ background: "oklch(var(--versus-board-bg))" }}
-      >
+      {/* Left: game board (~70%) */}
+      <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top bar */}
         <div
-          className="flex items-center justify-between px-4 py-3 border-b shrink-0"
-          style={{ borderColor: "oklch(0.25 0.05 65 / 0.4)" }}
+          className="glass-dark flex items-center justify-between px-4 py-3 border-b shrink-0"
+          style={{
+            borderColor: "oklch(0.72 0.18 65 / 0.18)",
+          }}
         >
           <button
             type="button"
             onClick={onBack}
-            className="flex items-center gap-2 text-sm transition-smooth hover:text-primary"
-            style={{ color: "oklch(0.60 0.03 65)" }}
+            className="flex items-center gap-2 text-sm transition-smooth btn-premium px-3 py-1.5 rounded-lg"
+            style={{
+              color: "oklch(0.65 0.03 65)",
+              border: "1px solid oklch(0.25 0.05 65 / 0.40)",
+            }}
             data-ocid="back-btn"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -635,8 +696,8 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
           </button>
           <div className="flex items-center gap-2">
             <span
-              className="text-sm font-display"
-              style={{ color: "oklch(0.78 0.03 65)" }}
+              className="text-sm font-display font-bold heading-cinematic"
+              style={{ color: "oklch(0.82 0.03 65)" }}
             >
               {match.gameType === VersusGameType.Chess
                 ? "Chess"
@@ -645,10 +706,25 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
                   : "Rock Paper Scissors"}
             </span>
           </div>
-          {/* Players */}
-          <div className="flex items-center gap-3 text-xs font-mono">
-            <span style={{ color: "oklch(0.72 0.18 65)" }}>You</span>
-            <span style={{ color: "oklch(0.40 0.02 65)" }}>vs</span>
+          {/* Opponent card */}
+          <div
+            className="glass-card flex items-center gap-3 px-3 py-1.5 rounded-xl text-xs font-mono"
+            style={{
+              borderColor: "oklch(0.72 0.18 65 / 0.25)",
+            }}
+          >
+            <span
+              className="font-bold text-gold-glow"
+              style={{ color: "oklch(0.82 0.18 65)" }}
+            >
+              You
+            </span>
+            <span
+              className="font-black text-sm"
+              style={{ color: "oklch(0.45 0.15 300 / 0.80)" }}
+            >
+              ⚔
+            </span>
             <span style={{ color: "oklch(0.72 0.15 300)" }}>
               {opponentName}
             </span>
@@ -656,7 +732,7 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
         </div>
 
         {/* Game area */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+        <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
           {/* Wager Panel — always visible in game screen */}
           <WagerPanel
             wagerICP={wagerICP}
@@ -706,10 +782,10 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
         </div>
       </div>
 
-      {/* Right panel: Chat (30%) */}
+      {/* Right panel: Chat (~30%) */}
       <div
-        className="w-80 flex flex-col border-l"
-        style={{ borderColor: "oklch(0.25 0.05 65 / 0.4)" }}
+        className="w-80 glass-dark flex flex-col border-l"
+        style={{ borderColor: "oklch(0.72 0.18 65 / 0.18)" }}
       >
         <LiveChat
           matchId={matchId}
@@ -719,7 +795,7 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
         {/* Online players mini list */}
         <div
           className="border-t shrink-0 max-h-64 overflow-y-auto"
-          style={{ borderColor: "oklch(0.25 0.05 65 / 0.4)" }}
+          style={{ borderColor: "oklch(0.72 0.18 65 / 0.15)" }}
         >
           <OnlinePlayersList
             players={onlinePlayers.slice(0, 5)}

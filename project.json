@@ -1,29 +1,25 @@
 {
-  "overview": "A full-stack ICP Casino with Internet Identity login, real ICP betting, slot machines (Lucky Sevens, Midnight Dragons), and a Versus Mode section for real-time PvP skill games (chess, dice, rock-paper-scissors) with ICP wagers of 10, 30, or 100 ICP. Strict gold and purple color scheme throughout.",
+  "overview": "A premium ICP Casino with gold and purple Vegas-inspired styling. Features 13+ casino games with realistic 3D-like visuals, slot machines, PvP Versus Mode, live chat, and Plug wallet integration for real ICP betting.",
   "features": [
-    "Internet Identity authentication",
-    "ICP wallet integration with real bets",
-    "Game lobby with featured carousel and category filters",
-    "Lucky Sevens slot machine with 1/3/5 ICP bets",
-    "Midnight Dragons 8x8 slot machine",
-    "Versus Mode with live PvP matchmaking",
-    "Chess with full move validation and checkmate detection",
-    "Dice Roll and Rock-Paper-Scissors PvP games",
-    "Wager options of 10, 30, or 100 ICP for PvP",
-    "Live in-game chat during PvP matches",
-    "Online player lobby with wallet balances",
-    "Transaction history with filters",
-    "Gold and purple casino theme"
+    "Premium 3D-like game assets with depth, shadows, and realistic textures",
+    "Glassmorphism UI effects on game cards with cinematic hover interactions",
+    "Advanced slot machines: Lucky Sevens and Midnight Dragons 8x8 grid",
+    "PvP Versus Mode with chess, dice, rock-paper-scissors and live ICP wagering",
+    "Plug wallet integration for real ICP bets and balance tracking",
+    "Premium typography with Montserrat and smooth CSS micro-transitions",
+    "Live lobby chat and transaction history",
+    "Featured game carousel with smooth animations"
   ],
   "category": "entertainment",
   "tags": [
     "casino",
     "icp",
+    "web3",
+    "gaming",
     "pvp",
-    "chess",
-    "real-time",
-    "betting",
-    "internet-computer"
+    "slots",
+    "versus-mode",
+    "plug-wallet"
   ],
-  "last_updated": "2026-04-08T19:55:47.635Z"
+  "last_updated": "2026-04-08T21:23:36.448Z"
 }

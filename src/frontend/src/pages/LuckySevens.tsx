@@ -8,7 +8,7 @@ import type { Transaction } from "../backend";
 import { useIcpWallet } from "../hooks/use-icp-wallet";
 import { formatICP, useWallet } from "../hooks/use-wallet";
 
-// ── constants ─────────────────────────────────────────────────────────────────
+// ── constants ──────────────────────────────────────────────────────────────────
 
 const E8S_PER_ICP = 100_000_000n;
 
@@ -29,7 +29,7 @@ type OutcomeState =
   | { status: "won"; tx: Transaction; newBalance: bigint }
   | { status: "lost"; tx: Transaction; newBalance: bigint };
 
-// ── reel component ────────────────────────────────────────────────────────────
+// ── Reel component ─────────────────────────────────────────────────────────────
 
 function Reel({
   symbol,
@@ -44,56 +44,111 @@ function Reel({
 }) {
   return (
     <div
-      className="relative w-24 h-28 rounded-xl overflow-hidden border-2 flex items-center justify-center"
+      className="relative flex-shrink-0"
       style={{
-        borderColor: isWin ? "#D4AF37" : spinning ? "#7B2FBE" : "#4B0082",
-        background: "linear-gradient(180deg, #1a0d3a 0%, #0f0620 100%)",
+        width: 96,
+        height: 120,
+        borderRadius: 12,
+        overflow: "hidden",
+        /* Multi-layer metallic border effect */
+        border: isWin
+          ? "2px solid #D4AF37"
+          : "2px solid rgba(180, 130, 40, 0.5)",
+        outline: isWin
+          ? "1px solid rgba(255, 220, 100, 0.3)"
+          : "1px solid rgba(100, 60, 140, 0.3)",
+        /* 3D depth illusion with box-shadow */
         boxShadow: isWin
-          ? "0 0 24px 6px rgba(212,175,55,0.55), inset 0 0 12px rgba(212,175,55,0.15)"
+          ? "0 0 32px 8px rgba(212,175,55,0.65), 0 0 60px rgba(212,175,55,0.3), inset 0 2px 4px rgba(255,220,100,0.2), inset 0 -2px 4px rgba(80,20,100,0.4)"
           : spinning
-            ? "0 0 12px 2px rgba(123,47,190,0.5)"
-            : "inset 0 0 8px rgba(0,0,0,0.4)",
+            ? "0 0 14px 3px rgba(123,47,190,0.55), inset 0 2px 4px rgba(180,130,255,0.1)"
+            : "inset 0 2px 8px rgba(0,0,0,0.7), inset 0 -2px 4px rgba(80,20,100,0.35), 0 2px 6px rgba(0,0,0,0.5)",
+        /* Deep glass window feel */
+        background:
+          "radial-gradient(ellipse at 50% 30%, rgba(45,25,80,0.9) 0%, rgba(15,6,32,0.98) 65%, rgba(26,13,58,1) 100%)",
       }}
     >
-      {/* Shimmer strip at top/bottom */}
+      {/* Top glass edge shadow — implies reel scrolling behind glass */}
       <div
-        className="absolute inset-x-0 top-0 h-6 pointer-events-none z-10"
+        className="absolute inset-x-0 top-0 z-20 pointer-events-none"
         style={{
+          height: 28,
           background:
-            "linear-gradient(180deg, rgba(26,13,58,0.9) 0%, transparent 100%)",
+            "linear-gradient(180deg, rgba(10,4,24,0.92) 0%, rgba(10,4,24,0.50) 60%, transparent 100%)",
         }}
       />
+      {/* Bottom glass edge shadow */}
       <div
-        className="absolute inset-x-0 bottom-0 h-6 pointer-events-none z-10"
+        className="absolute inset-x-0 bottom-0 z-20 pointer-events-none"
         style={{
+          height: 28,
           background:
-            "linear-gradient(0deg, rgba(26,13,58,0.9) 0%, transparent 100%)",
+            "linear-gradient(0deg, rgba(10,4,24,0.92) 0%, rgba(10,4,24,0.50) 60%, transparent 100%)",
+        }}
+      />
+
+      {/* Win flash overlay */}
+      {isWin && (
+        <div
+          className="absolute inset-0 z-10 pointer-events-none shimmer-overlay rounded-xl"
+          style={{ opacity: 0.5 }}
+        />
+      )}
+
+      {/* Centerline glow (the "payline") */}
+      <div
+        className="absolute inset-x-0 z-10 pointer-events-none"
+        style={{
+          top: "50%",
+          height: 2,
+          marginTop: -1,
+          background:
+            "linear-gradient(90deg, transparent, rgba(212,175,55,0.35), transparent)",
         }}
       />
 
       {/* Symbol */}
-      <span
-        className={`relative z-20 font-display font-black select-none transition-all duration-300 ${
-          spinning ? "reel-spinning" : ""
-        }`}
-        style={{
-          fontSize: symbol === "BAR" ? "1.4rem" : "2.4rem",
-          color: isWin ? "#D4AF37" : spinning ? "#A78BFA" : "#C4B5FD",
-          textShadow: isWin
-            ? "0 0 12px rgba(212,175,55,0.9), 0 0 24px rgba(212,175,55,0.55)"
-            : "0 0 8px rgba(167,139,250,0.4)",
-          animationDelay: `${delay}ms`,
-        }}
-      >
-        {spinning
-          ? SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]
-          : symbol}
-      </span>
+      <div className="relative z-30 h-full flex items-center justify-center">
+        <span
+          className={`font-display font-black select-none transition-all duration-300 ${
+            spinning ? "reel-spinning" : ""
+          } ${isWin ? "scale-110" : ""}`}
+          style={{
+            fontSize: symbol === "BAR" ? "1.7rem" : "3.2rem",
+            lineHeight: 1,
+            color: isWin
+              ? "#D4AF37"
+              : spinning
+                ? "#A78BFA"
+                : symbol === "7"
+                  ? "#D4AF37"
+                  : "#C4B5FD",
+            textShadow: isWin
+              ? "0 0 14px rgba(212,175,55,1), 0 0 28px rgba(212,175,55,0.7), 0 0 48px rgba(212,175,55,0.45), 0 2px 4px rgba(0,0,0,0.8)"
+              : symbol === "7"
+                ? "0 0 10px rgba(212,175,55,0.7), 0 0 20px rgba(212,175,55,0.4), 0 2px 4px rgba(0,0,0,0.8)"
+                : "0 0 8px rgba(167,139,250,0.5), 0 2px 4px rgba(0,0,0,0.8)",
+            filter: isWin
+              ? "drop-shadow(0 0 6px rgba(212,175,55,0.9))"
+              : "drop-shadow(0 2px 4px rgba(0,0,0,0.6))",
+            animationDelay: `${delay}ms`,
+            transform: spinning
+              ? undefined
+              : isWin
+                ? "scale(1.08)"
+                : "scale(1)",
+          }}
+        >
+          {spinning
+            ? SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]
+            : symbol}
+        </span>
+      </div>
     </div>
   );
 }
 
-// ── Wallet gate overlay ───────────────────────────────────────────────────────
+// ── Wallet gate overlay ────────────────────────────────────────────────────────
 
 function WalletGateOverlay({
   isConnecting,
@@ -109,27 +164,27 @@ function WalletGateOverlay({
       className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 rounded-3xl"
       style={{
         background:
-          "linear-gradient(160deg, rgba(26,7,64,0.97) 0%, rgba(15,6,32,0.98) 100%)",
-        backdropFilter: "blur(6px)",
-        border: "2px solid rgba(212,175,55,0.3)",
+          "linear-gradient(160deg, rgba(20,6,55,0.97) 0%, rgba(10,3,28,0.98) 100%)",
+        backdropFilter: "blur(8px)",
+        border: "2px solid rgba(212,175,55,0.35)",
+        boxShadow: "inset 0 1px 0 rgba(212,175,55,0.2)",
       }}
     >
+      {/* Gold ring icon */}
       <div
         className="flex items-center justify-center w-16 h-16 rounded-full"
         style={{
           background: "rgba(212,175,55,0.1)",
-          border: "2px solid rgba(212,175,55,0.5)",
+          border: "2px solid rgba(212,175,55,0.6)",
+          boxShadow: "0 0 20px rgba(212,175,55,0.3)",
         }}
       >
         <Wallet className="w-8 h-8" style={{ color: "#D4AF37" }} />
       </div>
       <div className="text-center px-8">
         <p
-          className="font-display font-black text-xl mb-1"
-          style={{
-            color: "#D4AF37",
-            textShadow: "0 0 16px rgba(212,175,55,0.6)",
-          }}
+          className="heading-cinematic text-xl mb-1 text-gold-glow"
+          style={{ color: "#D4AF37" }}
         >
           Connect Your Plug Wallet to Play
         </p>
@@ -150,13 +205,15 @@ function WalletGateOverlay({
         onClick={onConnect}
         disabled={isConnecting}
         data-ocid="wallet-gate-connect-btn"
-        className="px-10 py-3.5 rounded-2xl font-black text-base uppercase tracking-widest transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+        className="btn-premium px-10 py-3.5 rounded-2xl font-black text-base uppercase tracking-widest disabled:opacity-60 disabled:cursor-not-allowed"
         style={{
           background: isConnecting
             ? "rgba(212,175,55,0.4)"
-            : "linear-gradient(135deg, #D4AF37 0%, #a07830 100%)",
+            : "linear-gradient(135deg, #e8c96a 0%, #D4AF37 40%, #a07830 100%)",
           color: "#1a0740",
-          boxShadow: isConnecting ? "none" : "0 4px 20px rgba(212,175,55,0.5)",
+          boxShadow: isConnecting
+            ? "none"
+            : "0 4px 24px rgba(212,175,55,0.55), 0 2px 0 rgba(160,120,48,0.8), inset 0 1px 0 rgba(255,230,120,0.4)",
         }}
       >
         {isConnecting ? "Connecting…" : "Connect Wallet"}
@@ -165,7 +222,7 @@ function WalletGateOverlay({
   );
 }
 
-// ── main page ─────────────────────────────────────────────────────────────────
+// ── main page ──────────────────────────────────────────────────────────────────
 
 interface LuckySevensProps {
   onBack: () => void;
@@ -193,14 +250,13 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
 
   const balance = localBalance ?? rawBalance;
 
-  // Clear timers on unmount
   useEffect(() => {
     return () => {
       for (const t of stopTimers.current) clearTimeout(t);
     };
   }, []);
 
-  // ── bet mutation ──────────────────────────────────────────────────────────
+  // ── bet mutation ────────────────────────────────────────────────────────────
 
   const betMutation = useMutation({
     mutationFn: async (betAmount: bigint) => {
@@ -220,7 +276,6 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
           ? [WIN_SYMBOL, WIN_SYMBOL, WIN_SYMBOL]
           : [SYMBOLS[1], SYMBOLS[2], SYMBOLS[4]];
 
-        // Stop reels one by one
         for (const t of stopTimers.current) clearTimeout(t);
         stopTimers.current = [];
 
@@ -277,15 +332,15 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
   const isSpinning = outcome.status === "spinning" || betMutation.isPending;
   const isWinState = outcome.status === "won";
   const isLostState = outcome.status === "lost";
-
   const activeBetOption = BET_OPTIONS.find((o) => o.value === selectedBet);
 
   return (
     <div
       className="min-h-screen flex flex-col items-center pb-16"
       style={{
+        /* Deep radial vignette — dark purple center fading to near-black edges */
         background:
-          "linear-gradient(160deg, #1a0740 0%, #2d1b69 50%, #0f0620 100%)",
+          "radial-gradient(ellipse at 50% 35%, rgba(38,14,85,1) 0%, rgba(22,8,52,0.95) 40%, rgba(8,3,20,1) 100%)",
       }}
       data-ocid="lucky-sevens-page"
     >
@@ -294,7 +349,7 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
         <button
           type="button"
           onClick={onBack}
-          className="flex items-center gap-2 text-sm font-medium transition-colors duration-200"
+          className="heading-cinematic flex items-center gap-2 text-sm font-semibold transition-colors duration-200"
           style={{ color: "#A78BFA" }}
           onMouseEnter={(e) => {
             e.currentTarget.style.color = "#D4AF37";
@@ -310,29 +365,37 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
       </div>
 
       {/* Title */}
-      <div className="mt-8 mb-6 text-center">
+      <div className="mt-8 mb-5 text-center px-4">
         <h1
-          className="font-display font-black tracking-tight"
+          className="heading-cinematic text-gold-glow"
           style={{
-            fontSize: "clamp(2.4rem, 6vw, 4rem)",
-            color: "#D4AF37",
-            textShadow:
-              "0 0 20px rgba(212,175,55,0.7), 0 0 40px rgba(212,175,55,0.35)",
+            fontSize: "clamp(2.6rem, 7vw, 4.5rem)",
+            background:
+              "linear-gradient(135deg, #e8c76a 0%, #D4AF37 45%, #f0d070 60%, #a07830 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
           }}
         >
           🎰 Lucky Sevens
         </h1>
-        <p className="mt-2 text-sm font-medium" style={{ color: "#A78BFA" }}>
-          Match three 7s to win big · 2.63x payout
+        <p
+          className="mt-2 text-sm font-semibold tracking-widest uppercase"
+          style={{ color: "#A78BFA", letterSpacing: "0.18em" }}
+        >
+          Match three 7s to win big · 2.63× payout
         </p>
       </div>
 
-      {/* Balance */}
+      {/* Balance chip */}
       <div
-        className="flex items-center gap-2 px-5 py-2.5 rounded-full mb-8 border"
+        className="flex items-center gap-2.5 px-6 py-2.5 rounded-full mb-8"
         style={{
-          background: "rgba(212,175,55,0.08)",
-          borderColor: "rgba(212,175,55,0.3)",
+          background:
+            "linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(123,47,190,0.10) 100%)",
+          border: "1px solid rgba(212,175,55,0.4)",
+          boxShadow:
+            "0 0 16px rgba(212,175,55,0.2), inset 0 1px 0 rgba(255,220,100,0.15)",
         }}
       >
         <Coins className="w-4 h-4" style={{ color: "#D4AF37" }} />
@@ -340,7 +403,7 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
           <Skeleton className="h-4 w-28" />
         ) : (
           <span
-            className="font-mono font-semibold text-sm"
+            className="font-mono font-semibold text-sm text-gold-glow wallet-balance"
             style={{ color: "#D4AF37" }}
             data-ocid="wallet-balance"
           >
@@ -349,28 +412,62 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
         )}
       </div>
 
-      {/* Slot machine cabinet */}
+      {/* ── SLOT MACHINE CABINET ── */}
       <div
-        className="relative rounded-3xl p-8 w-full max-w-lg"
+        className="relative rounded-3xl w-full max-w-lg"
         style={{
+          /* Beveled metallic outer casing */
           background:
-            "linear-gradient(180deg, rgba(74,45,138,0.6) 0%, rgba(26,7,64,0.9) 100%)",
-          border: "2px solid rgba(212,175,55,0.3)",
-          boxShadow:
-            "0 0 40px rgba(123,47,190,0.25), inset 0 1px 0 rgba(212,175,55,0.2)",
+            "linear-gradient(160deg, rgba(55,28,100,0.85) 0%, rgba(20,8,48,0.95) 50%, rgba(10,3,25,1) 100%)",
+          borderTop: "2px solid rgba(212,175,55,0.7)",
+          borderLeft: "2px solid rgba(212,175,55,0.45)",
+          borderRight: "1px solid rgba(100,60,30,0.5)",
+          borderBottom: "1px solid rgba(80,40,10,0.6)",
+          boxShadow: [
+            /* Outer purple ambient glow */
+            "0 0 60px 8px rgba(123,47,190,0.25)",
+            /* Outer gold rim glow */
+            "0 0 30px 2px rgba(212,175,55,0.18)",
+            /* Hard depth shadow */
+            "0 20px 60px rgba(0,0,0,0.8)",
+            "0 8px 24px rgba(0,0,0,0.6)",
+            /* Inner top-edge gold highlight (beveled feel) */
+            "inset 0 2px 0 rgba(255,220,100,0.25)",
+            "inset 0 -2px 0 rgba(60,20,80,0.6)",
+          ].join(", "),
+          padding: "2rem",
         }}
       >
-        {/* Decorative top bar */}
+        {/* Cinematic top gold light strip */}
+        <div className="cinematic-top-light" />
+
+        {/* ── Cabinet badge title ── */}
+        <div className="text-center mb-6">
+          <div
+            className="inline-flex items-center gap-2 px-5 py-1 rounded-full text-xs font-black uppercase tracking-widest"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(212,175,55,0.15), rgba(123,47,190,0.15))",
+              border: "1px solid rgba(212,175,55,0.35)",
+              color: "#D4AF37",
+              letterSpacing: "0.22em",
+            }}
+          >
+            <span>⬦</span> CLASSIC SLOTS <span>⬦</span>
+          </div>
+        </div>
+
+        {/* ── Reel window container ── */}
         <div
-          className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl"
+          className="flex items-center justify-center gap-4 mb-3 p-4 rounded-2xl"
           style={{
             background:
-              "linear-gradient(90deg, transparent, #D4AF37, transparent)",
+              "linear-gradient(180deg, rgba(8,3,20,0.95) 0%, rgba(15,6,35,0.9) 100%)",
+            border: "1px solid rgba(100,60,160,0.4)",
+            boxShadow:
+              "inset 0 4px 16px rgba(0,0,0,0.8), inset 0 -2px 8px rgba(60,20,100,0.3)",
           }}
-        />
-
-        {/* Reels */}
-        <div className="flex items-center justify-center gap-4 mb-8">
+        >
           {(["left", "center", "right"] as const).map((pos, i) => (
             <Reel
               key={pos}
@@ -382,32 +479,79 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
           ))}
         </div>
 
-        {/* Outcome display */}
-        <div className="h-16 flex items-center justify-center mb-6">
+        {/* Payline indicator */}
+        <div className="flex items-center gap-2 justify-center mb-6">
+          <div
+            style={{
+              height: 1,
+              flex: 1,
+              background:
+                "linear-gradient(90deg, transparent, rgba(212,175,55,0.3))",
+            }}
+          />
+          <span
+            className="text-xs font-semibold uppercase tracking-widest"
+            style={{ color: "rgba(212,175,55,0.5)" }}
+          >
+            PAYLINE
+          </span>
+          <div
+            style={{
+              height: 1,
+              flex: 1,
+              background:
+                "linear-gradient(90deg, rgba(212,175,55,0.3), transparent)",
+            }}
+          />
+        </div>
+
+        {/* ── Outcome display ── */}
+        <div className="min-h-16 flex items-center justify-center mb-6">
           {isWinState && outcome.status === "won" && (
-            <div className="text-center animate-bounce">
+            <div
+              className="text-center relative overflow-hidden px-6 py-3 rounded-xl w-full"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(212,175,55,0.12), rgba(212,175,55,0.06))",
+                border: "1px solid rgba(212,175,55,0.4)",
+                boxShadow: "0 0 24px rgba(212,175,55,0.3)",
+              }}
+            >
+              {/* Shimmer sweep */}
+              <div
+                className="absolute inset-0 shimmer-overlay rounded-xl pointer-events-none"
+                style={{ opacity: 0.6 }}
+              />
               <p
-                className="font-display font-black text-2xl"
-                style={{
-                  color: "#D4AF37",
-                  textShadow:
-                    "0 0 16px rgba(212,175,55,0.9), 0 0 32px rgba(212,175,55,0.5)",
-                }}
+                className="heading-cinematic text-gold-glow font-black text-2xl relative z-10"
+                style={{ color: "#D4AF37" }}
                 data-ocid="win-message"
               >
-                <Sparkles className="inline w-5 h-5 mr-1" />
+                <Sparkles className="inline w-5 h-5 mr-1.5" />
                 YOU WIN! +{formatICP(outcome.tx.netAmount)} ICP
-                <Sparkles className="inline w-5 h-5 ml-1" />
+                <Sparkles className="inline w-5 h-5 ml-1.5" />
               </p>
-              <p className="text-xs mt-1" style={{ color: "#A78BFA" }}>
-                2.63x payout · Balance: {formatICP(outcome.newBalance)} ICP
+              <p
+                className="text-xs mt-1 font-semibold relative z-10"
+                style={{ color: "#A78BFA" }}
+              >
+                2.63× payout · Balance:{" "}
+                <span className="font-mono">
+                  {formatICP(outcome.newBalance)} ICP
+                </span>
               </p>
             </div>
           )}
           {isLostState && outcome.status === "lost" && (
-            <div className="text-center">
+            <div
+              className="text-center px-6 py-3 rounded-xl w-full"
+              style={{
+                background: "rgba(60,20,100,0.2)",
+                border: "1px solid rgba(123,47,190,0.3)",
+              }}
+            >
               <p
-                className="font-medium text-base"
+                className="font-semibold text-base"
                 style={{ color: "#A78BFA" }}
                 data-ocid="loss-message"
               >
@@ -420,7 +564,7 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
                 ICP
               </p>
               <p
-                className="text-xs mt-1"
+                className="text-xs mt-1 font-mono"
                 style={{ color: "rgba(212,175,55,0.5)" }}
               >
                 Balance: {formatICP(outcome.newBalance)} ICP
@@ -429,26 +573,26 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
           )}
           {isSpinning && (
             <p
-              className="font-semibold text-base animate-pulse"
-              style={{ color: "#A78BFA" }}
+              className="font-semibold text-base animate-pulse tracking-widest uppercase"
+              style={{ color: "#A78BFA", letterSpacing: "0.12em" }}
             >
-              Spinning the reels…
+              ✦ Spinning the reels… ✦
             </p>
           )}
           {error && !isSpinning && (
-            <p className="text-sm font-medium" style={{ color: "#9333EA" }}>
+            <p className="text-sm font-semibold" style={{ color: "#9333EA" }}>
               {error}
             </p>
           )}
         </div>
 
-        {/* Bet selection */}
+        {/* ── Bet selection ── */}
         <div className="mb-5">
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-center mb-3"
-            style={{ color: "#A78BFA" }}
+            className="text-xs font-black uppercase tracking-widest text-center mb-3"
+            style={{ color: "#A78BFA", letterSpacing: "0.2em" }}
           >
-            Select Bet Amount
+            ⬥ Select Bet Amount ⬥
           </p>
           <div className="grid grid-cols-3 gap-3">
             {BET_OPTIONS.map((opt) => {
@@ -465,32 +609,38 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
                   }}
                   disabled={isDisabled || isSpinning}
                   data-ocid={`bet-option-${opt.label.replace(" ", "-").toLowerCase()}`}
-                  className="py-3 rounded-xl text-sm font-bold transition-all duration-200"
+                  className="py-3 rounded-xl font-black transition-all duration-200 btn-premium"
                   style={{
-                    background: isActive ? "#D4AF37" : "rgba(74, 45, 138, 0.4)",
+                    background: isActive
+                      ? "linear-gradient(135deg, rgba(212,175,55,0.25), rgba(180,130,40,0.15))"
+                      : "rgba(30,14,65,0.6)",
                     color: isActive
-                      ? "#1a0740"
+                      ? "#D4AF37"
                       : isDisabled
                         ? "#6B21A8"
                         : "#C4B5FD",
                     border: isActive
-                      ? "2px solid #D4AF37"
-                      : "2px solid rgba(123,47,190,0.5)",
+                      ? "2px solid rgba(212,175,55,0.85)"
+                      : "1px solid rgba(123,47,190,0.4)",
                     boxShadow: isActive
-                      ? "0 0 14px rgba(212,175,55,0.45)"
-                      : "none",
+                      ? "0 0 16px rgba(212,175,55,0.45), inset 0 1px 0 rgba(255,220,100,0.2)"
+                      : "inset 0 1px 0 rgba(255,255,255,0.04)",
                     cursor:
                       isDisabled || isSpinning ? "not-allowed" : "pointer",
                     opacity: isDisabled ? 0.5 : 1,
+                    transform: isActive ? "scale(1.04)" : "scale(1)",
                   }}
                 >
-                  <span className="block">{opt.label}</span>
+                  <span className="flex items-center justify-center gap-1 text-sm">
+                    <Coins className="w-3.5 h-3.5" />
+                    {opt.label}
+                  </span>
                   <span
-                    className="block text-xs mt-0.5"
+                    className="block text-xs mt-0.5 font-semibold"
                     style={{
                       color: isActive
-                        ? "rgba(26,7,64,0.7)"
-                        : "rgba(196,181,253,0.6)",
+                        ? "rgba(212,175,55,0.7)"
+                        : "rgba(196,181,253,0.55)",
                       fontSize: "0.65rem",
                     }}
                   >
@@ -502,48 +652,114 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
           </div>
         </div>
 
-        {/* Spin / Play Again button */}
+        {/* ── SPIN / Play Again button ── */}
         {outcome.status === "idle" || isSpinning ? (
           <button
             type="button"
             onClick={handleSpin}
             disabled={isSpinning || !isConnected || selectedBet > balance}
             data-ocid="spin-btn"
-            className="w-full py-4 rounded-2xl text-lg font-black uppercase tracking-widest transition-all duration-200"
+            className="w-full py-4 rounded-2xl font-black uppercase tracking-widest relative overflow-hidden"
             style={{
+              fontSize: "1.2rem",
+              letterSpacing: "0.22em",
               background: isSpinning
-                ? "rgba(212,175,55,0.4)"
-                : "linear-gradient(135deg, #D4AF37 0%, #a07830 50%, #D4AF37 100%)",
+                ? "rgba(212,175,55,0.3)"
+                : "linear-gradient(135deg, #e8c76a 0%, #D4AF37 30%, #c8a030 65%, #a07830 100%)",
               color: "#1a0740",
+              /* 3D button effect: lighter on top, darker on bottom, depth shadow */
               boxShadow: isSpinning
                 ? "none"
-                : "0 4px 20px rgba(212,175,55,0.45), 0 0 40px rgba(212,175,55,0.2)",
+                : [
+                    /* Top highlight — gives 3D top lit feel */
+                    "inset 0 2px 0 rgba(255,230,120,0.5)",
+                    /* Bottom shadow — gives pressing depth */
+                    "inset 0 -3px 0 rgba(100,60,0,0.5)",
+                    /* Outer gold ambient glow */
+                    "0 0 32px rgba(212,175,55,0.5)",
+                    "0 0 60px rgba(212,175,55,0.25)",
+                    /* Hard drop shadow for depth */
+                    "0 6px 20px rgba(0,0,0,0.6)",
+                    "0 2px 8px rgba(0,0,0,0.4)",
+                  ].join(", "),
               cursor:
                 isSpinning || !isConnected || selectedBet > balance
                   ? "not-allowed"
                   : "pointer",
               opacity:
-                isSpinning || !isConnected || selectedBet > balance ? 0.7 : 1,
-              border: "none",
+                isSpinning || !isConnected || selectedBet > balance ? 0.65 : 1,
+              transition: "all 0.15s cubic-bezier(0.4,0,0.2,1)",
+            }}
+            onMouseEnter={(e) => {
+              if (!isSpinning && isConnected) {
+                const el = e.currentTarget;
+                el.style.transform = "translateY(-2px)";
+                el.style.boxShadow = [
+                  "inset 0 2px 0 rgba(255,230,120,0.5)",
+                  "inset 0 -3px 0 rgba(100,60,0,0.5)",
+                  "0 0 40px rgba(212,175,55,0.65)",
+                  "0 0 80px rgba(212,175,55,0.3)",
+                  "0 10px 28px rgba(0,0,0,0.65)",
+                  "0 4px 12px rgba(0,0,0,0.5)",
+                ].join(", ");
+              }
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget;
+              el.style.transform = "";
+              el.style.boxShadow = isSpinning
+                ? "none"
+                : [
+                    "inset 0 2px 0 rgba(255,230,120,0.5)",
+                    "inset 0 -3px 0 rgba(100,60,0,0.5)",
+                    "0 0 32px rgba(212,175,55,0.5)",
+                    "0 0 60px rgba(212,175,55,0.25)",
+                    "0 6px 20px rgba(0,0,0,0.6)",
+                    "0 2px 8px rgba(0,0,0,0.4)",
+                  ].join(", ");
+            }}
+            onMouseDown={(e) => {
+              const el = e.currentTarget;
+              el.style.transform = "scale(0.97) translateY(1px)";
+              el.style.boxShadow = [
+                "inset 0 1px 0 rgba(255,230,120,0.3)",
+                "inset 0 -1px 0 rgba(100,60,0,0.4)",
+                "0 0 20px rgba(212,175,55,0.4)",
+                "0 2px 8px rgba(0,0,0,0.5)",
+              ].join(", ");
+            }}
+            onMouseUp={(e) => {
+              const el = e.currentTarget;
+              el.style.transform = "";
             }}
           >
-            {isSpinning ? "Spinning…" : "🎰 SPIN"}
+            {isSpinning ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="animate-spin inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
+                Spinning…
+              </span>
+            ) : (
+              "🎰 SPIN"
+            )}
           </button>
         ) : (
           <button
             type="button"
             onClick={handlePlayAgain}
             data-ocid="play-again-btn"
-            className="w-full py-4 rounded-2xl text-lg font-black uppercase tracking-widest transition-all duration-200"
+            className="w-full py-4 rounded-2xl font-black uppercase tracking-widest btn-premium"
             style={{
+              fontSize: "1.1rem",
+              letterSpacing: "0.18em",
               background: "transparent",
               color: "#D4AF37",
-              border: "2px solid #D4AF37",
-              boxShadow: "0 0 14px rgba(212,175,55,0.3)",
+              border: "2px solid rgba(212,175,55,0.7)",
+              boxShadow:
+                "0 0 16px rgba(212,175,55,0.3), inset 0 1px 0 rgba(255,220,100,0.15)",
               cursor: "pointer",
             }}
           >
-            Play Again
+            ↻ Play Again
           </button>
         )}
 
@@ -558,25 +774,59 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
 
         {/* Decorative bottom bar */}
         <div
-          className="absolute bottom-0 left-0 right-0 h-1 rounded-b-3xl"
+          className="absolute bottom-0 left-0 right-0 h-px rounded-b-3xl pointer-events-none"
           style={{
             background:
-              "linear-gradient(90deg, transparent, rgba(123,47,190,0.8), transparent)",
+              "linear-gradient(90deg, transparent, rgba(123,47,190,0.6), rgba(212,175,55,0.3), rgba(123,47,190,0.6), transparent)",
           }}
         />
       </div>
 
-      {/* Payout info */}
+      {/* ── Payout table ── */}
       <div
-        className="mt-6 text-xs text-center space-y-1 px-4"
-        style={{ color: "#7B2FBE" }}
+        className="mt-5 rounded-2xl px-6 py-4 w-full max-w-lg"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(30,12,68,0.7), rgba(15,6,32,0.8))",
+          border: "1px solid rgba(212,175,55,0.2)",
+        }}
       >
-        <p>
-          1 ICP → 2.63 ICP win &nbsp;·&nbsp; 3 ICP → 7.89 ICP win &nbsp;·&nbsp;
-          5 ICP → 13.15 ICP win
+        <p
+          className="text-xs font-black uppercase tracking-widest text-center mb-3"
+          style={{ color: "rgba(212,175,55,0.6)", letterSpacing: "0.2em" }}
+        >
+          Paytable
         </p>
+        <div className="grid grid-cols-3 gap-2 text-xs text-center">
+          {BET_OPTIONS.map((opt) => (
+            <div
+              key={opt.label}
+              className="rounded-lg py-2"
+              style={{
+                background: "rgba(212,175,55,0.06)",
+                border: "1px solid rgba(212,175,55,0.15)",
+              }}
+            >
+              <span
+                className="block font-mono font-bold"
+                style={{ color: "#D4AF37" }}
+              >
+                {opt.label}
+              </span>
+              <span
+                className="block mt-0.5"
+                style={{ color: "rgba(167,139,250,0.7)" }}
+              >
+                → {opt.win}
+              </span>
+            </div>
+          ))}
+        </div>
         {activeBetOption && (
-          <p style={{ color: "rgba(212,175,55,0.45)" }}>
+          <p
+            className="mt-3 text-center text-xs font-semibold"
+            style={{ color: "rgba(212,175,55,0.45)" }}
+          >
             Current bet: {activeBetOption.label} · Jackpot:{" "}
             {activeBetOption.win}
           </p>
@@ -585,8 +835,8 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
 
       {/* House edge fine print */}
       <p
-        className="mt-3 text-xs text-center"
-        style={{ color: "rgba(212,175,55,0.4)" }}
+        className="mt-3 text-xs text-center font-mono"
+        style={{ color: "rgba(212,175,55,0.35)" }}
         data-ocid="house-edge-note"
       >
         House edge: ~8% · RTP 92%
@@ -596,13 +846,13 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
       <style>{`
         @keyframes reelSpin {
           0%   { transform: translateY(0px) scaleY(1); opacity: 1; }
-          25%  { transform: translateY(-8px) scaleY(0.85); opacity: 0.6; }
-          50%  { transform: translateY(0px) scaleY(1.1); opacity: 0.8; }
-          75%  { transform: translateY(6px) scaleY(0.9); opacity: 0.7; }
-          100% { transform: translateY(0px) scaleY(1); opacity: 1; }
+          20%  { transform: translateY(-10px) scaleY(0.8); opacity: 0.5; filter: blur(2px); }
+          50%  { transform: translateY(0px) scaleY(1.1); opacity: 0.7; filter: blur(1px); }
+          80%  { transform: translateY(8px) scaleY(0.85); opacity: 0.6; filter: blur(2px); }
+          100% { transform: translateY(0px) scaleY(1); opacity: 1; filter: blur(0); }
         }
         .reel-spinning {
-          animation: reelSpin 0.22s linear infinite;
+          animation: reelSpin 0.2s linear infinite;
         }
       `}</style>
     </div>
