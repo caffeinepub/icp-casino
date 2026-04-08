@@ -10,6 +10,13 @@ type VersusGameType =
    DiceRoll;
    RockPaperScissors;
  };
+type UserProfile = 
+ record {
+   avatarUrl: opt text;
+   createdAt: Timestamp;
+   userId: UserId;
+   username: text;
+ };
 type UserId = principal;
 type TransactionType = 
  variant {
@@ -50,10 +57,12 @@ type PlaceBetRequest =
  };
 type OnlinePlayer = 
  record {
+   avatarUrl: opt text;
    balanceE8s: E8s;
    id: UserId;
    lastSeen: Timestamp;
    status: PlayerStatus;
+   username: opt text;
  };
 type MatchStatus = 
  variant {
@@ -172,8 +181,11 @@ service : {
   getLobbyChatMessages: () -> (vec LobbyChatMessage) query;
   getMatch: (matchId: text) -> (opt Match) query;
   getMatchChat: (matchId: text) -> (vec ChatMessage) query;
+  getMyProfile: () -> (opt UserProfile) query;
   getOnlinePlayers: () -> (vec OnlinePlayer) query;
+  getProfile: (userId: UserId) -> (opt UserProfile) query;
   getTransactions: (typeFilter: opt TransactionType) -> (vec Transaction);
+  hasProfile: () -> (bool) query;
   heartbeat: () -> (OnlinePlayer);
   joinMatch: (matchId: text) -> (JoinMatchResult);
   leaveMatch: (matchId: text) -> (opt Match);
@@ -191,4 +203,9 @@ service : {
   sendChatMessage: (matchId: text, message: text) -> (ChatMessage);
   sendLobbyChatMessage: (message: text, senderName: text) ->
    (LobbyChatMessage);
+  setProfile: (username: text, avatarUrl: opt text) ->
+   (variant {
+      err: text;
+      ok;
+    });
 }

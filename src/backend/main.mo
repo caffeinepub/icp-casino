@@ -1,13 +1,17 @@
 import Types "types/casino";
 import VersusTypes "types/versus";
 import LobbyChatTypes "types/lobby-chat";
+import CommonTypes "types/common";
 import CasinoMixin "mixins/casino-api";
 import VersusMixin "mixins/versus-api";
 import LobbyChatMixin "mixins/lobby-chat-api";
+import ProfileMixin "mixins/profile-api";
 import CasinoLib "lib/casino";
+import Migration "migration";
 import Map "mo:core/Map";
 import List "mo:core/List";
 
+(with migration = Migration.run)
 actor {
   // Casino state
   let games = List.empty<Types.Game>();
@@ -26,10 +30,14 @@ actor {
   // Lobby chat state
   let lobbyChat = List.empty<LobbyChatTypes.LobbyChatMessage>();
 
+  // Profile state
+  let profiles = Map.empty<CommonTypes.UserId, CommonTypes.UserProfile>();
+
   // Seed game catalog on first initialization
   CasinoLib.seedGames(games);
 
   include CasinoMixin(games, wallets, transactions, nextTxIdHolder);
-  include VersusMixin(matches, playerMatches, matchChats, onlinePlayers, wallets, escrow, matchCounter);
-  include LobbyChatMixin(lobbyChat);
+  include VersusMixin(matches, playerMatches, matchChats, onlinePlayers, wallets, escrow, matchCounter, profiles);
+  include LobbyChatMixin(lobbyChat, profiles);
+  include ProfileMixin(profiles);
 };

@@ -84,12 +84,6 @@ export interface Match {
     gameType: VersusGameType;
     wager: WagerAmount;
 }
-export interface OnlinePlayer {
-    id: UserId;
-    status: PlayerStatus;
-    balanceE8s: E8s;
-    lastSeen: Timestamp;
-}
 export type PlaceBetResult = {
     __kind__: "ok";
     ok: {
@@ -100,6 +94,14 @@ export type PlaceBetResult = {
     __kind__: "err";
     err: string;
 };
+export interface OnlinePlayer {
+    id: UserId;
+    status: PlayerStatus;
+    username?: string;
+    avatarUrl?: string;
+    balanceE8s: E8s;
+    lastSeen: Timestamp;
+}
 export interface Transaction {
     id: bigint;
     result?: string;
@@ -148,6 +150,12 @@ export interface PlaceBetRequest {
     betAmount: E8s;
     gameId: bigint;
 }
+export interface UserProfile {
+    username: string;
+    userId: UserId;
+    createdAt: Timestamp;
+    avatarUrl?: string;
+}
 export enum GameCategory {
     Slots = "Slots",
     CardGames = "CardGames",
@@ -189,8 +197,11 @@ export interface backendInterface {
     getLobbyChatMessages(): Promise<Array<LobbyChatMessage>>;
     getMatch(matchId: string): Promise<Match | null>;
     getMatchChat(matchId: string): Promise<Array<ChatMessage>>;
+    getMyProfile(): Promise<UserProfile | null>;
     getOnlinePlayers(): Promise<Array<OnlinePlayer>>;
+    getProfile(userId: UserId): Promise<UserProfile | null>;
     getTransactions(typeFilter: TransactionType | null): Promise<Array<Transaction>>;
+    hasProfile(): Promise<boolean>;
     heartbeat(): Promise<OnlinePlayer>;
     joinMatch(matchId: string): Promise<JoinMatchResult>;
     leaveMatch(matchId: string): Promise<Match | null>;
@@ -206,4 +217,11 @@ export interface backendInterface {
     placeMidnightDragonsBet(betAmount: E8s): Promise<PlaceBetResult>;
     sendChatMessage(matchId: string, message: string): Promise<ChatMessage>;
     sendLobbyChatMessage(message: string, senderName: string): Promise<LobbyChatMessage>;
+    setProfile(username: string, avatarUrl: string | null): Promise<{
+        __kind__: "ok";
+        ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
 }

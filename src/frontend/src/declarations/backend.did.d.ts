@@ -96,6 +96,8 @@ export type MatchStatus = { 'WagerPending' : null } |
 export interface OnlinePlayer {
   'id' : UserId,
   'status' : PlayerStatus,
+  'username' : [] | [string],
+  'avatarUrl' : [] | [string],
   'balanceE8s' : E8s,
   'lastSeen' : Timestamp,
 }
@@ -122,6 +124,12 @@ export type TransactionType = { 'Bet' : null } |
   { 'Deposit' : null } |
   { 'Winning' : null };
 export type UserId = Principal;
+export interface UserProfile {
+  'username' : string,
+  'userId' : UserId,
+  'createdAt' : Timestamp,
+  'avatarUrl' : [] | [string],
+}
 export type VersusGameType = { 'DiceRoll' : null } |
   { 'RockPaperScissors' : null } |
   { 'Chess' : null };
@@ -137,8 +145,11 @@ export interface _SERVICE {
   'getLobbyChatMessages' : ActorMethod<[], Array<LobbyChatMessage>>,
   'getMatch' : ActorMethod<[string], [] | [Match]>,
   'getMatchChat' : ActorMethod<[string], Array<ChatMessage>>,
+  'getMyProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getOnlinePlayers' : ActorMethod<[], Array<OnlinePlayer>>,
+  'getProfile' : ActorMethod<[UserId], [] | [UserProfile]>,
   'getTransactions' : ActorMethod<[[] | [TransactionType]], Array<Transaction>>,
+  'hasProfile' : ActorMethod<[], boolean>,
   'heartbeat' : ActorMethod<[], OnlinePlayer>,
   'joinMatch' : ActorMethod<[string], JoinMatchResult>,
   'leaveMatch' : ActorMethod<[string], [] | [Match]>,
@@ -157,6 +168,11 @@ export interface _SERVICE {
   'placeMidnightDragonsBet' : ActorMethod<[E8s], PlaceBetResult>,
   'sendChatMessage' : ActorMethod<[string, string], ChatMessage>,
   'sendLobbyChatMessage' : ActorMethod<[string, string], LobbyChatMessage>,
+  'setProfile' : ActorMethod<
+    [string, [] | [string]],
+    { 'ok' : null } |
+      { 'err' : string }
+  >,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

@@ -1,4 +1,4 @@
-// Version: 1.0.0
+// Version: 3.0.0
 type ChatMessage__633304868 =
   {
     matchId : Text;
@@ -59,6 +59,10 @@ type LobbyChatMessage__329849640 =
     senderName : Text;
     timestamp : Timestamp__281808264
   };
+type Map__158565046<K, V> = Map__297112838<K, V>;
+type Map__297112838<K, V> =
+  {var root : Node__46230540<K, V>; var size : Nat__490723111};
+type Map__605269027<K, V> = Map__158565046<K, V>;
 type MatchPlayer__883469782 = {id : UserId__425322664; wagerAccepted : Bool};
 type MatchStatus__845997665 =
   {#Active; #Cancelled; #Completed; #WagerPending; #WaitingForOpponent};
@@ -79,12 +83,25 @@ type Nat__490723111 = Nat__920180692;
 type Nat__920180692 = Nat;
 type Node__46230540<K, V> =
   {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type OldE8s__569862830 = E8s__328334695;
+type OldOnlinePlayer__22031201 =
+  {
+    balanceE8s : OldE8s__569862830;
+    id : OldUserId__580276348;
+    lastSeen : OldTimestamp__27916213;
+    status : OldPlayerStatus__375698768
+  };
+type OldPlayerStatus__375698768 = {#Offline; #Online; #Playing};
+type OldTimestamp__27916213 = Timestamp__301639476;
+type OldUserId__580276348 = UserId__158757552;
 type OnlinePlayer__54178836 =
   {
+    avatarUrl : ?Text;
     balanceE8s : E8s__777423472;
     id : UserId__425322664;
     lastSeen : Timestamp__699095611;
-    status : PlayerStatus__991349361
+    status : PlayerStatus__991349361;
+    username : ?Text
   };
 type PlayerStatus__991349361 = {#Offline; #Online; #Playing};
 type Timestamp__281808264 = Timestamp__301639476;
@@ -107,9 +124,80 @@ type UserId__158757552 = Principal;
 type UserId__425322664 = UserId__158757552;
 type UserId__487301212 = UserId__158757552;
 type UserId__499747863 = UserId__158757552;
+type UserProfile__129828592 =
+  {
+    avatarUrl : ?Text;
+    createdAt : Timestamp__301639476;
+    userId : UserId__158757552;
+    username : Text
+  };
 type VersusGameType__530775574 = {#Chess; #DiceRoll; #RockPaperScissors};
 type WagerAmount__738321631 = {#OneHundred; #Ten; #Thirty};
-actor {
+actor ({
+  stable escrow :
+    {
+      var root : Node__46230540<Text, E8s__517071594>;
+      var size : Nat__490723111
+    };
+  stable games :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Game__1071417069]];
+      var elementIndex : Nat__490723111
+    };
+  stable lobbyChat :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?LobbyChatMessage__329849640]];
+      var elementIndex : Nat__490723111
+    };
+  stable matchChats :
+    {
+      var root : Node__46230540<Text, List__415060402<ChatMessage__633304868>>;
+      var size : Nat__490723111
+    };
+  stable matchCounter :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Nat]];
+      var elementIndex : Nat__490723111
+    };
+  stable matches :
+    {
+      var root : Node__46230540<Text, Match__272147183>;
+      var size : Nat__490723111
+    };
+  stable nextTxIdHolder :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Nat]];
+      var elementIndex : Nat__490723111
+    };
+  in onlinePlayers :
+    Map__605269027<OldUserId__580276348, OldOnlinePlayer__22031201>;
+  stable playerMatches :
+    {
+      var root : Node__46230540<UserId__487301212, Text>;
+      var size : Nat__490723111
+    };
+  stable profiles :
+    {
+      var root : Node__46230540<UserId__158757552, UserProfile__129828592>;
+      var size : Nat__490723111
+    };
+  stable transactions :
+    {
+      var root :
+        Node__46230540<UserId__487301212,
+                        List__415060402<Transaction__26687421>>;
+      var size : Nat__490723111
+    };
+  stable wallets :
+    {
+      var root : Node__46230540<UserId__487301212, E8s__517071594>;
+      var size : Nat__490723111
+    }
+}, {
   stable escrow :
     {
       var root : Node__46230540<Text, E8s__517071594>;
@@ -159,6 +247,11 @@ actor {
       var root : Node__46230540<UserId__487301212, Text>;
       var size : Nat__490723111
     };
+  stable profiles :
+    {
+      var root : Node__46230540<UserId__158757552, UserProfile__129828592>;
+      var size : Nat__490723111
+    };
   stable transactions :
     {
       var root :
@@ -171,4 +264,4 @@ actor {
       var root : Node__46230540<UserId__487301212, E8s__517071594>;
       var size : Nat__490723111
     }
-};
+}) ;

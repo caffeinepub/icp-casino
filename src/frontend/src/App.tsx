@@ -1,7 +1,9 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense, lazy, useState } from "react";
 import { Layout } from "./components/Layout";
+import { ProfileSetup } from "./components/ProfileSetup";
 import { useAuth } from "./hooks/use-auth";
+import { useHasProfile } from "./hooks/use-profile";
 
 const LoginPage = lazy(() => import("./pages/Login"));
 const LobbyPage = lazy(() => import("./pages/Lobby"));
@@ -26,56 +28,39 @@ function PageLoader() {
   );
 }
 
-export default function App() {
-  const { isAuthenticated, isInitializing } = useAuth();
+function AuthenticatedApp() {
   const [view, setView] = useState<View>("lobby");
   const [gameId, setGameId] = useState<bigint>(0n);
   const [matchId, setMatchId] = useState<string>("");
+  const { hasProfile, isLoading: profileLoading } = useHasProfile();
 
   function navigateToGame(id: bigint) {
     setGameId(id);
     setView("game");
   }
-
   function navigateToLobby() {
     setView("lobby");
   }
-
   function navigateToTransactions() {
     setView("transactions");
   }
-
   function navigateToVersusLobby() {
     setView("versusLobby");
   }
-
   function navigateToVersusMatch(id: string) {
     setMatchId(id);
     setView("versusMatch");
   }
 
-  if (isInitializing) {
+  // Show profile setup if not yet completed
+  if (!profileLoading && !hasProfile) {
     return (
       <Layout
         onNavigate={navigateToLobby}
         onTransactions={navigateToTransactions}
         onVersusMode={navigateToVersusLobby}
       >
-        <PageLoader />
-      </Layout>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <Layout
-        onNavigate={navigateToLobby}
-        onTransactions={navigateToTransactions}
-        onVersusMode={navigateToVersusLobby}
-      >
-        <Suspense fallback={<PageLoader />}>
-          <LoginPage />
-        </Suspense>
+        <ProfileSetup onComplete={() => setView("lobby")} />
       </Layout>
     );
   }
@@ -107,4 +92,38 @@ export default function App() {
       </Suspense>
     </Layout>
   );
+}
+
+export default function App() {
+  const { isAuthenticated, isInitializing } = useAuth();
+
+  const navigateNoop = () => {};
+
+  if (isInitializing) {
+    return (
+      <Layout
+        onNavigate={navigateNoop}
+        onTransactions={navigateNoop}
+        onVersusMode={navigateNoop}
+      >
+        <PageLoader />
+      </Layout>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <Layout
+        onNavigate={navigateNoop}
+        onTransactions={navigateNoop}
+        onVersusMode={navigateNoop}
+      >
+        <Suspense fallback={<PageLoader />}>
+          <LoginPage />
+        </Suspense>
+      </Layout>
+    );
+  }
+
+  return <AuthenticatedApp />;
 }

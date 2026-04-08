@@ -1,9 +1,9 @@
 import { useActor } from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback } from "react";
 import { createActor } from "../backend";
 import type { LobbyChatMessage } from "../backend";
 import { useAuth } from "./use-auth";
+import { type UserProfile, useMyProfile } from "./use-profile";
 
 const E8S_PER_ICP = 100_000_000n;
 
@@ -17,8 +17,6 @@ export function formatICP(e8s: bigint): string {
 
 // ---------------------------------------------------------------------------
 // Real on-chain wallet balance
-// Attempts to read from connected Plug wallet first (real balance on the IC
-// ledger), falls back to canister-tracked balance otherwise.
 // ---------------------------------------------------------------------------
 export function useWallet() {
   const { isFetching } = useActor(createActor);
@@ -26,9 +24,6 @@ export function useWallet() {
   const { data: balanceData, isLoading } = useQuery<bigint | null>({
     queryKey: ["wallet-balance"],
     queryFn: async () => {
-      // Only return a balance if Plug wallet is actually connected.
-      // Never fall back to the canister — it auto-initialises every user
-      // with 10,000 ICP which would be shown even without a real wallet.
       if (typeof window === "undefined" || !window.ic?.plug) {
         return null;
       }
@@ -45,22 +40,19 @@ export function useWallet() {
             (b: { symbol?: string }) => b.symbol === "ICP",
           );
           if (icpEntry && typeof icpEntry.amount === "number") {
-            // Plug returns ICP as a float (not e8s), convert to e8s bigint
             return BigInt(Math.round(icpEntry.amount * Number(E8S_PER_ICP)));
           }
         }
       } catch {
-        // If requestBalance fails for a connected wallet, return null (no display)
+        // If requestBalance fails, return null
       }
 
       return null;
     },
-    // Always poll — the connection state can change at any time
     refetchInterval: 15_000,
     staleTime: 10_000,
   });
 
-  // null means "Plug not connected / balance unknown" — distinct from 0n (zero balance)
   const isPlugConnected = balanceData !== null && balanceData !== undefined;
   const balance = balanceData ?? 0n;
 
@@ -115,15 +107,32 @@ export function useSendLobbyChatMessage() {
 }
 
 // ---------------------------------------------------------------------------
-// Derive a display name from a principal string
+// Derive a display name — use profile username if available, else principal suffix
 // ---------------------------------------------------------------------------
 export function usePlayerDisplayName(): string {
-  const { principalText } = useAuth();
-  const { isAuthenticated } = useAuth();
-  return useCallback(() => {
-    if (!isAuthenticated || !principalText) return "Guest";
-    // Use last 6 chars of principal as a short handle
-    const suffix = principalText.replace(/-/g, "").slice(-6).toUpperCase();
-    return `Player_${suffix}`;
-  }, [isAuthenticated, principalText])();
+  const { principalText, isAuthenticated } = useAuth();
+  const { data } = useMyProfile();
+  const profile = data as UserProfile | null | undefined;
+
+  if (!isAuthenticated || !principalText) return "Guest";
+
+  // Prefer profile username if set
+  if (profile?.username) return profile.username;
+
+  // Fall back to principal suffix
+  const suffix = principalText.replace(/-/g, "").slice(-6).toUpperCase();
+  return `Player_${suffix}`;
+}
+
+// ---------------------------------------------------------------------------
+// Player avatar URL from profile (if set)
+// ---------------------------------------------------------------------------
+export function usePlayerAvatarUrl(): string | null {
+  const { data } = useMyProfile();
+  const profile = data as UserProfile | null | undefined;
+  if (!profile) return null;
+  const avatarUrl = profile.avatarUrl;
+  if (Array.isArray(avatarUrl) && avatarUrl.length > 0)
+    return avatarUrl[0] ?? null;
+  return null;
 }

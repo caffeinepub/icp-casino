@@ -913,6 +913,7 @@ module {
     wallets : Map.Map<UserId, Types.E8s>,
     playerMatches : Map.Map<UserId, Text>,
     matches : Map.Map<Text, Types.Match>,
+    profiles : Map.Map<UserId, CommonTypes.UserProfile>,
     caller : UserId,
     now : Types.Timestamp,
   ) : Types.OnlinePlayer {
@@ -938,11 +939,18 @@ module {
       case null { #Online };
     };
 
+    let (username, avatarUrl) = switch (profiles.get(caller)) {
+      case (?p) (?p.username, p.avatarUrl);
+      case null (null, null);
+    };
+
     let player : Types.OnlinePlayer = {
       id = caller;
       balanceE8s;
       status;
       lastSeen = now;
+      username;
+      avatarUrl;
     };
 
     onlinePlayers.add(caller, player);

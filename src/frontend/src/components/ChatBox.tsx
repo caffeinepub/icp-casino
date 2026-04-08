@@ -4,9 +4,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MessageCircle, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useAuth } from "../hooks/use-auth";
+import {
+  getAvatarUrl,
+  getDisplayName,
+  useMyProfile,
+} from "../hooks/use-profile";
 import {
   useLobbyChatMessages,
-  usePlayerDisplayName,
   useSendLobbyChatMessage,
 } from "../hooks/use-wallet";
 
@@ -28,21 +33,48 @@ function getUserColor(name: string): string {
 }
 
 function formatTime(timestampNs: bigint): string {
-  // IC timestamps are in nanoseconds
   const ms = Number(timestampNs / 1_000_000n);
   const d = new Date(ms);
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
+/** Small circular avatar thumbnail used in chat messages */
+function AvatarDot({
+  name,
+  avatarUrl,
+  size = 20,
+}: {
+  name: string;
+  avatarUrl?: string | null;
+  size?: number;
+}) {
+  const initials = name.slice(0, 1).toUpperCase();
+  return (
+    <span
+      className="profile-avatar-thumbnail shrink-0"
+      style={{ width: size, height: size, fontSize: size * 0.45 }}
+      aria-hidden="true"
+    >
+      {avatarUrl ? (
+        <img src={avatarUrl} alt={name} />
+      ) : (
+        <span style={{ color: getUserColor(name) }}>{initials}</span>
+      )}
+    </span>
+  );
+}
+
 export function ChatBox() {
   const { data: messages = [], isLoading } = useLobbyChatMessages();
   const sendMessage = useSendLobbyChatMessage();
-  const displayName = usePlayerDisplayName();
+  const { principalText } = useAuth();
+  const { data: myProfile } = useMyProfile();
+  const displayName = getDisplayName(myProfile, principalText);
+  const myAvatarUrl = getAvatarUrl(myProfile);
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
   const prevCountRef = useRef(0);
 
-  // Auto-scroll when new messages arrive
   useEffect(() => {
     if (messages.length !== prevCountRef.current) {
       prevCountRef.current = messages.length;
@@ -71,14 +103,13 @@ export function ChatBox() {
       }}
     >
       <div className="max-w-7xl mx-auto px-4 py-3 relative z-10">
-        {/* Data stream section header */}
+        {/* Header */}
         <div className="flex items-center gap-2 mb-2.5" data-ocid="chat-header">
           <MessageCircle
             className="w-4 h-4"
             style={{ color: "oklch(0.72 0.18 65)" }}
             aria-hidden="true"
           />
-          {/* LIVE NETWORK CHAT label in tech-text style */}
           <span
             className="tech-text text-xs font-bold"
             style={{ color: "oklch(0.92 0 0)" }}
@@ -120,38 +151,47 @@ export function ChatBox() {
                 No messages yet — be the first to say hello! 👋
               </div>
             ) : (
-              messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className="flex items-baseline gap-1.5 text-xs leading-relaxed min-w-0 px-1.5 py-0.5 rounded"
-                  style={{
-                    background:
-                      msg.senderName === displayName
+              messages.map((msg) => {
+                const isMe = msg.senderName === displayName;
+                return (
+                  <div
+                    key={msg.id}
+                    className="flex items-center gap-1.5 text-xs leading-relaxed min-w-0 px-1.5 py-0.5 rounded"
+                    style={{
+                      background: isMe
                         ? "oklch(0.72 0.18 65 / 0.08)"
                         : "transparent",
-                  }}
-                >
-                  {/* Timestamp in tech-text mono style */}
-                  <span
-                    className="tech-text text-[10px] shrink-0 tabular-nums"
-                    style={{ color: "oklch(0.45 0.02 65)" }}
+                    }}
                   >
-                    {formatTime(msg.timestamp)}
-                  </span>
-                  <span
-                    className="font-bold shrink-0 text-premium"
-                    style={{ color: getUserColor(msg.senderName) }}
-                  >
-                    {msg.senderName}:
-                  </span>
-                  <span
-                    className="break-words min-w-0"
-                    style={{ color: "oklch(0.82 0.02 65)" }}
-                  >
-                    {msg.message}
-                  </span>
-                </div>
-              ))
+                    {/* Timestamp */}
+                    <span
+                      className="tech-text text-[10px] shrink-0 tabular-nums"
+                      style={{ color: "oklch(0.45 0.02 65)" }}
+                    >
+                      {formatTime(msg.timestamp)}
+                    </span>
+                    {/* Avatar dot */}
+                    <AvatarDot
+                      name={msg.senderName}
+                      avatarUrl={isMe ? myAvatarUrl : null}
+                      size={16}
+                    />
+                    {/* Username */}
+                    <span
+                      className="font-bold shrink-0 text-premium"
+                      style={{ color: getUserColor(msg.senderName) }}
+                    >
+                      {msg.senderName}:
+                    </span>
+                    <span
+                      className="break-words min-w-0"
+                      style={{ color: "oklch(0.82 0.02 65)" }}
+                    >
+                      {msg.message}
+                    </span>
+                  </div>
+                );
+              })
             )}
             <div ref={bottomRef} />
           </div>
@@ -159,12 +199,14 @@ export function ChatBox() {
 
         {/* Input row */}
         <div className="flex gap-2 mt-2.5" data-ocid="chat-input-row">
+          {/* Show current user's avatar next to input */}
+          <AvatarDot name={displayName} avatarUrl={myAvatarUrl} size={28} />
           <Input
             data-ocid="chat-input"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Say something to the table…"
+            placeholder={`${displayName}: say something…`}
             className="flex-1 h-8 text-xs glass-dark cyber-border transition-smooth"
             style={{
               borderColor: "oklch(0.4 0.15 300 / 0.30)",

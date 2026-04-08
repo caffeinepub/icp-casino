@@ -13,6 +13,7 @@ mixin (
   wallets : Map.Map<CommonTypes.UserId, CommonTypes.E8s>,
   escrow : Map.Map<Text, CommonTypes.E8s>,
   matchCounter : List.List<Nat>,
+  profiles : Map.Map<CommonTypes.UserId, CommonTypes.UserProfile>,
 ) {
 
   // Create a new open match; caller is player1
@@ -95,7 +96,7 @@ mixin (
   // Update the caller's last-seen timestamp and online status (polling heartbeat)
   public shared ({ caller }) func heartbeat() : async Types.OnlinePlayer {
     let now = Time.now();
-    VersusLib.heartbeat(onlinePlayers, wallets, playerMatches, matches, caller, now)
+    VersusLib.heartbeat(onlinePlayers, wallets, playerMatches, matches, profiles, caller, now)
   };
 
   // Retrieve all chat messages for a given match

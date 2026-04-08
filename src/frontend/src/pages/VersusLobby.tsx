@@ -10,6 +10,11 @@ import { OnlinePlayersList } from "../components/versus/OnlinePlayersList";
 import { WagerSelector } from "../components/versus/WagerSelector";
 import { useAuth } from "../hooks/use-auth";
 import {
+  getAvatarUrl,
+  getDisplayName,
+  useMyProfile,
+} from "../hooks/use-profile";
+import {
   useCreateMatch,
   useHeartbeat,
   useJoinMatch,
@@ -126,6 +131,10 @@ function OpenMatchRow({
     GAME_OPTIONS.find((g) => g.type === match.gameType)?.label ??
     match.gameType;
 
+  const creatorId = match.player1.id;
+  const creatorText = creatorId.toText();
+  const creatorName = `Player_${creatorText.replace(/-/g, "").slice(-6).toUpperCase()}`;
+
   return (
     <div
       className="glass-card flex items-center justify-between px-4 py-3 rounded-xl border transition-smooth hover:border-primary/50"
@@ -142,10 +151,10 @@ function OpenMatchRow({
           {gameLabel}
         </p>
         <p
-          className="text-xs font-mono"
-          style={{ color: "oklch(0.50 0.03 65)" }}
+          className="text-xs font-mono profile-username-display"
+          style={{ color: "oklch(0.55 0.04 265)", fontSize: "0.7rem" }}
         >
-          {match.player1.id.toText().slice(0, 12)}…
+          {creatorName}
         </p>
       </div>
       <div className="flex items-center gap-3 shrink-0">
@@ -176,7 +185,6 @@ function OpenMatchRow({
   );
 }
 
-// Plug Wallet required — full banner (unauthenticated)
 function PlugWalletFullBanner() {
   return (
     <div
@@ -217,7 +225,6 @@ function PlugWalletFullBanner() {
   );
 }
 
-// Plug Wallet info strip — compact, always visible when authenticated
 function PlugWalletInfoStrip() {
   return (
     <div
@@ -239,6 +246,47 @@ function PlugWalletInfoStrip() {
       </span>
       <span className="text-xs" style={{ color: "oklch(0.50 0.03 65)" }}>
         — real ICP bets only
+      </span>
+    </div>
+  );
+}
+
+/** My identity badge shown in lobby header */
+function MyIdentityBadge() {
+  const { principalText } = useAuth();
+  const { data: myProfile } = useMyProfile();
+  const displayName = getDisplayName(myProfile, principalText);
+  const avatarUrl = getAvatarUrl(myProfile);
+  const initial = displayName.slice(0, 1).toUpperCase();
+
+  return (
+    <div
+      className="flex items-center gap-2 px-3 py-1.5 rounded-xl glass-card border"
+      style={{ borderColor: "oklch(0.65 0.25 265 / 0.35)" }}
+      data-ocid="my-identity-badge"
+    >
+      <span
+        className="profile-avatar-thumbnail"
+        style={{
+          width: 28,
+          height: 28,
+          fontSize: 11,
+          border: "1px solid oklch(0.65 0.25 265 / 0.5)",
+          boxShadow: "0 0 8px oklch(0.65 0.25 265 / 0.3)",
+        }}
+        aria-hidden="true"
+      >
+        {avatarUrl ? (
+          <img src={avatarUrl} alt={displayName} />
+        ) : (
+          <span style={{ color: "oklch(0.65 0.25 265)" }}>{initial}</span>
+        )}
+      </span>
+      <span
+        className="profile-username-display text-xs"
+        style={{ color: "oklch(0.92 0 0)", maxWidth: 120 }}
+      >
+        {displayName}
       </span>
     </div>
   );
@@ -312,8 +360,7 @@ export default function VersusLobby({ onMatchStart }: VersusLobbyProps) {
           transition={{ duration: 0.4 }}
           className="space-y-4"
         >
-          <div className="flex items-center gap-4 mb-1">
-            {/* Crown decorative SVG */}
+          <div className="flex items-center gap-4 mb-1 flex-wrap">
             <svg
               width="32"
               height="32"
@@ -346,6 +393,9 @@ export default function VersusLobby({ onMatchStart }: VersusLobbyProps) {
             >
               PvP
             </Badge>
+            <div className="ml-auto">
+              <MyIdentityBadge />
+            </div>
           </div>
           <p
             className="text-premium text-sm"
@@ -353,7 +403,6 @@ export default function VersusLobby({ onMatchStart }: VersusLobbyProps) {
           >
             Challenge real players. Agree on a wager. Winner takes all.
           </p>
-          {/* Always-visible Plug Wallet info strip */}
           <PlugWalletInfoStrip />
         </motion.div>
 

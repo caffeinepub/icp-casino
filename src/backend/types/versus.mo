@@ -41,6 +41,8 @@ module {
     balanceE8s : E8s;
     status : PlayerStatus;
     lastSeen : Timestamp;
+    username : ?Text;
+    avatarUrl : ?Text;
   };
 
   // Per-player slot inside a Match

@@ -105,6 +105,12 @@ export const ChatMessage = IDL.Record({
   'timestamp' : Timestamp,
   'senderId' : UserId,
 });
+export const UserProfile = IDL.Record({
+  'username' : IDL.Text,
+  'userId' : UserId,
+  'createdAt' : Timestamp,
+  'avatarUrl' : IDL.Opt(IDL.Text),
+});
 export const PlayerStatus = IDL.Variant({
   'Online' : IDL.Null,
   'Playing' : IDL.Null,
@@ -113,6 +119,8 @@ export const PlayerStatus = IDL.Variant({
 export const OnlinePlayer = IDL.Record({
   'id' : UserId,
   'status' : PlayerStatus,
+  'username' : IDL.Opt(IDL.Text),
+  'avatarUrl' : IDL.Opt(IDL.Text),
   'balanceE8s' : E8s,
   'lastSeen' : Timestamp,
 });
@@ -156,12 +164,15 @@ export const idlService = IDL.Service({
   'getLobbyChatMessages' : IDL.Func([], [IDL.Vec(LobbyChatMessage)], ['query']),
   'getMatch' : IDL.Func([IDL.Text], [IDL.Opt(Match)], ['query']),
   'getMatchChat' : IDL.Func([IDL.Text], [IDL.Vec(ChatMessage)], ['query']),
+  'getMyProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getOnlinePlayers' : IDL.Func([], [IDL.Vec(OnlinePlayer)], ['query']),
+  'getProfile' : IDL.Func([UserId], [IDL.Opt(UserProfile)], ['query']),
   'getTransactions' : IDL.Func(
       [IDL.Opt(TransactionType)],
       [IDL.Vec(Transaction)],
       [],
     ),
+  'hasProfile' : IDL.Func([], [IDL.Bool], ['query']),
   'heartbeat' : IDL.Func([], [OnlinePlayer], []),
   'joinMatch' : IDL.Func([IDL.Text], [JoinMatchResult], []),
   'leaveMatch' : IDL.Func([IDL.Text], [IDL.Opt(Match)], []),
@@ -183,6 +194,11 @@ export const idlService = IDL.Service({
   'sendLobbyChatMessage' : IDL.Func(
       [IDL.Text, IDL.Text],
       [LobbyChatMessage],
+      [],
+    ),
+  'setProfile' : IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Text)],
+      [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
       [],
     ),
 });
@@ -284,6 +300,12 @@ export const idlFactory = ({ IDL }) => {
     'timestamp' : Timestamp,
     'senderId' : UserId,
   });
+  const UserProfile = IDL.Record({
+    'username' : IDL.Text,
+    'userId' : UserId,
+    'createdAt' : Timestamp,
+    'avatarUrl' : IDL.Opt(IDL.Text),
+  });
   const PlayerStatus = IDL.Variant({
     'Online' : IDL.Null,
     'Playing' : IDL.Null,
@@ -292,6 +314,8 @@ export const idlFactory = ({ IDL }) => {
   const OnlinePlayer = IDL.Record({
     'id' : UserId,
     'status' : PlayerStatus,
+    'username' : IDL.Opt(IDL.Text),
+    'avatarUrl' : IDL.Opt(IDL.Text),
     'balanceE8s' : E8s,
     'lastSeen' : Timestamp,
   });
@@ -336,12 +360,15 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getMatch' : IDL.Func([IDL.Text], [IDL.Opt(Match)], ['query']),
     'getMatchChat' : IDL.Func([IDL.Text], [IDL.Vec(ChatMessage)], ['query']),
+    'getMyProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getOnlinePlayers' : IDL.Func([], [IDL.Vec(OnlinePlayer)], ['query']),
+    'getProfile' : IDL.Func([UserId], [IDL.Opt(UserProfile)], ['query']),
     'getTransactions' : IDL.Func(
         [IDL.Opt(TransactionType)],
         [IDL.Vec(Transaction)],
         [],
       ),
+    'hasProfile' : IDL.Func([], [IDL.Bool], ['query']),
     'heartbeat' : IDL.Func([], [OnlinePlayer], []),
     'joinMatch' : IDL.Func([IDL.Text], [JoinMatchResult], []),
     'leaveMatch' : IDL.Func([IDL.Text], [IDL.Opt(Match)], []),
@@ -367,6 +394,11 @@ export const idlFactory = ({ IDL }) => {
     'sendLobbyChatMessage' : IDL.Func(
         [IDL.Text, IDL.Text],
         [LobbyChatMessage],
+        [],
+      ),
+    'setProfile' : IDL.Func(
+        [IDL.Text, IDL.Opt(IDL.Text)],
+        [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
         [],
       ),
   });

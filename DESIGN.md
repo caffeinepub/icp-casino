@@ -1,7 +1,7 @@
 # Design Brief
 
 ## Direction
-Premium ICP casino platform with cinematic depth, glassmorphism effects, and premium typography. Luxurious dark gaming aesthetic with sophisticated gold/purple accents. Versus Mode is a separate competitive gaming section featuring real-time PvP skill games with live chat and player roster. CSS-only micro-transitions maintain premium feel throughout.
+Premium ICP casino platform with cinematic depth, glassmorphism effects, and premium typography. Luxurious dark gaming aesthetic with sophisticated gold/purple accents. Versus Mode is a separate competitive gaming section featuring real-time PvP skill games with live chat and player roster. Profile setup modal on first Internet Identity login — cyberpunk identity capture with neon-glowing avatar frame, holographic shimmer, username input with glow animations. CSS-only micro-transitions maintain premium feel throughout.
 
 ## Palette
 | Token | OKLCH | Usage |
@@ -12,6 +12,14 @@ Premium ICP casino platform with cinematic depth, glassmorphism effects, and pre
 | accent | `0.4 0.15 300` | Royal purple for accents, badges, opponent highlights |
 | chart-1 | `0.72 0.18 65` | Gold badges & accents |
 | chart-2 | `0.45 0.18 300` | Purple badges & accents |
+
+## Profile Setup Palette
+| Token | OKLCH | Usage |
+|-------|-------|-------|
+| profile-avatar-glow | `0.65 0.25 265` | Neon indigo glow ring on avatar frame |
+| profile-avatar-glow-cyan | `0.7 0.25 200` | Cyan component in dual-tone avatar glow |
+| profile-border-glow | `0.55 0.22 265` | Card border glow and holographic shimmer |
+| profile-input-glow | `0.65 0.25 265` | Neon input focus animation |
 
 ## Versus Mode Palette
 | Token | OKLCH | Usage |
@@ -56,6 +64,15 @@ Multi-layer glassmorphic surfaces: background → glass-card (semi-transparent b
 - **Waiting State**: Gold spinner (32px) with pulsing text "Waiting for opponent..."
 - **Wager Selection**: 3 gold buttons (10/30/100 ICP), currently active is `versus-wager-button.active`
 
+## Component Patterns — Profile Setup
+- **Modal Overlay**: Full-screen dark backdrop (oklch 0.05 0 0 / 0.85), blur 8px, centered card entry animation (profile-card-enter 0.5s cubic-bezier spring)
+- **Card**: 480px max-width, cyber grid + scanline pseudo-elements (::before z-0, ::after z-1), glassmorphic bg with 16px blur, neon border glow (indigo / 0.35)
+- **Avatar Frame**: 200px circle, neon indigo pulse ring (avatar-glow-pulse 2.5s infinite), holographic shimmer on hover, scanline overlay, radial placeholder gradient with initials
+- **Username Input**: 12px border-radius, neon glow focus animation (profile-input-glow 2s infinite), dual cyan/indigo glow on active, character counter (mono font, updated on input)
+- **Buttons**: "Complete Setup" (indigo bg, plasma glow shadow), "Skip for Now" (ghost style, dim border, smaller weight). Both use press-depth on active.
+- **Header**: Space Grotesk h1 with text-shadow-premium, subtext in muted foreground (Lora)
+- **Character Count**: Mono font (JetBrains), real-time validation: green (valid 3–20 chars), red (invalid)
+
 ## Component Patterns — Game Cards (Glassmorphism)
 - **Glass Surface**: Semi-transparent blur (12px) with subtle gold border glow and inset highlight
 - **Cinematic Overlay**: Gradient lighting effect (gold highlight top 40%, shadow bottom 100%)
@@ -76,6 +93,7 @@ Multi-layer glassmorphic surfaces: background → glass-card (semi-transparent b
 Grid-based spacing (0.25rem, 0.5rem, 1rem, 1.5rem units). Card padding: 1.5rem. Gap between grid items: 1rem. Versus Mode: game board left 70%, chat right 30%, padding 1rem all sides. Chat messages 0.75rem gap, input 50px fixed height.
 
 ## Motion
+- **Profile Setup**: Modal card entry (profile-card-enter 0.5s spring), avatar glow pulse (avatar-glow-pulse 2.5s infinite), input focus glow (profile-input-glow 2s infinite), holographic shimmer on avatar hover (holographic-shift 4s infinite)
 - **Smooth Transition**: 0.3s cubic-bezier(0.4, 0, 0.2, 1) on all hover/focus/active states
 - **Staggered Grid Load**: Fade-in-up animation (0.6s) with 50ms stagger per item (12 game cards load sequentially)
 - **Glass Hover**: Scale 1.02 + shimmer overlay on card hover, depth shadow upgrade (sm → md)
@@ -86,7 +104,7 @@ Grid-based spacing (0.25rem, 0.5rem, 1rem, 1.5rem units). Card padding: 1.5rem. 
 - **Versus Spinner**: 0.8s linear infinite rotation on waiting state
 - **Versus Chat**: Smooth scroll, fade-in on new messages, no bounce
 - **Shimmer Effect**: Gold shimmer (3s infinite) on game cards on hover
-- **No bounce or playful animations — premium cinematic feel maintained throughout**
+- **No bounce or playful animations — premium cyberpunk feel maintained throughout**
 
 ## Constraints
 - No gradients on text. No opacity stacking for readability. AA+ contrast on all text. Dark mode only.

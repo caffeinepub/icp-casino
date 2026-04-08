@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Wallet } from "lucide-react";
 import { useState } from "react";
-import type { GameState } from "../backend";
+import type { GameState, OnlinePlayer } from "../backend";
 import { MatchStatus, VersusGameType } from "../backend";
 import type { WagerAmount } from "../backend";
 import { LiveChat } from "../components/versus/LiveChat";
@@ -10,6 +10,11 @@ import { MatchStatusCard } from "../components/versus/MatchStatusCard";
 import { OnlinePlayersList } from "../components/versus/OnlinePlayersList";
 import { WagerSelector } from "../components/versus/WagerSelector";
 import { useAuth } from "../hooks/use-auth";
+import {
+  getAvatarUrl,
+  getDisplayName,
+  useMyProfile,
+} from "../hooks/use-profile";
 import {
   useAcceptWager,
   useHeartbeat,
@@ -27,13 +32,36 @@ interface VersusMatchProps {
   onBack: () => void;
 }
 
+/** Extended OnlinePlayer with optional profile fields */
+interface OnlinePlayerWithProfile extends OnlinePlayer {
+  username?: [] | [string];
+  avatarUrl?: [] | [string];
+}
+
+function resolveOnlinePlayerName(player: OnlinePlayerWithProfile): string {
+  if (player.username && player.username.length > 0) {
+    const name = player.username[0];
+    if (name) return name;
+  }
+  return `Player_${player.id.toText().replace(/-/g, "").slice(-6).toUpperCase()}`;
+}
+
+function resolveOnlinePlayerAvatar(
+  player: OnlinePlayerWithProfile,
+): string | null {
+  if (player.avatarUrl && player.avatarUrl.length > 0) {
+    const url = player.avatarUrl[0];
+    return url ?? null;
+  }
+  return null;
+}
+
 function wagerToICP(wager: string): number {
   if (wager === "Ten") return 10;
   if (wager === "Thirty") return 30;
   return 100;
 }
 
-// --- Plug Wallet Notice ---
 function PlugWalletBanner({ compact = false }: { compact?: boolean }) {
   if (compact) {
     return (
@@ -79,7 +107,6 @@ function PlugWalletBanner({ compact = false }: { compact?: boolean }) {
   );
 }
 
-// --- Wager Display Panel ---
 function WagerPanel({
   wagerICP,
   pending,
@@ -111,7 +138,6 @@ function WagerPanel({
       }}
       data-ocid="wager-panel"
     >
-      {/* Header row */}
       <div className="flex items-center justify-between">
         <span
           className="text-xs font-bold uppercase tracking-widest"
@@ -122,7 +148,6 @@ function WagerPanel({
         <PlugWalletBanner compact />
       </div>
 
-      {/* Amounts row */}
       <div className="flex items-center gap-8 flex-wrap">
         <div className="flex flex-col items-center">
           <span
@@ -171,7 +196,6 @@ function WagerPanel({
         </div>
       </div>
 
-      {/* Wager selector (shown when wager is still pending) */}
       {pending && (
         <div
           className="space-y-3 border-t pt-4"
@@ -212,7 +236,6 @@ function WagerPanel({
         </div>
       )}
 
-      {/* Active indicator */}
       {!pending && (
         <div
           className="flex items-center gap-2 text-xs font-bold"
@@ -233,7 +256,6 @@ function WagerPanel({
   );
 }
 
-// --- Chess Board ---
 const FILES = ["a", "b", "c", "d", "e", "f", "g", "h"];
 const RANKS = [8, 7, 6, 5, 4, 3, 2, 1];
 
@@ -305,7 +327,6 @@ function ChessBoard({
       }}
       data-ocid="chess-board"
     >
-      {/* Files labels */}
       <div className="flex pl-6 mb-1">
         {FILES.map((f) => (
           <div
@@ -318,7 +339,6 @@ function ChessBoard({
         ))}
       </div>
       <div className="flex">
-        {/* Ranks */}
         <div className="flex flex-col justify-around pr-2">
           {RANKS.map((r) => (
             <div
@@ -330,7 +350,6 @@ function ChessBoard({
             </div>
           ))}
         </div>
-        {/* Board */}
         <div
           className="grid grid-cols-8 flex-1 rounded-lg overflow-hidden border"
           style={{
@@ -398,16 +417,11 @@ function ChessBoard({
   );
 }
 
-// --- Dice Roll ---
 function DiceGame({
   state,
   matchId,
   canRoll,
-}: {
-  state: GameState;
-  matchId: string;
-  canRoll: boolean;
-}) {
+}: { state: GameState; matchId: string; canRoll: boolean }) {
   const { mutate: roll, isPending } = useMakeDiceRoll();
   const diceState = state.__kind__ === "DiceRoll" ? state.DiceRoll : null;
 
@@ -417,62 +431,39 @@ function DiceGame({
       data-ocid="dice-game"
     >
       <div className="flex gap-10">
-        <div className="text-center">
-          <div
-            className="w-24 h-24 rounded-2xl flex items-center justify-center text-4xl font-mono font-black border-2 card-shimmer"
-            style={{
-              background:
-                "linear-gradient(135deg, oklch(0.14 0.04 290 / 0.80), oklch(0.10 0.03 290))",
-              borderColor: "oklch(0.72 0.18 65 / 0.55)",
-              color: "oklch(0.85 0.14 65)",
-              boxShadow:
-                "0 0 20px oklch(0.72 0.18 65 / 0.20), var(--shadow-md)",
-              textShadow: "0 0 12px oklch(0.72 0.18 65 / 0.50)",
-            }}
-          >
-            {diceState?.player1Roll != null
-              ? String(diceState.player1Roll)
-              : "?"}
+        {[
+          { roll: diceState?.player1Roll, label: "Player 1", isGold: true },
+          { roll: diceState?.player2Roll, label: "Player 2", isGold: false },
+        ].map(({ roll, label, isGold }) => (
+          <div key={label} className="text-center">
+            <div
+              className="w-24 h-24 rounded-2xl flex items-center justify-center text-4xl font-mono font-black border-2 card-shimmer"
+              style={{
+                background: isGold
+                  ? "linear-gradient(135deg, oklch(0.14 0.04 290 / 0.80), oklch(0.10 0.03 290))"
+                  : "linear-gradient(135deg, oklch(0.14 0.04 300 / 0.60), oklch(0.10 0.02 300 / 0.50))",
+                borderColor: isGold
+                  ? "oklch(0.72 0.18 65 / 0.55)"
+                  : "oklch(0.45 0.15 300 / 0.55)",
+                color: isGold ? "oklch(0.85 0.14 65)" : "oklch(0.78 0.15 300)",
+                boxShadow: isGold
+                  ? "0 0 20px oklch(0.72 0.18 65 / 0.20), var(--shadow-md)"
+                  : "0 0 20px oklch(0.45 0.15 300 / 0.20), var(--shadow-md)",
+                textShadow: isGold
+                  ? "0 0 12px oklch(0.72 0.18 65 / 0.50)"
+                  : undefined,
+              }}
+            >
+              {roll != null ? String(roll) : "?"}
+            </div>
+            <p
+              className="text-xs font-semibold mt-2"
+              style={{ color: "oklch(0.58 0.03 280)" }}
+            >
+              {label}
+            </p>
           </div>
-          <p
-            className="text-xs font-semibold mt-2"
-            style={{ color: "oklch(0.58 0.03 280)" }}
-          >
-            Player 1
-          </p>
-        </div>
-        <div
-          className="self-center text-3xl font-black"
-          style={{
-            color: "oklch(0.72 0.18 65 / 0.60)",
-            textShadow: "0 0 12px oklch(0.72 0.18 65 / 0.30)",
-          }}
-        >
-          VS
-        </div>
-        <div className="text-center">
-          <div
-            className="w-24 h-24 rounded-2xl flex items-center justify-center text-4xl font-mono font-black border-2 card-shimmer"
-            style={{
-              background:
-                "linear-gradient(135deg, oklch(0.14 0.04 300 / 0.60), oklch(0.10 0.02 300 / 0.50))",
-              borderColor: "oklch(0.45 0.15 300 / 0.55)",
-              color: "oklch(0.78 0.15 300)",
-              boxShadow:
-                "0 0 20px oklch(0.45 0.15 300 / 0.20), var(--shadow-md)",
-            }}
-          >
-            {diceState?.player2Roll != null
-              ? String(diceState.player2Roll)
-              : "?"}
-          </div>
-          <p
-            className="text-xs font-semibold mt-2"
-            style={{ color: "oklch(0.58 0.03 280)" }}
-          >
-            Player 2
-          </p>
-        </div>
+        ))}
       </div>
       {canRoll && (
         <Button
@@ -495,7 +486,6 @@ function DiceGame({
   );
 }
 
-// --- RPS Game ---
 const RPS_CHOICES = [
   { value: "Rock", emoji: "✊" },
   { value: "Paper", emoji: "✋" },
@@ -506,11 +496,7 @@ function RPSGame({
   state,
   matchId,
   canPlay,
-}: {
-  state: GameState;
-  matchId: string;
-  canPlay: boolean;
-}) {
+}: { state: GameState; matchId: string; canPlay: boolean }) {
   const { mutate: choose, isPending } = useMakeRPSChoice();
   const [myChoice, setMyChoice] = useState<string | null>(null);
   const rpsState = state.__kind__ === "RPS" ? state.RPS : null;
@@ -528,39 +514,28 @@ function RPSGame({
     >
       {rpsState?.player1Choice || rpsState?.player2Choice ? (
         <div className="flex gap-8 text-5xl">
-          <div className="text-center">
-            <div>
-              {RPS_CHOICES.find((c) => c.value === rpsState.player1Choice)
-                ?.emoji ?? "🤔"}
+          {[
+            { choice: rpsState.player1Choice, label: "Player 1" },
+            { choice: rpsState.player2Choice, label: "Player 2" },
+          ].map(({ choice, label }) => (
+            <div key={label} className="text-center">
+              <div>
+                {RPS_CHOICES.find((c) => c.value === choice)?.emoji ?? "🤔"}
+              </div>
+              <p
+                className="text-xs mt-2 font-semibold"
+                style={{ color: "oklch(0.58 0.03 280)" }}
+              >
+                {choice ?? "Choosing…"}
+              </p>
+              <p
+                className="text-[10px] mt-0.5"
+                style={{ color: "oklch(0.45 0.03 280)" }}
+              >
+                {label}
+              </p>
             </div>
-            <p
-              className="text-xs mt-2 font-semibold"
-              style={{ color: "oklch(0.58 0.03 280)" }}
-            >
-              {rpsState.player1Choice ?? "Choosing…"}
-            </p>
-          </div>
-          <div
-            className="text-4xl self-center font-black"
-            style={{
-              color: "oklch(0.72 0.18 65)",
-              textShadow: "0 0 16px oklch(0.72 0.18 65 / 0.50)",
-            }}
-          >
-            VS
-          </div>
-          <div className="text-center">
-            <div>
-              {RPS_CHOICES.find((c) => c.value === rpsState.player2Choice)
-                ?.emoji ?? "🤔"}
-            </div>
-            <p
-              className="text-xs mt-2 font-semibold"
-              style={{ color: "oklch(0.58 0.03 280)" }}
-            >
-              {rpsState.player2Choice ?? "Choosing…"}
-            </p>
-          </div>
+          ))}
         </div>
       ) : null}
       {canPlay && !myChoice && (
@@ -598,9 +573,68 @@ function RPSGame({
   );
 }
 
-// --- Main Match Screen ---
+/** Opponent identity display in match header */
+function OpponentCard({
+  name,
+  avatarUrl,
+}: {
+  name: string;
+  avatarUrl: string | null;
+}) {
+  const initial = name.slice(0, 1).toUpperCase();
+  const hue = (name.charCodeAt(0) * 137) % 360;
+  const color = `oklch(0.65 0.22 ${hue})`;
+
+  return (
+    <div
+      className="glass-card flex items-center gap-2.5 px-3 py-1.5 rounded-xl text-xs"
+      style={{ borderColor: "oklch(0.72 0.18 65 / 0.25)" }}
+    >
+      <span
+        className="profile-avatar-thumbnail shrink-0"
+        style={{
+          width: 28,
+          height: 28,
+          fontSize: 11,
+          border: `1px solid ${color}60`,
+          boxShadow: `0 0 6px ${color}40`,
+        }}
+        aria-hidden="true"
+      >
+        {avatarUrl ? (
+          <img src={avatarUrl} alt={name} />
+        ) : (
+          <span style={{ color }}>{initial}</span>
+        )}
+      </span>
+      <span
+        className="font-bold text-gold-glow"
+        style={{ color: "oklch(0.82 0.14 65)" }}
+      >
+        You
+      </span>
+      <span
+        className="font-black text-sm"
+        style={{ color: "oklch(0.45 0.15 300 / 0.80)" }}
+      >
+        ⚔
+      </span>
+      <span
+        className="profile-username-display"
+        style={{ color: "oklch(0.72 0.15 300)" }}
+      >
+        {name}
+      </span>
+    </div>
+  );
+}
+
 export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
   const { principalText, isAuthenticated } = useAuth();
+  const { data: myProfile } = useMyProfile();
+  const myDisplayName = getDisplayName(myProfile, principalText);
+  const myAvatarUrl = getAvatarUrl(myProfile);
+
   const { data: match, isLoading } = useMatch(matchId);
   const { data: chatMessages = [] } = useMatchChat(matchId);
   const { data: onlinePlayers = [] } = useOnlinePlayers();
@@ -614,7 +648,6 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
     onBack();
   }
 
-  // Unauthenticated state
   if (!isAuthenticated) {
     return (
       <div className="flex flex-col items-center justify-center min-h-96 gap-6 px-6">
@@ -656,9 +689,22 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
   const opponentPlayer =
     match.player1.id.toText() === myId ? match.player2 : match.player1;
 
-  const opponentName = opponentPlayer
-    ? `${opponentPlayer.id.toText().slice(0, 8)}…`
-    : "Opponent";
+  // Try to find opponent in online players list to get profile data
+  const opponentOnlineEntry = opponentPlayer
+    ? (onlinePlayers as OnlinePlayerWithProfile[]).find(
+        (p) => p.id.toText() === opponentPlayer.id.toText(),
+      )
+    : undefined;
+
+  const opponentName = opponentOnlineEntry
+    ? resolveOnlinePlayerName(opponentOnlineEntry)
+    : opponentPlayer
+      ? `Player_${opponentPlayer.id.toText().replace(/-/g, "").slice(-6).toUpperCase()}`
+      : "Opponent";
+
+  const opponentAvatarUrl = opponentOnlineEntry
+    ? resolveOnlinePlayerAvatar(opponentOnlineEntry)
+    : null;
 
   const wagerICP = wagerToICP(match.wager);
   const isWagerPending = match.status === MatchStatus.WagerPending;
@@ -677,9 +723,7 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
         {/* Top bar */}
         <div
           className="glass-dark flex items-center justify-between px-4 py-3 border-b shrink-0"
-          style={{
-            borderColor: "oklch(0.72 0.18 65 / 0.18)",
-          }}
+          style={{ borderColor: "oklch(0.72 0.18 65 / 0.18)" }}
         >
           <button
             type="button"
@@ -706,34 +750,46 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
                   : "Rock Paper Scissors"}
             </span>
           </div>
-          {/* Opponent card */}
-          <div
-            className="glass-card flex items-center gap-3 px-3 py-1.5 rounded-xl text-xs font-mono"
+          {/* My name vs Opponent name */}
+          <OpponentCard name={opponentName} avatarUrl={opponentAvatarUrl} />
+        </div>
+
+        {/* My identity strip */}
+        <div
+          className="flex items-center gap-2 px-4 py-2 border-b"
+          style={{
+            borderColor: "oklch(0.65 0.25 265 / 0.15)",
+            background: "oklch(0.12 0.02 290 / 0.4)",
+          }}
+        >
+          <span
+            className="profile-avatar-thumbnail shrink-0"
             style={{
-              borderColor: "oklch(0.72 0.18 65 / 0.25)",
+              width: 20,
+              height: 20,
+              fontSize: 9,
+              border: "1px solid oklch(0.65 0.25 265 / 0.4)",
             }}
+            aria-hidden="true"
           >
-            <span
-              className="font-bold text-gold-glow"
-              style={{ color: "oklch(0.82 0.14 65)" }}
-            >
-              You
-            </span>
-            <span
-              className="font-black text-sm"
-              style={{ color: "oklch(0.45 0.15 300 / 0.80)" }}
-            >
-              ⚔
-            </span>
-            <span style={{ color: "oklch(0.72 0.15 300)" }}>
-              {opponentName}
-            </span>
-          </div>
+            {myAvatarUrl ? (
+              <img src={myAvatarUrl} alt={myDisplayName} />
+            ) : (
+              <span style={{ color: "oklch(0.65 0.25 265)" }}>
+                {myDisplayName.slice(0, 1).toUpperCase()}
+              </span>
+            )}
+          </span>
+          <span
+            className="profile-username-display text-xs"
+            style={{ color: "oklch(0.75 0.15 265)", fontSize: "0.68rem" }}
+          >
+            Playing as {myDisplayName}
+          </span>
         </div>
 
         {/* Game area */}
         <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
-          {/* Wager Panel — always visible in game screen */}
           <WagerPanel
             wagerICP={wagerICP}
             pending={isWagerPending}
@@ -743,7 +799,6 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
             pendingWager={match.wager as WagerAmount}
           />
 
-          {/* Match Status / Game Content */}
           {match.status !== MatchStatus.Active ? (
             <div className="max-w-sm mx-auto mt-4">
               <MatchStatusCard match={match} onLeave={handleLeave} />
@@ -773,7 +828,6 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
             </div>
           )}
 
-          {/* Completed overlay */}
           {match.status === MatchStatus.Completed && (
             <div className="max-w-sm mx-auto w-full">
               <MatchStatusCard match={match} onLeave={handleLeave} />
@@ -791,6 +845,7 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
           matchId={matchId}
           messages={chatMessages}
           opponentName={opponentName}
+          opponentAvatarUrl={opponentAvatarUrl}
         />
         {/* Online players mini list */}
         <div
@@ -798,7 +853,7 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
           style={{ borderColor: "oklch(0.72 0.18 65 / 0.15)" }}
         >
           <OnlinePlayersList
-            players={onlinePlayers.slice(0, 5)}
+            players={(onlinePlayers as OnlinePlayer[]).slice(0, 5)}
             isLoading={false}
           />
         </div>

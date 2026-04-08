@@ -3,17 +3,63 @@ import { Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { ChatMessage } from "../../backend";
 import { useAuth } from "../../hooks/use-auth";
+import {
+  getAvatarUrl,
+  getDisplayName,
+  useMyProfile,
+} from "../../hooks/use-profile";
 import { useSendChatMessage } from "../../hooks/use-versus";
 import { formatTimestamp } from "../../types/versus";
 
 interface LiveChatProps {
   matchId: string;
   messages: ChatMessage[];
+  /** Username of the opponent (already resolved) */
   opponentName?: string;
+  opponentAvatarUrl?: string | null;
 }
 
-export function LiveChat({ matchId, messages, opponentName }: LiveChatProps) {
+/** Tiny circular avatar for chat messages */
+function MsgAvatar({
+  name,
+  avatarUrl,
+}: {
+  name: string;
+  avatarUrl?: string | null;
+}) {
+  const initial = name.slice(0, 1).toUpperCase();
+  const hue = (name.charCodeAt(0) * 137) % 360;
+  const color = `oklch(0.65 0.22 ${hue})`;
+  return (
+    <span
+      className="profile-avatar-thumbnail shrink-0"
+      style={{
+        width: 24,
+        height: 24,
+        fontSize: 10,
+        border: `1px solid ${color}40`,
+      }}
+      aria-hidden="true"
+    >
+      {avatarUrl ? (
+        <img src={avatarUrl} alt={name} />
+      ) : (
+        <span style={{ color }}>{initial}</span>
+      )}
+    </span>
+  );
+}
+
+export function LiveChat({
+  matchId,
+  messages,
+  opponentName,
+  opponentAvatarUrl,
+}: LiveChatProps) {
   const { principalText } = useAuth();
+  const { data: myProfile } = useMyProfile();
+  const myDisplayName = getDisplayName(myProfile, principalText);
+  const myAvatarUrl = getAvatarUrl(myProfile);
   const [text, setText] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
   const { mutate: sendMessage, isPending } = useSendChatMessage();
@@ -43,13 +89,16 @@ export function LiveChat({ matchId, messages, opponentName }: LiveChatProps) {
       >
         <div
           className="w-2 h-2 rounded-full animate-pulse"
-          style={{ background: "oklch(0.72 0.18 65)" }}
+          style={{
+            background: "oklch(0.70 0.25 200)",
+            boxShadow: "0 0 6px oklch(0.70 0.25 200 / 0.9)",
+          }}
         />
         <span
-          className="text-sm font-display font-semibold uppercase tracking-widest"
-          style={{ color: "oklch(0.72 0.18 65)" }}
+          className="tech-text text-xs font-bold"
+          style={{ color: "oklch(0.70 0.25 200)" }}
         >
-          Live Chat
+          LIVE CHAT
         </span>
       </div>
 
@@ -60,43 +109,43 @@ export function LiveChat({ matchId, messages, opponentName }: LiveChatProps) {
       >
         {messages.length === 0 && (
           <p
-            className="text-xs text-center py-8"
-            style={{ color: "oklch(0.45 0.03 65)" }}
+            className="text-xs text-center py-8 tech-text"
+            style={{ color: "oklch(0.38 0.04 280)" }}
           >
             No messages yet. Say hello!
           </p>
         )}
         {messages.map((msg, i) => {
           const isMe = msg.senderId.toText() === principalText;
-          const senderLabel = isMe
-            ? "You"
+          const senderName = isMe
+            ? myDisplayName
             : (opponentName ?? `${msg.senderId.toText().slice(0, 8)}…`);
+          const senderAvatar = isMe ? myAvatarUrl : (opponentAvatarUrl ?? null);
 
           return (
             <div
               key={`${msg.timestamp}-${i}`}
               className="versus-chat-message mb-3"
             >
-              <div className="flex items-baseline justify-between mb-1 gap-2">
-                <span
-                  className={
-                    isMe
-                      ? "versus-chat-message-player"
-                      : "versus-chat-message-opponent"
-                  }
-                  style={{ fontSize: "0.75rem" }}
-                >
-                  {senderLabel}
-                </span>
-                <span
-                  className="text-xs shrink-0"
-                  style={{ color: "oklch(0.40 0.02 65)" }}
-                >
-                  {formatTimestamp(msg.timestamp)}
-                </span>
+              <div className="flex items-center gap-2 mb-1.5">
+                <MsgAvatar name={senderName} avatarUrl={senderAvatar} />
+                <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                  <span
+                    className={`text-xs font-bold truncate profile-username-display ${isMe ? "versus-chat-message-player" : "versus-chat-message-opponent"}`}
+                    style={{ fontSize: "0.7rem" }}
+                  >
+                    {senderName}
+                  </span>
+                  <span
+                    className="text-[10px] shrink-0 tech-text"
+                    style={{ color: "oklch(0.35 0.03 280)" }}
+                  >
+                    {formatTimestamp(msg.timestamp)}
+                  </span>
+                </div>
               </div>
               <p
-                className="text-sm leading-relaxed break-words"
+                className="text-sm leading-relaxed break-words pl-8"
                 style={{ color: "oklch(0.88 0.02 65)" }}
               >
                 {msg.message}
@@ -110,12 +159,13 @@ export function LiveChat({ matchId, messages, opponentName }: LiveChatProps) {
       {/* Input */}
       <div className="versus-chat-input shrink-0" data-ocid="chat-input-area">
         <div className="flex gap-2 items-center">
+          <MsgAvatar name={myDisplayName} avatarUrl={myAvatarUrl} />
           <input
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type a message…"
+            placeholder={`${myDisplayName}…`}
             maxLength={200}
             className="flex-1 rounded-lg px-3 py-2 text-sm outline-none transition-smooth min-w-0"
             style={{
@@ -129,7 +179,7 @@ export function LiveChat({ matchId, messages, opponentName }: LiveChatProps) {
             size="sm"
             onClick={handleSend}
             disabled={!text.trim() || isPending}
-            className="shrink-0 rounded-lg p-2 transition-smooth"
+            className="shrink-0 rounded-lg p-2 transition-smooth btn-premium plasma-button"
             style={{
               background:
                 "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",

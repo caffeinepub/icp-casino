@@ -5,6 +5,27 @@ import { PlayerStatus } from "../../backend";
 import { formatICP } from "../../hooks/use-wallet";
 import { shortPrincipal } from "../../types/versus";
 
+/** Extended type to carry optional profile fields returned from enriched backend */
+interface OnlinePlayerWithProfile extends OnlinePlayer {
+  username?: [] | [string];
+  avatarUrl?: [] | [string];
+}
+
+function resolveUsername(player: OnlinePlayerWithProfile): string {
+  if (player.username && player.username.length > 0)
+    return (
+      player.username[0] ??
+      `Player_${player.id.toText().replace(/-/g, "").slice(-6).toUpperCase()}`
+    );
+  return `Player_${player.id.toText().replace(/-/g, "").slice(-6).toUpperCase()}`;
+}
+
+function resolveAvatarUrl(player: OnlinePlayerWithProfile): string | null {
+  if (player.avatarUrl && player.avatarUrl.length > 0)
+    return player.avatarUrl[0] ?? null;
+  return null;
+}
+
 interface OnlinePlayersListProps {
   players: OnlinePlayer[];
   isLoading?: boolean;
@@ -15,7 +36,12 @@ function StatusDot({ status }: { status: PlayerStatus }) {
   if (status === PlayerStatus.Online) {
     return (
       <span
-        className="versus-player-status-online shrink-0"
+        className="shrink-0 w-2 h-2 rounded-full inline-block"
+        style={{
+          background: "oklch(0.70 0.25 200)",
+          boxShadow: "0 0 6px oklch(0.70 0.25 200 / 0.9)",
+          marginRight: "6px",
+        }}
         title="Online"
         aria-label="Online"
       />
@@ -24,8 +50,12 @@ function StatusDot({ status }: { status: PlayerStatus }) {
   if (status === PlayerStatus.Playing) {
     return (
       <span
-        className="shrink-0 w-2 h-2 rounded-full inline-block mr-2"
-        style={{ background: "oklch(0.45 0.15 300)" }}
+        className="shrink-0 w-2 h-2 rounded-full inline-block"
+        style={{
+          background: "oklch(0.65 0.25 265)",
+          boxShadow: "0 0 6px oklch(0.65 0.25 265 / 0.8)",
+          marginRight: "6px",
+        }}
         title="Playing"
         aria-label="Playing"
       />
@@ -33,10 +63,48 @@ function StatusDot({ status }: { status: PlayerStatus }) {
   }
   return (
     <span
-      className="versus-player-status-offline shrink-0"
+      className="shrink-0 w-2 h-2 rounded-full inline-block"
+      style={{
+        background: "oklch(0.25 0.03 280)",
+        marginRight: "6px",
+      }}
       title="Offline"
       aria-label="Offline"
     />
+  );
+}
+
+/** Mini circular avatar shown in the player card */
+function PlayerAvatar({
+  username,
+  avatarUrl,
+}: {
+  username: string;
+  avatarUrl: string | null;
+}) {
+  const initial = username.slice(0, 1).toUpperCase();
+  const hue = (username.charCodeAt(0) * 137) % 360;
+  const glowColor = `oklch(0.65 0.22 ${hue})`;
+
+  return (
+    <div
+      className="profile-avatar-thumbnail shrink-0"
+      style={{
+        width: 36,
+        height: 36,
+        border: `1.5px solid ${glowColor}`,
+        boxShadow: `0 0 8px ${glowColor}40`,
+        fontSize: 14,
+        transition: "box-shadow 0.2s ease",
+      }}
+      aria-hidden="true"
+    >
+      {avatarUrl ? (
+        <img src={avatarUrl} alt={username} />
+      ) : (
+        <span style={{ color: glowColor }}>{initial}</span>
+      )}
+    </div>
   );
 }
 
@@ -45,7 +113,8 @@ export function OnlinePlayersList({
   isLoading,
   onChallenge,
 }: OnlinePlayersListProps) {
-  const onlineCount = players.filter(
+  const typedPlayers = players as OnlinePlayerWithProfile[];
+  const onlineCount = typedPlayers.filter(
     (p) => p.status !== PlayerStatus.Offline,
   ).length;
 
@@ -57,19 +126,23 @@ export function OnlinePlayersList({
         style={{ borderColor: "oklch(0.25 0.05 65 / 0.5)" }}
       >
         <div className="flex items-center gap-2">
-          <Users className="w-4 h-4" style={{ color: "oklch(0.72 0.18 65)" }} />
+          <Users
+            className="w-4 h-4 neon-glow-cyan"
+            style={{ color: "oklch(0.70 0.25 200)" }}
+          />
           <span
-            className="text-sm font-display font-semibold uppercase tracking-widest"
-            style={{ color: "oklch(0.72 0.18 65)" }}
+            className="tech-text text-xs font-bold"
+            style={{ color: "oklch(0.70 0.25 200)" }}
           >
-            Online Players
+            ONLINE PLAYERS
           </span>
         </div>
         <span
           className="text-xs font-mono px-2 py-0.5 rounded-full"
           style={{
-            background: "oklch(0.72 0.18 65 / 0.15)",
-            color: "oklch(0.82 0.14 65)",
+            background: "oklch(0.65 0.25 265 / 0.15)",
+            color: "oklch(0.75 0.20 265)",
+            border: "1px solid oklch(0.65 0.25 265 / 0.3)",
           }}
           data-ocid="online-count"
         >
@@ -87,7 +160,7 @@ export function OnlinePlayersList({
           </div>
         )}
 
-        {!isLoading && players.length === 0 && (
+        {!isLoading && typedPlayers.length === 0 && (
           <div
             className="text-center py-12 space-y-2"
             data-ocid="no-players-state"
@@ -103,53 +176,78 @@ export function OnlinePlayersList({
         )}
 
         {!isLoading &&
-          players.map((player) => (
-            <button
-              key={player.id.toText()}
-              type="button"
-              onClick={() => onChallenge?.(player)}
-              disabled={player.status === PlayerStatus.Offline || !onChallenge}
-              className="versus-player-card w-full text-left transition-smooth mb-3 last:mb-0 disabled:opacity-50 hover:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary"
-              data-ocid="player-card"
-            >
-              <div className="flex items-start gap-2 min-w-0">
-                {/* Avatar placeholder */}
-                <div
-                  className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 font-display font-bold text-sm"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, oklch(0.72 0.18 65 / 0.25), oklch(0.45 0.15 300 / 0.25))",
-                    color: "oklch(0.82 0.14 65)",
-                    border: "1px solid oklch(0.72 0.18 65 / 0.3)",
-                  }}
-                >
-                  {player.id.toText().slice(0, 1).toUpperCase()}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1 mb-0.5">
-                    <StatusDot status={player.status} />
+          typedPlayers.map((player) => {
+            const username = resolveUsername(player);
+            const avatarUrl = resolveAvatarUrl(player);
+            const isAvailable =
+              player.status === PlayerStatus.Online && !!onChallenge;
+
+            return (
+              <button
+                key={player.id.toText()}
+                type="button"
+                onClick={() => onChallenge?.(player)}
+                disabled={
+                  player.status === PlayerStatus.Offline || !onChallenge
+                }
+                className="versus-player-card w-full text-left transition-smooth mb-3 last:mb-0 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary group"
+                style={{
+                  borderColor: "oklch(0.4 0.1 265 / 0.30)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isAvailable) return;
+                  (e.currentTarget as HTMLElement).style.borderColor =
+                    "oklch(0.65 0.25 265 / 0.70)";
+                  (e.currentTarget as HTMLElement).style.boxShadow =
+                    "0 0 16px oklch(0.65 0.25 265 / 0.20), 0 0 4px oklch(0.70 0.25 200 / 0.15)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor =
+                    "oklch(0.4 0.1 265 / 0.30)";
+                  (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                }}
+                data-ocid="player-card"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  {/* Avatar */}
+                  <PlayerAvatar username={username} avatarUrl={avatarUrl} />
+
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1 mb-0.5">
+                      <StatusDot status={player.status} />
+                      <span
+                        className="profile-username-display text-xs truncate"
+                        style={{ color: "oklch(0.92 0 0)" }}
+                      >
+                        {username}
+                      </span>
+                    </div>
                     <span
-                      className="text-xs font-mono truncate"
-                      style={{ color: "oklch(0.70 0 0)" }}
+                      className="text-[10px] font-mono block truncate"
+                      style={{ color: "oklch(0.38 0.04 280)" }}
                     >
                       {shortPrincipal(player.id)}
                     </span>
+                    <span className="versus-player-balance block mt-0.5">
+                      {formatICP(player.balanceE8s)} ICP
+                    </span>
                   </div>
-                  <span className="versus-player-balance block">
-                    {formatICP(player.balanceE8s)} ICP
-                  </span>
                 </div>
-              </div>
-              {player.status === PlayerStatus.Online && onChallenge && (
-                <div
-                  className="text-xs font-semibold shrink-0 ml-2 mt-0.5"
-                  style={{ color: "oklch(0.72 0.18 65)" }}
-                >
-                  Challenge
-                </div>
-              )}
-            </button>
-          ))}
+
+                {isAvailable && (
+                  <div
+                    className="text-xs font-semibold shrink-0 ml-2 mt-0.5 tech-text"
+                    style={{
+                      color: "oklch(0.70 0.25 200)",
+                      fontSize: "0.65rem",
+                    }}
+                  >
+                    CHALLENGE
+                  </div>
+                )}
+              </button>
+            );
+          })}
       </div>
     </div>
   );
