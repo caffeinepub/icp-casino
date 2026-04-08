@@ -1,0 +1,73 @@
+// Version: 1.0.0
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type E8s__328334695 = Nat;
+type E8s__517071594 = E8s__328334695;
+type GameCategory__436682757 = {#CardGames; #Slots; #TableGames};
+type Game__1071417069 =
+  {
+    category : GameCategory__436682757;
+    featured : Bool;
+    houseEdge : Float;
+    id : Nat;
+    imageUrl : Text;
+    name : Text;
+    playerCount : Nat;
+    rtp : Float
+  };
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type List__415060402<T> = List__790383201<T>;
+type List__790383201<T> =
+  {
+    var blockIndex : Nat__490723111;
+    var blocks : [var [var ?T]];
+    var elementIndex : Nat__490723111
+  };
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type Timestamp__301639476 = Int;
+type Timestamp__982391923 = Timestamp__301639476;
+type TransactionType__952205645 = {#Bet; #Deposit; #Winning};
+type Transaction__26687421 =
+  {
+    betAmount : E8s__517071594;
+    gameId : ?Nat;
+    gameName : ?Text;
+    id : Nat;
+    netAmount : Int;
+    result : ?Text;
+    timestamp : Timestamp__982391923;
+    transactionType : TransactionType__952205645
+  };
+type UserId__158757552 = Principal;
+type UserId__487301212 = UserId__158757552;
+actor {
+  stable games :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Game__1071417069]];
+      var elementIndex : Nat__490723111
+    };
+  stable nextTxIdHolder :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Nat]];
+      var elementIndex : Nat__490723111
+    };
+  stable transactions :
+    {
+      var root :
+        Node__46230540<UserId__487301212,
+                        List__415060402<Transaction__26687421>>;
+      var size : Nat__490723111
+    };
+  stable wallets :
+    {
+      var root : Node__46230540<UserId__487301212, E8s__517071594>;
+      var size : Nat__490723111
+    }
+};

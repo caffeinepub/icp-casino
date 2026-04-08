@@ -1,0 +1,166 @@
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
+import { TransactionType } from "../backend";
+import { useAuth } from "../hooks/use-auth";
+import { formatICP } from "../hooks/use-wallet";
+import type { Transaction } from "../types/casino";
+
+interface TransactionModalProps {
+  transaction: Transaction | null;
+  onClose: () => void;
+}
+
+function formatTimestamp(ts: bigint): string {
+  const ms = Number(ts / 1_000_000n);
+  return new Date(ms).toLocaleString("en-US", {
+    dateStyle: "long",
+    timeStyle: "medium",
+  });
+}
+
+function typeLabel(type: TransactionType): string {
+  switch (type) {
+    case TransactionType.Bet:
+      return "Bet";
+    case TransactionType.Winning:
+      return "Winning";
+    case TransactionType.Deposit:
+      return "Deposit";
+  }
+}
+
+function typeBadgeClass(type: TransactionType): string {
+  switch (type) {
+    case TransactionType.Bet:
+      return "bg-primary/20 text-primary border-primary/30";
+    case TransactionType.Winning:
+      return "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
+    case TransactionType.Deposit:
+      return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+  }
+}
+
+interface ReceiptRowProps {
+  label: string;
+  value: string;
+  valueClass?: string;
+  mono?: boolean;
+}
+
+function ReceiptRow({
+  label,
+  value,
+  valueClass = "text-foreground",
+  mono,
+}: ReceiptRowProps) {
+  return (
+    <div className="flex justify-between items-start gap-4 py-2.5">
+      <span className="text-sm text-muted-foreground shrink-0">{label}</span>
+      <span
+        className={`text-sm text-right break-all ${mono ? "font-mono" : ""} ${valueClass}`}
+      >
+        {value}
+      </span>
+    </div>
+  );
+}
+
+// Deterministic hash derived from transaction id — purely cosmetic
+function confirmationHash(id: bigint): string {
+  const hex = id.toString(16).padStart(8, "0");
+  return `0x${hex}abcf${((id * 31n) % 0xffffn).toString(16).padStart(4, "0")}`;
+}
+
+export function TransactionModal({
+  transaction,
+  onClose,
+}: TransactionModalProps) {
+  const { principalText } = useAuth();
+  const principal = principalText ?? "—";
+
+  if (!transaction) return null;
+
+  const isWin = transaction.netAmount > 0n;
+  const isNeutral = transaction.netAmount === 0n;
+  const amountClass = isNeutral
+    ? "text-muted-foreground"
+    : isWin
+      ? "text-emerald-400 font-semibold"
+      : "text-red-400 font-semibold";
+  const sign = isWin ? "+" : isNeutral ? "" : "-";
+  const absAmount =
+    transaction.netAmount < 0n ? -transaction.netAmount : transaction.netAmount;
+
+  return (
+    <Dialog open={!!transaction} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent
+        data-ocid="transaction-modal"
+        className="bg-card border-border max-w-md w-full"
+      >
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <DialogTitle className="font-display text-lg text-foreground">
+              Transaction Receipt
+            </DialogTitle>
+            <Badge
+              variant="outline"
+              className={`text-xs font-semibold uppercase tracking-wide border ${typeBadgeClass(transaction.transactionType)}`}
+            >
+              {typeLabel(transaction.transactionType)}
+            </Badge>
+          </div>
+        </DialogHeader>
+
+        <div className="mt-2 space-y-0.5">
+          <ReceiptRow
+            label="Date"
+            value={formatTimestamp(transaction.timestamp)}
+          />
+          <ReceiptRow label="Game" value={transaction.gameName ?? "—"} />
+          <ReceiptRow label="Result" value={transaction.result ?? "—"} />
+          <Separator className="bg-border/60 my-1" />
+          <ReceiptRow
+            label="Bet Amount"
+            value={`${formatICP(transaction.betAmount)} ICP`}
+          />
+          <ReceiptRow
+            label="Net Amount"
+            value={`${sign}${formatICP(absAmount)} ICP`}
+            valueClass={amountClass}
+          />
+          <Separator className="bg-border/60 my-1" />
+          <ReceiptRow
+            label="Transaction ID"
+            value={`#${transaction.id.toString()}`}
+            mono
+          />
+          {transaction.gameId != null && (
+            <ReceiptRow
+              label="Game ID"
+              value={`#${transaction.gameId.toString()}`}
+              mono
+            />
+          )}
+          <ReceiptRow
+            label="Principal"
+            value={principal}
+            valueClass="text-xs text-muted-foreground"
+            mono
+          />
+          <ReceiptRow
+            label="Confirmation"
+            value={confirmationHash(transaction.id)}
+            valueClass="text-xs text-muted-foreground"
+            mono
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}

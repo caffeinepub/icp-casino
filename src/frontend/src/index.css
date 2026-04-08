@@ -1,0 +1,198 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-display: Fraunces, serif;
+    --font-body: DM Sans, sans-serif;
+    --font-mono: Geist Mono, monospace;
+    --radius: 0.5rem;
+
+    --background: 0.12 0 0;
+    --foreground: 0.95 0 0;
+    --card: 0.16 0 0;
+    --card-foreground: 0.93 0 0;
+    --popover: 0.2 0 0;
+    --popover-foreground: 0.95 0 0;
+
+    --primary: 0.68 0.24 56;
+    --primary-foreground: 0.12 0 0;
+
+    --secondary: 0.2 0 0;
+    --secondary-foreground: 0.88 0 0;
+    --muted: 0.22 0 0;
+    --muted-foreground: 0.58 0 0;
+
+    --accent: 0.68 0.24 56;
+    --accent-foreground: 0.12 0 0;
+
+    --destructive: 0.62 0.24 12;
+    --destructive-foreground: 0.95 0 0;
+
+    --border: 0.25 0 0;
+    --input: 0.18 0 0;
+    --ring: 0.68 0.24 56;
+
+    --chart-1: 0.62 0.28 263;
+    --chart-2: 0.68 0.22 162;
+    --chart-3: 0.72 0.26 124;
+    --chart-4: 0.68 0.28 304;
+    --chart-5: 0.65 0.26 28;
+
+    --sidebar: 0.16 0 0;
+    --sidebar-foreground: 0.93 0 0;
+    --sidebar-primary: 0.68 0.24 56;
+    --sidebar-primary-foreground: 0.12 0 0;
+    --sidebar-accent: 0.22 0 0;
+    --sidebar-accent-foreground: 0.88 0 0;
+    --sidebar-border: 0.25 0 0;
+    --sidebar-ring: 0.68 0.24 56;
+
+    /* Casino semantic tokens */
+    --win: 0.72 0.18 155;
+    --loss: 0.62 0.22 12;
+    --deposit: 0.62 0.22 240;
+  }
+
+  .dark {
+    --background: 0.12 0 0;
+    --foreground: 0.95 0 0;
+    --card: 0.16 0 0;
+    --card-foreground: 0.93 0 0;
+    --popover: 0.2 0 0;
+    --popover-foreground: 0.95 0 0;
+
+    --primary: 0.68 0.24 56;
+    --primary-foreground: 0.12 0 0;
+
+    --secondary: 0.2 0 0;
+    --secondary-foreground: 0.88 0 0;
+    --muted: 0.22 0 0;
+    --muted-foreground: 0.58 0 0;
+
+    --accent: 0.68 0.24 56;
+    --accent-foreground: 0.12 0 0;
+
+    --destructive: 0.62 0.24 12;
+    --destructive-foreground: 0.95 0 0;
+
+    --border: 0.25 0 0;
+    --input: 0.18 0 0;
+    --ring: 0.68 0.24 56;
+
+    --chart-1: 0.62 0.28 263;
+    --chart-2: 0.68 0.22 162;
+    --chart-3: 0.72 0.26 124;
+    --chart-4: 0.68 0.28 304;
+    --chart-5: 0.65 0.26 28;
+
+    --sidebar: 0.16 0 0;
+    --sidebar-foreground: 0.93 0 0;
+    --sidebar-primary: 0.68 0.24 56;
+    --sidebar-primary-foreground: 0.12 0 0;
+    --sidebar-accent: 0.22 0 0;
+    --sidebar-accent-foreground: 0.88 0 0;
+    --sidebar-border: 0.25 0 0;
+    --sidebar-ring: 0.68 0.24 56;
+
+    /* Casino semantic tokens */
+    --win: 0.72 0.18 155;
+    --loss: 0.62 0.22 12;
+    --deposit: 0.62 0.22 240;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+}
+
+@layer base {
+  @font-face {
+    font-family: Fraunces;
+    src: url("/assets/fonts/Fraunces.woff2") format("woff2");
+    font-display: swap;
+  }
+  @font-face {
+    font-family: DM Sans;
+    src: url("/assets/fonts/DMSans.woff2") format("woff2");
+    font-display: swap;
+  }
+  @font-face {
+    font-family: Geist Mono;
+    src: url("/assets/fonts/GeistMono.woff2") format("woff2");
+    font-display: swap;
+  }
+}
+
+@layer utilities {
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Slot machine reel spin animation */
+  @keyframes slotSpin {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(calc(-23 * 80px));
+    }
+  }
+
+  .badge-cyan {
+    @apply inline-flex items-center px-2.5 py-1 rounded-sm bg-cyan-500/20 text-cyan-300 text-xs font-semibold uppercase tracking-wide;
+  }
+
+  .badge-magenta {
+    @apply inline-flex items-center px-2.5 py-1 rounded-sm bg-pink-500/20 text-pink-300 text-xs font-semibold uppercase tracking-wide;
+  }
+
+  .badge-lime {
+    @apply inline-flex items-center px-2.5 py-1 rounded-sm bg-lime-500/20 text-lime-300 text-xs font-semibold uppercase tracking-wide;
+  }
+
+  .accent-bar {
+    @apply h-1 bg-primary/80;
+  }
+
+  .shadow-card {
+    @apply shadow-lg;
+  }
+
+  .shadow-hover {
+    @apply hover:shadow-2xl transition-smooth;
+  }
+
+  /* Casino outcome colors using CSS variables */
+  .text-win {
+    color: oklch(var(--win));
+  }
+  .text-loss {
+    color: oklch(var(--loss));
+  }
+  .text-deposit {
+    color: oklch(var(--deposit));
+  }
+  .bg-win-muted {
+    background-color: oklch(var(--win) / 0.15);
+  }
+  .bg-loss-muted {
+    background-color: oklch(var(--loss) / 0.15);
+  }
+  .bg-deposit-muted {
+    background-color: oklch(var(--deposit) / 0.15);
+  }
+  .border-win {
+    border-color: oklch(var(--win) / 0.35);
+  }
+  .border-loss {
+    border-color: oklch(var(--loss) / 0.35);
+  }
+  .border-deposit {
+    border-color: oklch(var(--deposit) / 0.35);
+  }
+}

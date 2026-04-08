@@ -1,0 +1,20 @@
+{
+  "overview": "A casino-style gaming website on the Internet Computer with Internet Identity login, a game lobby featuring carousels and searchable game grids, game detail pages with bet selection, ICP wallet balance tracking, and a full transaction history.",
+  "features": [
+    "Internet Identity login and session persistence",
+    "Game lobby with featured carousel and category filters",
+    "Real-time game search and filtering",
+    "Game detail pages with bet amount selection",
+    "ICP wallet balance in navigation bar",
+    "Transaction history with type filtering and pagination"
+  ],
+  "category": "entertainment",
+  "tags": [
+    "casino",
+    "gaming",
+    "icp",
+    "internet-identity",
+    "wallet"
+  ],
+  "last_updated": "2026-04-08T01:03:26.913Z"
+}

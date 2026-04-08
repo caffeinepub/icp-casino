@@ -1,0 +1,61 @@
+type TransactionType = 
+ variant {
+   Bet;
+   Deposit;
+   Winning;
+ };
+type Transaction = 
+ record {
+   betAmount: E8s;
+   gameId: opt nat;
+   gameName: opt text;
+   id: nat;
+   netAmount: int;
+   result: opt text;
+   timestamp: Timestamp;
+   transactionType: TransactionType;
+ };
+type Timestamp = int;
+type PlaceBetResult = 
+ variant {
+   err: text;
+   ok: Transaction;
+ };
+type PlaceBetRequest = 
+ record {
+   betAmount: E8s;
+   gameId: nat;
+ };
+type GameCategory = 
+ variant {
+   CardGames;
+   Slots;
+   TableGames;
+ };
+type Game = 
+ record {
+   category: GameCategory;
+   featured: bool;
+   houseEdge: float64;
+   id: nat;
+   imageUrl: text;
+   name: text;
+   playerCount: nat;
+   rtp: float64;
+ };
+type E8s = nat;
+type DepositResult = 
+ variant {
+   err: text;
+   ok: E8s;
+ };
+service : {
+  deposit: (amount: E8s) -> (DepositResult);
+  getBalance: () -> (E8s);
+  getGame: (gameId: nat) -> (opt Game) query;
+  getTransactions: (typeFilter: opt TransactionType) -> (vec Transaction);
+  listFeaturedGames: () -> (vec Game) query;
+  listGames: () -> (vec Game) query;
+  listGamesByCategory: (category: GameCategory) -> (vec Game) query;
+  placeBet: (req: PlaceBetRequest) -> (PlaceBetResult);
+}
