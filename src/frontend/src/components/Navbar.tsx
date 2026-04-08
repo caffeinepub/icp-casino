@@ -72,19 +72,36 @@ export function Navbar({
           color: oklch(0.80 0.18 280);
           text-shadow: 0 0 12px oklch(0.58 0.22 265 / 0.45);
         }
+        @keyframes neon-bottom-pulse {
+          0%, 100% { opacity: 0.55; box-shadow: 0 0 6px oklch(0.65 0.28 265 / 0.5); }
+          50% { opacity: 1; box-shadow: 0 0 14px oklch(0.70 0.25 200 / 0.8), 0 0 28px oklch(0.65 0.28 265 / 0.4); }
+        }
+        .navbar-neon-border {
+          animation: neon-bottom-pulse 2.8s ease-in-out infinite;
+        }
       `}</style>
 
       <header
-        className="sticky top-0 z-50"
+        className="sticky top-0 z-50 cyber-grid-bg"
         style={{
           /* FIXED: deep purple background, not orange-brown */
-          background: "oklch(0.10 0.04 290 / 0.95)",
-          borderBottom: "1px solid oklch(0.55 0.22 265 / 0.25)",
+          background: "oklch(0.10 0.04 290 / 0.97)",
+          borderBottom: "none",
           boxShadow:
             "0 2px 24px oklch(0 0 0 / 0.65), 0 1px 0 oklch(0.55 0.22 265 / 0.18)",
         }}
         data-ocid="navbar"
       >
+        {/* Animated neon bottom border */}
+        <div
+          className="navbar-neon-border absolute bottom-0 left-0 right-0 h-px"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent 0%, oklch(0.65 0.28 265) 30%, oklch(0.70 0.25 200) 70%, transparent 100%)",
+          }}
+          aria-hidden="true"
+        />
+
         <div className="container mx-auto flex items-center justify-between h-16 px-4">
           {/* Brand — DFINITY-inspired purple/indigo/violet gradient logo */}
           <button
@@ -145,8 +162,8 @@ export function Navbar({
                 <circle cx="12" cy="12" r="2" fill="oklch(0.97 0 0)" />
               </svg>
             </div>
-            {/* Logo text: wide DFINITY-style spectrum gradient */}
-            <span className="heading-cinematic font-display text-xl font-bold tracking-tight">
+            {/* Logo text: wide DFINITY-style spectrum gradient + glitch effect */}
+            <span className="heading-cinematic font-display text-xl font-bold tracking-tight glitch-text">
               <span
                 style={{
                   background:
@@ -180,14 +197,14 @@ export function Navbar({
             <button
               type="button"
               onClick={onNavigate}
-              className="nav-link text-sm font-semibold text-muted-foreground hover:text-foreground transition-smooth"
+              className="nav-link tech-text text-sm font-semibold text-muted-foreground hover:text-foreground transition-smooth"
             >
               Games
             </button>
             <button
               type="button"
               onClick={onVersusMode}
-              className="nav-link text-sm font-semibold text-muted-foreground hover:text-foreground transition-smooth flex items-center gap-1.5"
+              className="nav-link tech-text text-sm font-semibold text-muted-foreground hover:text-foreground transition-smooth flex items-center gap-1.5"
               data-ocid="nav-versus"
             >
               <Sword
@@ -199,7 +216,7 @@ export function Navbar({
             <button
               type="button"
               onClick={onTransactions}
-              className="nav-link text-sm font-semibold text-muted-foreground hover:text-foreground transition-smooth"
+              className="nav-link tech-text text-sm font-semibold text-muted-foreground hover:text-foreground transition-smooth"
               data-ocid="nav-transactions"
             >
               Transactions
@@ -214,7 +231,8 @@ export function Navbar({
                 style={{
                   background: "oklch(0.14 0.04 290 / 0.80)",
                   borderColor: "oklch(0.55 0.22 265 / 0.40)",
-                  boxShadow: "0 0 12px oklch(0.55 0.22 265 / 0.12)",
+                  boxShadow:
+                    "0 0 12px oklch(0.55 0.22 265 / 0.18), 0 0 6px oklch(0.72 0.18 65 / 0.12)",
                 }}
                 data-ocid="wallet-balance"
               >
@@ -227,7 +245,10 @@ export function Navbar({
                 ) : (
                   <span
                     className="text-sm font-mono font-semibold wallet-balance"
-                    style={{ color: "oklch(0.83 0.14 65)" }}
+                    style={{
+                      color: "oklch(0.83 0.14 65)",
+                      textShadow: "0 0 10px oklch(0.72 0.18 65 / 0.50)",
+                    }}
                   >
                     {balanceFormatted} ICP
                   </span>
@@ -256,7 +277,7 @@ export function Navbar({
                   size="sm"
                   onClick={() => setDepositOpen(true)}
                   variant="outline"
-                  className="gap-1.5 font-bold btn-premium"
+                  className="gap-1.5 font-bold btn-premium plasma-button"
                   style={{
                     background:
                       "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
@@ -290,7 +311,7 @@ export function Navbar({
                 size="sm"
                 onClick={login}
                 disabled={isLoggingIn}
-                className="gap-1.5 font-bold btn-premium"
+                className="gap-1.5 font-bold btn-premium plasma-button"
                 style={{
                   background:
                     "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
@@ -338,7 +359,7 @@ export function Navbar({
                   setMobileOpen(false);
                   onNavigate?.();
                 }}
-                className="text-sm font-semibold text-muted-foreground hover:text-foreground py-2.5 px-2 rounded-lg transition-smooth text-left flex items-center gap-2 hover:bg-primary/10"
+                className="tech-text text-sm font-semibold text-muted-foreground hover:text-foreground py-2.5 px-2 rounded-lg transition-smooth text-left flex items-center gap-2 hover:bg-primary/10"
               >
                 Games
               </button>
@@ -348,7 +369,7 @@ export function Navbar({
                   setMobileOpen(false);
                   onVersusMode?.();
                 }}
-                className="text-sm font-semibold text-muted-foreground hover:text-foreground py-2.5 px-2 rounded-lg transition-smooth text-left flex items-center gap-2 hover:bg-primary/10"
+                className="tech-text text-sm font-semibold text-muted-foreground hover:text-foreground py-2.5 px-2 rounded-lg transition-smooth text-left flex items-center gap-2 hover:bg-primary/10"
                 data-ocid="mobile-nav-versus"
               >
                 <Sword
@@ -363,7 +384,7 @@ export function Navbar({
                   setMobileOpen(false);
                   onTransactions?.();
                 }}
-                className="text-sm font-semibold text-muted-foreground hover:text-foreground py-2.5 px-2 rounded-lg transition-smooth text-left flex items-center gap-2 hover:bg-primary/10"
+                className="tech-text text-sm font-semibold text-muted-foreground hover:text-foreground py-2.5 px-2 rounded-lg transition-smooth text-left flex items-center gap-2 hover:bg-primary/10"
                 data-ocid="mobile-nav-transactions"
               >
                 <Receipt className="w-4 h-4" />
@@ -390,7 +411,10 @@ export function Navbar({
                     ) : (
                       <span
                         className="text-sm font-mono font-bold wallet-balance"
-                        style={{ color: "oklch(0.83 0.14 65)" }}
+                        style={{
+                          color: "oklch(0.83 0.14 65)",
+                          textShadow: "0 0 10px oklch(0.72 0.18 65 / 0.50)",
+                        }}
                       >
                         {balanceFormatted} ICP
                       </span>
@@ -406,7 +430,7 @@ export function Navbar({
                         setDepositOpen(true);
                       }}
                       variant="outline"
-                      className="gap-1.5 w-full font-bold btn-premium"
+                      className="gap-1.5 w-full font-bold btn-premium plasma-button"
                       style={{
                         background:
                           "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
@@ -442,7 +466,7 @@ export function Navbar({
                       login();
                     }}
                     disabled={isLoggingIn}
-                    className="gap-1.5 w-full font-bold btn-premium"
+                    className="gap-1.5 w-full font-bold btn-premium plasma-button"
                     style={{
                       background:
                         "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",

@@ -24,8 +24,19 @@ export function Layout({
         onVersusMode={onVersusMode}
       />
       <ChatBox />
-      <main className="flex-1 w-full">{children}</main>
-      <Footer />
+      <main className="flex-1 w-full cyber-grid-bg">{children}</main>
+      <footer className="relative">
+        {/* Neon top border on footer */}
+        <div
+          className="absolute top-0 left-0 right-0 h-px neon-glow"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent 0%, oklch(0.65 0.28 265 / 0.6) 30%, oklch(0.70 0.25 200 / 0.6) 70%, transparent 100%)",
+          }}
+          aria-hidden="true"
+        />
+        <Footer />
+      </footer>
     </div>
   );
 }

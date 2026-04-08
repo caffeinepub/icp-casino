@@ -984,4 +984,378 @@
       transform: none;
     }
   }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     FUTURISTIC / CYBERPUNK LAYER — Tron Legacy × Luxury Vegas
+     All animations and utilities added on top of existing design system.
+  ═══════════════════════════════════════════════════════════════════════ */
+
+  /* ─── Keyframe: neon-pulse ───────────────────────────────────────────── */
+  @keyframes neon-pulse {
+    0%,
+    100% {
+      filter: drop-shadow(0 0 8px oklch(0.65 0.25 265 / 0.8))
+        drop-shadow(0 0 16px oklch(0.7 0.25 200 / 0.5));
+      opacity: 1;
+    }
+    50% {
+      filter: drop-shadow(0 0 3px oklch(0.65 0.25 265 / 0.35))
+        drop-shadow(0 0 6px oklch(0.7 0.25 200 / 0.2));
+      opacity: 0.85;
+    }
+  }
+
+  /* ─── Keyframe: cyber-scan ───────────────────────────────────────────── */
+  @keyframes cyber-scan {
+    0% {
+      background-position: 0 -100%;
+    }
+    100% {
+      background-position: 0 200%;
+    }
+  }
+
+  /* ─── Keyframe: holographic-shift ───────────────────────────────────── */
+  @keyframes holographic-shift {
+    0%,
+    100% {
+      filter: hue-rotate(0deg) brightness(1);
+    }
+    50% {
+      filter: hue-rotate(20deg) brightness(1.08);
+    }
+  }
+
+  /* ─── Keyframe: grid-drift ───────────────────────────────────────────── */
+  @keyframes grid-drift {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: -50px -50px;
+    }
+  }
+
+  /* ─── Keyframe: plasma-ripple ────────────────────────────────────────── */
+  @keyframes plasma-ripple {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 oklch(0.55 0.25 265 / 0.6), 0 0 8px 2px
+        oklch(0.7 0.25 200 / 0.3);
+    }
+    50% {
+      box-shadow: 0 0 0 8px oklch(0.55 0.25 265 / 0.0), 0 0 20px 6px
+        oklch(0.7 0.25 200 / 0.5);
+    }
+  }
+
+  /* ─── Keyframe: data-stream ──────────────────────────────────────────── */
+  @keyframes data-stream {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 0 400px;
+    }
+  }
+
+  /* ─── Keyframe: glitch-flicker ───────────────────────────────────────── */
+  @keyframes glitch-flicker {
+    0%,
+    89%,
+    91%,
+    94%,
+    96%,
+    100% {
+      transform: translate(0, 0);
+      opacity: 1;
+    }
+    90% {
+      transform: translate(1px, 0);
+      opacity: 0.9;
+    }
+    92% {
+      transform: translate(-1px, 0);
+      opacity: 0.95;
+    }
+    93% {
+      transform: translate(1px, 0);
+      opacity: 0.88;
+    }
+    95% {
+      transform: translate(-1px, 0);
+      opacity: 0.92;
+    }
+  }
+
+  /* ─── Utility: .neon-glow ────────────────────────────────────────────── */
+  .neon-glow {
+    animation: neon-pulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px oklch(0.65 0.25 265 / 0.8));
+  }
+
+  /* ─── Utility: .neon-glow-cyan ───────────────────────────────────────── */
+  .neon-glow-cyan {
+    animation: neon-pulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px oklch(0.7 0.25 200 / 0.8));
+  }
+
+  /* ─── Utility: .cyber-border ─────────────────────────────────────────── */
+  .cyber-border {
+    border: 1px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+  }
+
+  .cyber-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      oklch(0.65 0.25 265 / 0.9),
+      oklch(0.55 0.22 290 / 0.7),
+      oklch(0.7 0.25 200 / 0.9)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .cyber-border:hover {
+    animation: plasma-ripple 1.5s ease-in-out infinite;
+  }
+
+  /* ─── Utility: .holographic-card ─────────────────────────────────────── */
+  .holographic-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .holographic-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: conic-gradient(
+      from 180deg at 50% 50%,
+      oklch(0.65 0.25 265 / 0.0) 0deg,
+      oklch(0.65 0.25 265 / 0.07) 60deg,
+      oklch(0.55 0.22 290 / 0.05) 120deg,
+      oklch(0.7 0.25 200 / 0.07) 180deg,
+      oklch(0.6 0.24 240 / 0.05) 240deg,
+      oklch(0.65 0.28 330 / 0.06) 300deg,
+      oklch(0.65 0.25 265 / 0.0) 360deg
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    border-radius: inherit;
+    animation: holographic-shift 4s ease infinite;
+  }
+
+  .holographic-card:hover::after {
+    opacity: 1;
+  }
+
+  /* ─── Utility: .cyber-grid-bg ────────────────────────────────────────── */
+  .cyber-grid-bg {
+    background-image: linear-gradient(
+        oklch(0.4 0.1 265 / 0.15) 1px,
+        transparent 1px
+      ), linear-gradient(90deg, oklch(0.4 0.1 265 / 0.15) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: grid-drift 20s linear infinite;
+  }
+
+  /* ─── Utility: .scanline-overlay ─────────────────────────────────────── */
+  .scanline-overlay {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scanline-overlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      oklch(0.97 0 0 / 0.04) 0px,
+      oklch(0.97 0 0 / 0.04) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events: none;
+    z-index: 1;
+    border-radius: inherit;
+  }
+
+  /* ─── Utility: .plasma-button ────────────────────────────────────────── */
+  .plasma-button {
+    position: relative;
+    border: 1px solid oklch(0.65 0.25 265 / 0.6);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .plasma-button:hover {
+    border-color: oklch(0.7 0.25 200 / 0.8);
+    animation: plasma-ripple 1.5s ease-in-out infinite;
+    box-shadow: 0 0 12px oklch(0.65 0.25 265 / 0.4), 0 0 24px
+      oklch(0.7 0.25 200 / 0.2);
+  }
+
+  /* ─── Utility: .data-stream-bg ───────────────────────────────────────── */
+  .data-stream-bg {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 8px,
+      oklch(0.65 0.25 265 / 0.04) 8px,
+      oklch(0.65 0.25 265 / 0.04) 9px,
+      transparent 9px,
+      transparent 16px,
+      oklch(0.7 0.25 200 / 0.03) 16px,
+      oklch(0.7 0.25 200 / 0.03) 17px
+    );
+    background-size: 100% 34px;
+    animation: data-stream 8s linear infinite;
+  }
+
+  /* ─── Utility: .tech-text ────────────────────────────────────────────── */
+  .tech-text {
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-family: "JetBrains Mono", var(--font-mono), monospace;
+    text-shadow: 0 0 6px oklch(0.65 0.25 265 / 0.5);
+  }
+
+  /* ─── Utility: .glitch-text ──────────────────────────────────────────── */
+  .glitch-text {
+    animation: glitch-flicker 6s step-end infinite;
+  }
+
+  /* ─── Utility: .futuristic-panel ─────────────────────────────────────── */
+  .futuristic-panel {
+    background: oklch(0.1 0.03 290 / 0.6);
+    backdrop-filter: blur(14px) saturate(1.5);
+    -webkit-backdrop-filter: blur(14px) saturate(1.5);
+    border: 1px solid oklch(0.65 0.25 265 / 0.35);
+    box-shadow: 0 0 24px oklch(0.65 0.25 265 / 0.12), 0 8px 32px
+      oklch(0 0 0 / 0.5), inset 0 1px 0 oklch(0.97 0 0 / 0.06);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Combine cyber-grid + scanline on .futuristic-panel */
+  .futuristic-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+        oklch(0.4 0.1 265 / 0.1) 1px,
+        transparent 1px
+      ), linear-gradient(90deg, oklch(0.4 0.1 265 / 0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: grid-drift 20s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+    border-radius: inherit;
+  }
+
+  .futuristic-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      oklch(0.97 0 0 / 0.03) 0px,
+      oklch(0.97 0 0 / 0.03) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events: none;
+    z-index: 1;
+    border-radius: inherit;
+  }
+
+  /* ─── Utility: .holo-shimmer ─────────────────────────────────────────── */
+  .holo-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .holo-shimmer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: conic-gradient(
+      from 90deg at 50% 120%,
+      oklch(0.65 0.28 330 / 0.0) 0deg,
+      oklch(0.65 0.28 330 / 0.12) 40deg,
+      oklch(0.65 0.25 265 / 0.14) 90deg,
+      oklch(0.7 0.25 200 / 0.12) 140deg,
+      oklch(0.6 0.24 240 / 0.1) 200deg,
+      oklch(0.55 0.22 290 / 0.08) 260deg,
+      oklch(0.65 0.28 330 / 0.0) 360deg
+    );
+    opacity: 0;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    transform: translateX(-100%);
+    pointer-events: none;
+    z-index: 2;
+    border-radius: inherit;
+  }
+
+  .holo-shimmer:hover::before {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* ─── Futuristic cyber-scan strip ────────────────────────────────────── */
+  .cyber-scan-active {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cyber-scan-active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      oklch(0.65 0.25 265 / 0.6) 30%,
+      oklch(0.7 0.25 200 / 0.9) 50%,
+      oklch(0.65 0.25 265 / 0.6) 70%,
+      transparent
+    );
+    animation: cyber-scan 3s linear infinite;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* ─── Reduced motion override — cyberpunk layer ──────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .neon-glow,
+    .neon-glow-cyan,
+    .cyber-border:hover,
+    .holographic-card::after,
+    .cyber-grid-bg,
+    .data-stream-bg,
+    .plasma-button:hover,
+    .glitch-text,
+    .futuristic-panel::before,
+    .cyber-scan-active::after {
+      animation: none !important;
+    }
+    .holographic-card:hover::after,
+    .holo-shimmer:hover::before {
+      opacity: 0 !important;
+    }
+  }
 }

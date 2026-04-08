@@ -67,14 +67,14 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
 
   return (
     <div
-      className="relative min-h-screen"
+      className="relative min-h-screen cyber-grid-bg scanline-overlay"
       style={{
         background:
           "radial-gradient(ellipse at 50% 0%, oklch(0.13 0.03 300 / 0.55) 0%, oklch(0.07 0 0) 60%)",
       }}
       data-ocid="lobby-page"
     >
-      {/* Subtle vignette overlay */}
+      {/* Subtle vignette overlay — sits above grid, below content */}
       <div
         className="pointer-events-none fixed inset-0 z-0"
         style={{
@@ -94,24 +94,34 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
           />
         </section>
 
-        {/* Gold divider */}
-        <div
-          className="h-px w-full"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, oklch(0.72 0.18 65 / 0.35) 30%, oklch(0.82 0.18 65 / 0.55) 50%, oklch(0.72 0.18 65 / 0.35) 70%, transparent)",
-          }}
-          aria-hidden="true"
-        />
+        {/* Neon divider + gold divider */}
+        <div className="space-y-px" aria-hidden="true">
+          <div
+            className="h-px w-full"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent, oklch(0.65 0.25 265 / 0.5) 30%, oklch(0.70 0.25 200 / 0.7) 50%, oklch(0.65 0.25 265 / 0.5) 70%, transparent)",
+              filter: "blur(0.5px)",
+            }}
+          />
+          <div
+            className="h-px w-full"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent, oklch(0.72 0.18 65 / 0.35) 30%, oklch(0.82 0.18 65 / 0.55) 50%, oklch(0.72 0.18 65 / 0.35) 70%, transparent)",
+            }}
+          />
+        </div>
 
         {/* Game Grid */}
         <section id="games" aria-label="Game lobby">
           {/* Header row */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-            <h2 className="heading-cinematic font-display text-3xl font-bold text-foreground">
+            <h2 className="heading-cinematic glitch-text tech-text font-display text-3xl font-bold text-foreground">
               Game Lobby
             </h2>
             <div className="flex items-center gap-3 flex-wrap">
+              {/* Category filter — cyber-border applied via CategoryFilter wrapper */}
               <CategoryFilter
                 active={categoryFilter}
                 onChange={handleCategoryChange}
@@ -120,7 +130,7 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
           </div>
 
           {/* Search */}
-          <div className="relative mb-8 max-w-sm" data-ocid="game-search">
+          <div className="relative mb-6 max-w-sm" data-ocid="game-search">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
               style={{ color: "oklch(0.72 0.18 65 / 0.65)" }}
@@ -130,16 +140,16 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
               placeholder="Search games…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 glass-dark transition-smooth focus-visible:ring-1"
+              className="pl-9 glass-dark cyber-border transition-smooth focus-visible:ring-1"
               style={{
                 borderColor: "oklch(0.4 0.15 300 / 0.30)",
                 color: "oklch(0.94 0 0)",
               }}
               onFocus={(e) => {
                 e.currentTarget.style.borderColor =
-                  "oklch(0.72 0.18 65 / 0.70)";
+                  "oklch(0.65 0.25 265 / 0.70)";
                 e.currentTarget.style.boxShadow =
-                  "0 0 0 1px oklch(0.72 0.18 65 / 0.25)";
+                  "0 0 0 1px oklch(0.65 0.25 265 / 0.25), 0 0 12px oklch(0.70 0.25 200 / 0.20)";
               }}
               onBlur={(e) => {
                 e.currentTarget.style.borderColor =
@@ -150,6 +160,14 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
             />
           </div>
 
+          {/* GAME GRID // ICP NETWORK label */}
+          <p
+            className="tech-text text-xs mb-4"
+            style={{ color: "oklch(0.65 0.25 265 / 0.65)" }}
+          >
+            {"GAME GRID // ICP NETWORK"}
+          </p>
+
           {/* Grid */}
           {isLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
@@ -159,39 +177,41 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
             </div>
           ) : filteredGames.length === 0 ? (
             <div
-              className="glass-card flex flex-col items-center justify-center py-24 rounded-2xl"
+              className="glass-card futuristic-panel flex flex-col items-center justify-center py-24 rounded-2xl"
               data-ocid="games-empty-state"
             >
-              <Dices
-                className="w-14 h-14 mb-4 opacity-50"
-                style={{ color: "oklch(0.72 0.18 65)" }}
-              />
-              <h3
-                className="text-lg font-semibold mb-1"
-                style={{ color: "oklch(0.97 0 0)" }}
-              >
-                {search ? "No games match your search" : "No games available"}
-              </h3>
-              <p className="text-sm text-muted-foreground mb-5 text-center max-w-xs">
-                {search
-                  ? `We couldn't find any games matching "${search}". Try a different term or clear your filters.`
-                  : "No games are available in this category yet. Check back soon!"}
-              </p>
-              <button
-                type="button"
-                onClick={clearFilters}
-                className="flex items-center gap-2 text-sm font-medium transition-smooth btn-premium px-4 py-2 rounded-lg"
-                style={{
-                  background:
-                    "linear-gradient(135deg, oklch(0.55 0.22 265 / 0.18), oklch(0.45 0.22 265 / 0.10))",
-                  color: "oklch(0.80 0.18 280)",
-                  border: "1px solid oklch(0.55 0.22 265 / 0.35)",
-                }}
-                data-ocid="clear-filters-btn"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                Clear filters
-              </button>
+              {/* futuristic-panel uses z-0 pseudo-elements; content needs relative z-10 */}
+              <div className="relative z-10 flex flex-col items-center">
+                <Dices
+                  className="w-14 h-14 mb-4 opacity-50 neon-glow"
+                  style={{ color: "oklch(0.72 0.18 65)" }}
+                />
+                <h3
+                  className="text-lg font-semibold mb-1"
+                  style={{ color: "oklch(0.97 0 0)" }}
+                >
+                  {search ? "No games match your search" : "No games available"}
+                </h3>
+                <p className="text-sm text-muted-foreground mb-5 text-center max-w-xs">
+                  {search
+                    ? `We couldn't find any games matching "${search}". Try a different term or clear your filters.`
+                    : "No games are available in this category yet. Check back soon!"}
+                </p>
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="flex items-center gap-2 text-sm font-medium transition-smooth btn-premium cyber-border px-4 py-2 rounded-lg"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, oklch(0.55 0.22 265 / 0.18), oklch(0.45 0.22 265 / 0.10))",
+                    color: "oklch(0.80 0.18 280)",
+                  }}
+                  data-ocid="clear-filters-btn"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  Clear filters
+                </button>
+              </div>
             </div>
           ) : (
             <>
@@ -215,15 +235,24 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
           )}
         </section>
 
-        {/* Gold divider */}
-        <div
-          className="h-px w-full"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, oklch(0.72 0.18 65 / 0.35) 30%, oklch(0.82 0.18 65 / 0.55) 50%, oklch(0.72 0.18 65 / 0.35) 70%, transparent)",
-          }}
-          aria-hidden="true"
-        />
+        {/* Neon + gold divider */}
+        <div className="space-y-px" aria-hidden="true">
+          <div
+            className="h-px w-full"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent, oklch(0.65 0.25 265 / 0.5) 30%, oklch(0.70 0.25 200 / 0.7) 50%, oklch(0.65 0.25 265 / 0.5) 70%, transparent)",
+              filter: "blur(0.5px)",
+            }}
+          />
+          <div
+            className="h-px w-full"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent, oklch(0.72 0.18 65 / 0.35) 30%, oklch(0.82 0.18 65 / 0.55) 50%, oklch(0.72 0.18 65 / 0.35) 70%, transparent)",
+            }}
+          />
+        </div>
 
         {/* Versus Mode Banner */}
         {onVersusMode && (
@@ -231,7 +260,7 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
             <button
               type="button"
               onClick={onVersusMode}
-              className="w-full glass-card card-shimmer rounded-2xl p-8 text-left transition-smooth hover:scale-[1.01] focus-visible:ring-2 focus-visible:ring-primary"
+              className="w-full glass-card card-shimmer futuristic-panel rounded-2xl p-8 text-left transition-smooth hover:scale-[1.01] focus-visible:ring-2 focus-visible:ring-primary"
               style={{
                 background:
                   "linear-gradient(135deg, oklch(0.13 0.03 300 / 0.55), oklch(0.10 0.02 300 / 0.35))",
@@ -241,7 +270,7 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
               }}
               data-ocid="versus-mode-banner"
             >
-              <div className="flex items-center justify-between gap-4">
+              <div className="relative z-10 flex items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-3 mb-3">
                     {/* Gold cross-swords SVG */}
@@ -250,6 +279,7 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
                       height="28"
                       viewBox="0 0 24 24"
                       fill="none"
+                      className="neon-glow-cyan"
                       aria-hidden="true"
                     >
                       <path
@@ -273,13 +303,13 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
                       />
                     </svg>
                     <h2
-                      className="heading-cinematic font-display text-2xl font-bold text-gold-glow"
+                      className="heading-cinematic glitch-text tech-text font-display text-2xl font-bold text-gold-glow"
                       style={{ color: "oklch(0.85 0.16 65)" }}
                     >
                       Versus Mode
                     </h2>
                     <span
-                      className="text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider"
+                      className="tech-text text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider"
                       style={{
                         background: "oklch(0.45 0.15 300 / 0.25)",
                         color: "oklch(0.78 0.15 300)",
@@ -298,7 +328,7 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
                   </p>
                 </div>
                 <div
-                  className="shrink-0 ml-4 px-6 py-3 rounded-xl font-semibold text-sm btn-premium"
+                  className="shrink-0 ml-4 px-6 py-3 rounded-xl font-semibold text-sm btn-premium cyber-border"
                   style={{
                     background:
                       "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
@@ -313,37 +343,69 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
           </section>
         )}
 
-        {/* Gold divider */}
-        <div
-          className="h-px w-full"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, oklch(0.72 0.18 65 / 0.35) 30%, oklch(0.82 0.18 65 / 0.55) 50%, oklch(0.72 0.18 65 / 0.35) 70%, transparent)",
-          }}
-          aria-hidden="true"
-        />
+        {/* Neon + gold divider */}
+        <div className="space-y-px" aria-hidden="true">
+          <div
+            className="h-px w-full"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent, oklch(0.65 0.25 265 / 0.5) 30%, oklch(0.70 0.25 200 / 0.7) 50%, oklch(0.65 0.25 265 / 0.5) 70%, transparent)",
+              filter: "blur(0.5px)",
+            }}
+          />
+          <div
+            className="h-px w-full"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent, oklch(0.72 0.18 65 / 0.35) 30%, oklch(0.82 0.18 65 / 0.55) 50%, oklch(0.72 0.18 65 / 0.35) 70%, transparent)",
+            }}
+          />
+        </div>
 
         {/* Midnight Dragons — 8×8 Slot Machine */}
         <section
           id="midnight-dragons"
           aria-label="Midnight Dragons slot machine"
         >
-          <div className="flex items-center gap-3 mb-6">
-            <h2 className="heading-cinematic font-display text-2xl font-bold text-foreground">
-              Midnight Dragons
-            </h2>
-            <span
-              className="text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider"
-              style={{
-                background: "oklch(0.72 0.18 65 / 0.15)",
-                color: "oklch(0.82 0.14 65)",
-                border: "1px solid oklch(0.72 0.18 65 / 0.35)",
-              }}
-            >
-              8×8 Slots
-            </span>
+          {/* Data-stream header strip */}
+          <div
+            className="data-stream-bg rounded-t-xl px-6 py-4 -mb-px"
+            style={{
+              background:
+                "linear-gradient(90deg, oklch(0.12 0.04 290 / 0.9), oklch(0.10 0.03 265 / 0.7))",
+              borderTop: "1px solid oklch(0.65 0.25 265 / 0.40)",
+              borderLeft: "1px solid oklch(0.65 0.25 265 / 0.30)",
+              borderRight: "1px solid oklch(0.65 0.25 265 / 0.30)",
+            }}
+          >
+            <div className="relative z-10 flex items-center gap-3">
+              <h2 className="heading-cinematic tech-text font-display text-2xl font-bold text-foreground">
+                Midnight Dragons
+              </h2>
+              <span
+                className="tech-text text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider"
+                style={{
+                  background: "oklch(0.72 0.18 65 / 0.15)",
+                  color: "oklch(0.82 0.14 65)",
+                  border: "1px solid oklch(0.72 0.18 65 / 0.35)",
+                }}
+              >
+                8×8 Slots
+              </span>
+            </div>
           </div>
-          <MidnightDragons />
+
+          {/* Futuristic panel wrapping the slot machine */}
+          <div
+            className="futuristic-panel rounded-b-xl rounded-tr-xl"
+            style={{
+              border: "1px solid oklch(0.65 0.25 265 / 0.30)",
+            }}
+          >
+            <div className="relative z-10 p-4">
+              <MidnightDragons />
+            </div>
+          </div>
         </section>
       </div>
     </div>

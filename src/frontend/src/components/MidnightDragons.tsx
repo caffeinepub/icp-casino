@@ -300,7 +300,7 @@ function SymbolCell({
   const def = getSymbolDef(id);
   return (
     <div
-      className={`relative flex items-center justify-center transition-all duration-300 ${
+      className={`relative flex items-center justify-center transition-all duration-300 cyber-border ${
         isWinning ? "scale-105 z-10" : ""
       }`}
       style={{
@@ -316,7 +316,7 @@ function SymbolCell({
         boxShadow: isWinning
           ? "0 0 20px oklch(0.72 0.18 65 / 0.7), 0 0 40px oklch(0.72 0.18 65 / 0.35), inset 0 0 10px oklch(0.72 0.18 65 / 0.25)"
           : isSpinning
-            ? "none"
+            ? "0 0 8px 2px oklch(0.65 0.25 265 / 0.4), 0 0 16px oklch(0.70 0.25 200 / 0.2)"
             : "inset 0 1px 0 oklch(1 0 0 / 0.04), inset 0 -1px 0 oklch(0 0 0 / 0.3)",
         filter: isSpinning ? "blur(1px)" : "none",
         opacity: isSpinning ? 0.65 : 1,
@@ -333,7 +333,7 @@ function SymbolCell({
         />
       )}
       <div
-        className="w-14 h-14"
+        className="w-14 h-14 relative z-10"
         style={{
           filter: isWinning
             ? "drop-shadow(0 0 5px oklch(0.72 0.18 65 / 0.9))"
@@ -363,7 +363,7 @@ function Reel({ symbols, isSpinning, winningRows, spinDuration }: ReelProps) {
 
   return (
     <div
-      className="relative overflow-hidden flex-shrink-0"
+      className={`relative overflow-hidden flex-shrink-0 ${isSpinning ? "neon-glow" : ""}`}
       style={{
         width: 80,
         height: 8 * 80,
@@ -371,6 +371,9 @@ function Reel({ symbols, isSpinning, winningRows, spinDuration }: ReelProps) {
           "linear-gradient(180deg, oklch(0.05 0.04 240 / 0.95), oklch(0.07 0.05 240 / 0.9))",
         borderLeft: "1px solid oklch(0.18 0.08 240 / 0.25)",
         borderRight: "1px solid oklch(0.18 0.08 240 / 0.25)",
+        boxShadow: isSpinning
+          ? "0 0 12px oklch(0.65 0.25 265 / 0.4), inset 0 0 8px oklch(0.70 0.25 200 / 0.15)"
+          : "none",
       }}
     >
       {/* Top reel shadow — glass pane illusion */}
@@ -609,7 +612,7 @@ function WalletGateOverlay({
 }) {
   return (
     <div
-      className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-4 rounded-2xl"
+      className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-4 rounded-2xl futuristic-panel"
       style={{
         background:
           "linear-gradient(160deg, rgba(8,3,24,0.97) 0%, rgba(4,2,14,0.98) 100%)",
@@ -619,7 +622,7 @@ function WalletGateOverlay({
       }}
     >
       <div
-        className="flex items-center justify-center w-16 h-16 rounded-full"
+        className="flex items-center justify-center w-16 h-16 rounded-full relative z-10"
         style={{
           background: "rgba(212,175,55,0.09)",
           border: "2px solid rgba(212,175,55,0.55)",
@@ -628,7 +631,7 @@ function WalletGateOverlay({
       >
         <Wallet className="w-8 h-8" style={{ color: "#D4AF37" }} />
       </div>
-      <div className="text-center px-8">
+      <div className="text-center px-8 relative z-10">
         <p
           className="heading-cinematic text-xl mb-1 text-gold-glow"
           style={{ color: "#D4AF37" }}
@@ -641,7 +644,7 @@ function WalletGateOverlay({
       </div>
       {connectError && (
         <p
-          className="text-xs px-6 max-w-xs text-center"
+          className="text-xs px-6 max-w-xs text-center relative z-10"
           style={{ color: "#9333EA" }}
         >
           {connectError}
@@ -652,7 +655,7 @@ function WalletGateOverlay({
         onClick={onConnect}
         disabled={isConnecting}
         data-ocid="wallet-gate-connect-btn"
-        className="btn-premium px-10 py-3.5 rounded-2xl font-black text-base uppercase tracking-widest disabled:opacity-60 disabled:cursor-not-allowed"
+        className="btn-premium plasma-button px-10 py-3.5 rounded-2xl font-black text-base uppercase tracking-widest disabled:opacity-60 disabled:cursor-not-allowed relative z-10"
         style={{
           background: isConnecting
             ? "rgba(99,102,241,0.4)"
@@ -817,9 +820,16 @@ export function MidnightDragons() {
     >
       <div className="container mx-auto px-4 max-w-5xl">
         {/* ── Section title ── */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
+          {/* Futuristic data label accent */}
+          <p
+            className="tech-text text-xs mb-2"
+            style={{ color: "oklch(0.70 0.25 200 / 0.55)" }}
+          >
+            {"// DRAGON PROTOCOL Ω"}
+          </p>
           <h2
-            className="heading-cinematic text-gold-glow"
+            className="heading-cinematic text-gold-glow glitch-text tech-text"
             style={{
               fontSize: "clamp(1.8rem, 4vw, 3rem)",
               background:
@@ -832,7 +842,7 @@ export function MidnightDragons() {
             🐉 Midnight Dragons 🐉
           </h2>
           <p
-            className="mt-2 text-sm font-semibold uppercase tracking-widest"
+            className="mt-2 text-sm font-semibold uppercase tracking-widest tech-text"
             style={{ color: "rgba(164,128,255,0.65)", letterSpacing: "0.2em" }}
           >
             8×8 Premium Dragon Slot · Up to 25× Multiplier
@@ -844,7 +854,7 @@ export function MidnightDragons() {
           className="mb-6 rounded-xl overflow-hidden"
           style={{
             boxShadow:
-              "0 0 40px oklch(0.45 0.25 240 / 0.5), 0 0 80px oklch(0.72 0.18 65 / 0.15)",
+              "0 0 40px oklch(0.45 0.25 240 / 0.5), 0 0 80px oklch(0.72 0.18 65 / 0.15), 0 0 20px oklch(0.65 0.25 265 / 0.2)",
           }}
         >
           <DragonBanner />
@@ -852,7 +862,7 @@ export function MidnightDragons() {
 
         {/* ── Main game cabinet ── */}
         <div
-          className="rounded-3xl overflow-hidden relative"
+          className="rounded-3xl overflow-hidden relative futuristic-panel cyber-grid-bg"
           style={{
             /* Premium metallic cabinet */
             borderTop: "2px solid rgba(212,175,55,0.5)",
@@ -862,6 +872,7 @@ export function MidnightDragons() {
             boxShadow: [
               "0 0 60px 8px rgba(74,122,232,0.2)",
               "0 0 30px 2px rgba(212,175,55,0.12)",
+              "0 0 40px 4px oklch(0.65 0.25 265 / 0.15)",
               "0 24px 80px rgba(0,0,0,0.85)",
               "inset 0 2px 0 rgba(255,220,100,0.18)",
               "inset 0 -2px 0 rgba(30,15,60,0.5)",
@@ -869,11 +880,11 @@ export function MidnightDragons() {
           }}
         >
           {/* Top gold light strip */}
-          <div className="cinematic-top-light" />
+          <div className="cinematic-top-light" style={{ zIndex: 2 }} />
 
           {/* Cabinet header strip */}
           <div
-            className="px-6 py-3 flex items-center justify-between"
+            className="px-6 py-3 flex items-center justify-between relative z-10"
             style={{
               background:
                 "linear-gradient(180deg, rgba(10,6,30,0.98) 0%, rgba(8,4,22,0.95) 100%)",
@@ -902,7 +913,7 @@ export function MidnightDragons() {
               )}
             </div>
             <span
-              className="text-xs font-black uppercase tracking-widest"
+              className="text-xs font-black uppercase tracking-widest tech-text"
               style={{ color: "rgba(212,175,55,0.5)", letterSpacing: "0.22em" }}
             >
               ⬦ DRAGON REELS ⬦
@@ -931,6 +942,7 @@ export function MidnightDragons() {
 
           {/* Reel grid container */}
           <div
+            className="scanline-overlay relative z-10"
             style={{
               background:
                 "linear-gradient(180deg, rgba(6,3,18,0.98) 0%, rgba(8,4,22,0.95) 100%)",
@@ -978,7 +990,7 @@ export function MidnightDragons() {
 
               {/* Reel viewport with inset depth */}
               <div
-                className="overflow-hidden mx-auto rounded-xl"
+                className="overflow-hidden mx-auto rounded-xl relative"
                 style={{
                   width: REELS_COUNT * 80,
                   height: ROWS_COUNT * 80,
@@ -986,10 +998,9 @@ export function MidnightDragons() {
                   border: "1px solid oklch(0.15 0.06 240 / 0.5)",
                   boxShadow:
                     "inset 0 4px 20px rgba(0,0,0,0.9), inset 0 -4px 12px rgba(30,15,60,0.5)",
-                  position: "relative",
                 }}
               >
-                {/* Win row highlights */}
+                {/* Win row highlights — gold (not red) */}
                 {winLines.map((win) => (
                   <div
                     key={win.row}
@@ -1001,7 +1012,8 @@ export function MidnightDragons() {
                         "linear-gradient(90deg, oklch(0.72 0.18 65 / 0.05) 0%, oklch(0.72 0.18 65 / 0.22) 30%, oklch(0.72 0.18 65 / 0.30) 50%, oklch(0.72 0.18 65 / 0.22) 70%, oklch(0.72 0.18 65 / 0.05) 100%)",
                       borderTop: "1px solid oklch(0.72 0.18 65 / 0.6)",
                       borderBottom: "1px solid oklch(0.72 0.18 65 / 0.6)",
-                      boxShadow: "0 0 24px oklch(0.72 0.18 65 / 0.4)",
+                      boxShadow:
+                        "0 0 24px oklch(0.72 0.18 65 / 0.4), 0 0 8px oklch(0.65 0.25 265 / 0.2)",
                       animation: "goldShimmer 1.6s ease-in-out infinite",
                     }}
                   />
@@ -1025,7 +1037,7 @@ export function MidnightDragons() {
 
           {/* ── Controls bar ── */}
           <div
-            className="px-6 py-5"
+            className="px-6 py-5 relative z-10"
             style={{
               background:
                 "linear-gradient(180deg, rgba(8,4,22,0.98) 0%, rgba(10,5,26,0.95) 100%)",
@@ -1035,10 +1047,11 @@ export function MidnightDragons() {
             <div className="flex flex-wrap items-center justify-between gap-4">
               {/* Balance display */}
               <div
-                className="flex items-center gap-2.5 px-4 py-2 rounded-full"
+                className="flex items-center gap-2.5 px-4 py-2 rounded-full cyber-border tech-text"
                 style={{
                   background: "rgba(212,175,55,0.08)",
                   border: "1px solid rgba(212,175,55,0.3)",
+                  boxShadow: "0 0 8px oklch(0.72 0.18 65 / 0.15)",
                 }}
               >
                 <span
@@ -1059,7 +1072,7 @@ export function MidnightDragons() {
               {/* Bet selector */}
               <div className="flex items-center gap-3">
                 <span
-                  className="text-xs font-bold uppercase tracking-widest"
+                  className="text-xs font-bold uppercase tracking-widest tech-text"
                   style={{
                     color: "rgba(164,128,255,0.65)",
                     letterSpacing: "0.18em",
@@ -1074,7 +1087,7 @@ export function MidnightDragons() {
                       type="button"
                       onClick={() => !isSpinning && setBetIcp(b)}
                       disabled={isSpinning || !isConnected}
-                      className="px-3 py-1.5 rounded-lg text-sm font-black btn-premium disabled:opacity-50"
+                      className={`px-3 py-1.5 rounded-lg text-sm font-black btn-premium disabled:opacity-50 tech-text cyber-border ${betIcp === b ? "neon-glow" : ""}`}
                       style={{
                         background:
                           betIcp === b
@@ -1088,7 +1101,7 @@ export function MidnightDragons() {
                             : "1px solid rgba(74,122,232,0.35)",
                         boxShadow:
                           betIcp === b
-                            ? "0 0 14px rgba(212,175,55,0.45), inset 0 1px 0 rgba(255,220,100,0.2)"
+                            ? "0 0 14px rgba(212,175,55,0.45), 0 0 6px oklch(0.65 0.25 265 / 0.2), inset 0 1px 0 rgba(255,220,100,0.2)"
                             : "inset 0 1px 0 rgba(255,255,255,0.04)",
                         transform: betIcp === b ? "scale(1.05)" : "scale(1)",
                       }}
@@ -1106,13 +1119,13 @@ export function MidnightDragons() {
               <div className="flex items-center min-w-[120px] justify-center">
                 {outcome.status === "won" && (
                   <div
-                    className="relative overflow-hidden px-4 py-1.5 rounded-xl text-sm font-black"
+                    className="relative overflow-hidden px-4 py-1.5 rounded-xl text-sm font-black glitch-text"
                     style={{
                       background: "rgba(212,175,55,0.12)",
                       border: "1px solid rgba(212,175,55,0.65)",
                       color: "#D4AF37",
                       boxShadow:
-                        "0 0 20px rgba(212,175,55,0.4), inset 0 1px 0 rgba(255,220,100,0.2)",
+                        "0 0 20px rgba(212,175,55,0.4), 0 0 8px oklch(0.65 0.25 265 / 0.2), inset 0 1px 0 rgba(255,220,100,0.2)",
                     }}
                     data-ocid="win-display"
                   >
@@ -1145,7 +1158,7 @@ export function MidnightDragons() {
                 type="button"
                 onClick={spin}
                 disabled={isSpinning || !isConnected || betE8s > balance}
-                className="relative px-8 py-3.5 rounded-xl font-black text-lg uppercase tracking-wider overflow-hidden"
+                className="relative px-8 py-3.5 rounded-xl font-black text-lg uppercase tracking-wider overflow-hidden plasma-button"
                 style={{
                   letterSpacing: "0.18em",
                   background: isSpinning
@@ -1163,6 +1176,7 @@ export function MidnightDragons() {
                         "inset 0 -3px 0 rgba(40,30,120,0.45)",
                         "0 0 32px rgba(99,102,241,0.5)",
                         "0 0 60px rgba(99,102,241,0.2)",
+                        "0 0 16px oklch(0.70 0.25 200 / 0.2)",
                         "0 6px 24px rgba(0,0,0,0.7)",
                       ].join(", "),
                   minWidth: 140,
@@ -1183,6 +1197,7 @@ export function MidnightDragons() {
                       "inset 0 -3px 0 rgba(40,30,120,0.45)",
                       "0 0 48px rgba(99,102,241,0.65)",
                       "0 0 80px rgba(99,102,241,0.3)",
+                      "0 0 24px oklch(0.70 0.25 200 / 0.35)",
                       "0 10px 32px rgba(0,0,0,0.75)",
                     ].join(", ");
                   }
@@ -1197,6 +1212,7 @@ export function MidnightDragons() {
                         "inset 0 -3px 0 rgba(40,30,120,0.45)",
                         "0 0 32px rgba(99,102,241,0.5)",
                         "0 0 60px rgba(99,102,241,0.2)",
+                        "0 0 16px oklch(0.70 0.25 200 / 0.2)",
                         "0 6px 24px rgba(0,0,0,0.7)",
                       ].join(", ");
                 }}
@@ -1232,7 +1248,7 @@ export function MidnightDragons() {
                 style={{ borderTop: "1px solid rgba(212,175,55,0.2)" }}
               >
                 <span
-                  className="text-xs font-black uppercase tracking-widest self-center mr-2"
+                  className="text-xs font-black uppercase tracking-widest self-center mr-2 tech-text"
                   style={{
                     color: "rgba(212,175,55,0.55)",
                     letterSpacing: "0.18em",
@@ -1243,11 +1259,13 @@ export function MidnightDragons() {
                 {winLines.map((win) => (
                   <div
                     key={win.row}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold glitch-text cyber-border"
                     style={{
                       background: "rgba(212,175,55,0.1)",
                       border: "1px solid rgba(212,175,55,0.45)",
                       color: "#D4AF37",
+                      boxShadow:
+                        "0 0 8px oklch(0.72 0.18 65 / 0.3), 0 0 4px oklch(0.65 0.25 265 / 0.15)",
                     }}
                   >
                     <span>Row {win.row + 1}</span>
@@ -1270,7 +1288,7 @@ export function MidnightDragons() {
             {/* Balance after result */}
             {(outcome.status === "won" || outcome.status === "lost") && (
               <p
-                className="mt-2 text-xs text-center font-mono"
+                className="mt-2 text-xs text-center font-mono tech-text"
                 style={{ color: "rgba(212,175,55,0.5)" }}
               >
                 New balance: {formatICP(outcome.newBalance)} ICP
@@ -1279,7 +1297,7 @@ export function MidnightDragons() {
 
             {/* House edge fine print */}
             <p
-              className="mt-2 text-center text-xs font-mono"
+              className="mt-2 text-center text-xs font-mono tech-text"
               style={{ color: "rgba(74,122,232,0.3)" }}
               data-ocid="house-edge-note"
             >
@@ -1299,7 +1317,7 @@ export function MidnightDragons() {
 
         {/* ── Paytable ── */}
         <div
-          className="mt-5 rounded-2xl p-5"
+          className="mt-5 rounded-2xl p-5 futuristic-panel"
           style={{
             background:
               "linear-gradient(135deg, rgba(8,4,22,0.9), rgba(5,2,14,0.95))",
@@ -1308,16 +1326,16 @@ export function MidnightDragons() {
           }}
         >
           <div
-            className="text-center text-xs font-black uppercase tracking-widest mb-4"
+            className="text-center text-xs font-black uppercase tracking-widest mb-4 tech-text relative z-10"
             style={{ color: "rgba(164,128,255,0.55)", letterSpacing: "0.2em" }}
           >
             ⬦ Paytable — Win Multipliers ⬦
           </div>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-4 gap-3 relative z-10">
             {Object.entries(MULTIPLIERS).map(([count, mult]) => (
               <div
                 key={count}
-                className="text-center py-2.5 rounded-xl"
+                className="text-center py-2.5 rounded-xl cyber-border"
                 style={{
                   background:
                     "radial-gradient(ellipse at center, rgba(212,175,55,0.08) 0%, rgba(8,4,22,0.6) 100%)",
@@ -1325,7 +1343,7 @@ export function MidnightDragons() {
                 }}
               >
                 <div
-                  className="text-lg font-black text-gold-glow"
+                  className="text-lg font-black text-gold-glow tech-text"
                   style={{ color: "oklch(0.75 0.18 65)" }}
                 >
                   {mult}x
@@ -1353,6 +1371,7 @@ export function MidnightDragons() {
           50% {
             box-shadow: 0 0 32px oklch(0.72 0.18 65 / 0.90),
                         0 0 64px oklch(0.72 0.18 65 / 0.50),
+                        0 0 12px oklch(0.65 0.25 265 / 0.30),
                         inset 0 0 18px oklch(0.72 0.18 65 / 0.35);
           }
         }

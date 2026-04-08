@@ -64,25 +64,26 @@ export function ChatBox() {
   return (
     <div
       data-ocid="chatbox"
-      className="w-full glass-dark border-b"
+      className="w-full futuristic-panel border-b"
       style={{
         borderTop: "2px solid oklch(0.72 0.18 65 / 0.35)",
         borderBottomColor: "oklch(0.72 0.18 65 / 0.15)",
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 py-3">
-        {/* Header */}
-        <div className="flex items-center gap-2 mb-2.5">
+      <div className="max-w-7xl mx-auto px-4 py-3 relative z-10">
+        {/* Data stream section header */}
+        <div className="flex items-center gap-2 mb-2.5" data-ocid="chat-header">
           <MessageCircle
             className="w-4 h-4"
             style={{ color: "oklch(0.72 0.18 65)" }}
             aria-hidden="true"
           />
+          {/* LIVE NETWORK CHAT label in tech-text style */}
           <span
-            className="text-xs font-bold uppercase tracking-widest"
+            className="tech-text text-xs font-bold"
             style={{ color: "oklch(0.92 0 0)" }}
           >
-            Live Casino Chat
+            LIVE NETWORK CHAT
           </span>
           <span className="ml-auto flex items-center gap-1.5">
             <span
@@ -93,7 +94,7 @@ export function ChatBox() {
               }}
             />
             <span
-              className="text-[10px] font-mono"
+              className="tech-text text-[10px]"
               style={{ color: "oklch(0.55 0.03 65)" }}
             >
               {isLoading ? "…" : `${messages.length} messages`}
@@ -130,8 +131,9 @@ export function ChatBox() {
                         : "transparent",
                   }}
                 >
+                  {/* Timestamp in tech-text mono style */}
                   <span
-                    className="font-mono text-[10px] shrink-0 tabular-nums"
+                    className="tech-text text-[10px] shrink-0 tabular-nums"
                     style={{ color: "oklch(0.45 0.02 65)" }}
                   >
                     {formatTime(msg.timestamp)}
@@ -155,7 +157,7 @@ export function ChatBox() {
           </div>
         </ScrollArea>
 
-        {/* Input */}
+        {/* Input row */}
         <div className="flex gap-2 mt-2.5" data-ocid="chat-input-row">
           <Input
             data-ocid="chat-input"
@@ -163,15 +165,15 @@ export function ChatBox() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Say something to the table…"
-            className="flex-1 h-8 text-xs glass-dark transition-smooth"
+            className="flex-1 h-8 text-xs glass-dark cyber-border transition-smooth"
             style={{
               borderColor: "oklch(0.4 0.15 300 / 0.30)",
               color: "oklch(0.88 0.02 65)",
             }}
             onFocus={(e) => {
-              e.currentTarget.style.borderColor = "oklch(0.72 0.18 65 / 0.65)";
+              e.currentTarget.style.borderColor = "oklch(0.65 0.28 265 / 0.75)";
               e.currentTarget.style.boxShadow =
-                "0 0 0 1px oklch(0.72 0.18 65 / 0.20)";
+                "0 0 0 1px oklch(0.65 0.28 265 / 0.25), 0 0 12px oklch(0.70 0.25 200 / 0.20)";
             }}
             onBlur={(e) => {
               e.currentTarget.style.borderColor = "oklch(0.4 0.15 300 / 0.30)";
@@ -185,7 +187,7 @@ export function ChatBox() {
             data-ocid="chat-send"
             onClick={handleSend}
             size="sm"
-            className="h-8 px-3 font-bold btn-premium"
+            className="h-8 px-3 font-bold btn-premium plasma-button"
             style={{
               background:
                 "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",

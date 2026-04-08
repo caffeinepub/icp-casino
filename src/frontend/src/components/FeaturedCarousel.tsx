@@ -58,13 +58,16 @@ export function FeaturedCarousel({
 
   return (
     <div
-      className="relative rounded-xl overflow-hidden bg-card border border-border group select-none transition-all duration-500"
+      className="relative rounded-xl overflow-hidden bg-card border border-border group select-none transition-all duration-500 futuristic-panel"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       data-ocid="featured-carousel"
     >
-      {/* Slide image */}
-      <div className="relative aspect-[21/9] md:aspect-[3/1] overflow-hidden">
+      {/* Slide image — needs z-10 to sit above futuristic-panel pseudo-elements */}
+      <div
+        className="relative aspect-[21/9] md:aspect-[3/1] overflow-hidden"
+        style={{ zIndex: 2 }}
+      >
         {imageSrc ? (
           <img
             key={game.id.toString()}
@@ -105,14 +108,17 @@ export function FeaturedCarousel({
       </div>
 
       {/* Content overlay */}
-      <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10">
+      <div
+        className="absolute inset-0 flex flex-col justify-end p-6 md:p-10"
+        style={{ zIndex: 3 }}
+      >
         <span
           className={`${CATEGORY_BADGE[game.category]} mb-2 w-fit backdrop-blur-sm`}
           style={{ border: "1px solid oklch(0.72 0.18 65 / 0.35)" }}
         >
           {CATEGORY_LABEL[game.category]}
         </span>
-        <h2 className="heading-cinematic text-2xl md:text-4xl lg:text-5xl mb-2 leading-tight max-w-lg">
+        <h2 className="heading-cinematic glitch-text tech-text text-2xl md:text-4xl lg:text-5xl mb-2 leading-tight max-w-lg">
           {game.name}
         </h2>
         <div className="flex items-center gap-4 text-sm text-muted-foreground mb-5">
@@ -127,7 +133,7 @@ export function FeaturedCarousel({
         </div>
         <Button
           size="lg"
-          className="btn-premium w-fit gap-2"
+          className="btn-premium w-fit gap-2 cyber-border"
           style={{
             background:
               "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
@@ -149,8 +155,11 @@ export function FeaturedCarousel({
             type="button"
             onClick={prev}
             aria-label="Previous game"
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full glass-dark flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 hover:border-[oklch(0.72_0.18_65/_0.6)] focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            style={{ border: "1px solid oklch(0.72 0.18 65 / 0.25)" }}
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full glass-dark plasma-button flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            style={{
+              border: "1px solid oklch(0.65 0.25 265 / 0.45)",
+              zIndex: 4,
+            }}
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -158,14 +167,20 @@ export function FeaturedCarousel({
             type="button"
             onClick={next}
             aria-label="Next game"
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full glass-dark flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 hover:border-[oklch(0.72_0.18_65/_0.6)] focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            style={{ border: "1px solid oklch(0.72 0.18 65 / 0.25)" }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full glass-dark plasma-button flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            style={{
+              border: "1px solid oklch(0.65 0.25 265 / 0.45)",
+              zIndex: 4,
+            }}
           >
             <ChevronRight className="w-4 h-4" />
           </button>
 
           {/* Slide indicator dots */}
-          <div className="absolute bottom-4 right-6 flex items-center gap-1.5">
+          <div
+            className="absolute bottom-4 right-6 flex items-center gap-1.5"
+            style={{ zIndex: 4 }}
+          >
             {games.map((g, i) => (
               <button
                 key={g.id.toString()}
@@ -173,7 +188,9 @@ export function FeaturedCarousel({
                 onClick={() => setCurrent(i)}
                 aria-label={`Go to slide ${i + 1}`}
                 className={`h-2 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${
-                  i === current ? "w-5" : "w-2 hover:opacity-80"
+                  i === current
+                    ? "w-5 neon-glow"
+                    : "w-2 hover:opacity-80 neon-glow-cyan"
                 }`}
                 style={{
                   background:
