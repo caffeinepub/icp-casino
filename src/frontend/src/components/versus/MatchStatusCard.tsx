@@ -15,7 +15,7 @@ function WagerLabel({ wager }: { wager: WagerAmount }) {
   return (
     <span
       className="font-mono font-bold"
-      style={{ color: "oklch(0.82 0.18 65)" }}
+      style={{ color: "oklch(0.82 0.14 65)" }}
     >
       {wagerToICP(wager)} ICP
     </span>
@@ -54,13 +54,13 @@ export function MatchStatusCard({ match, onLeave }: MatchStatusCardProps) {
             />
             <p
               className="font-display text-3xl font-bold"
-              style={{ color: "oklch(0.82 0.18 65)" }}
+              style={{ color: "oklch(0.82 0.14 65)" }}
             >
               Winner!
             </p>
             <p
               className="text-sm mt-2"
-              style={{ color: "oklch(0.60 0.05 65)" }}
+              style={{ color: "oklch(0.65 0.04 280)" }}
             >
               You won <WagerLabel wager={match.wager} /> × 2
             </p>
@@ -88,7 +88,7 @@ export function MatchStatusCard({ match, onLeave }: MatchStatusCardProps) {
           <div
             className="rounded-lg p-6 border text-center"
             style={{
-              background: "oklch(0.13 0.01 45)",
+              background: "oklch(0.13 0.03 290)",
               borderColor: "oklch(0.25 0.05 65 / 0.4)",
             }}
           >
@@ -104,7 +104,7 @@ export function MatchStatusCard({ match, onLeave }: MatchStatusCardProps) {
             className="w-full transition-smooth"
             style={{
               borderColor: "oklch(0.72 0.18 65 / 0.5)",
-              color: "oklch(0.82 0.18 65)",
+              color: "oklch(0.82 0.14 65)",
             }}
             data-ocid="leave-match-btn"
           >
@@ -121,18 +121,18 @@ export function MatchStatusCard({ match, onLeave }: MatchStatusCardProps) {
         <div
           className="rounded-lg p-6 border text-center space-y-4"
           style={{
-            background: "oklch(0.11 0.01 45)",
+            background: "oklch(0.10 0.03 290)",
             borderColor: "oklch(0.25 0.05 65 / 0.35)",
           }}
         >
           <div className="versus-spinner mx-auto" />
           <p
             className="font-display text-lg font-semibold"
-            style={{ color: "oklch(0.78 0.03 65)" }}
+            style={{ color: "oklch(0.72 0 0)" }}
           >
             Searching for Opponent…
           </p>
-          <p className="text-sm" style={{ color: "oklch(0.50 0.03 65)" }}>
+          <p className="text-sm" style={{ color: "oklch(0.50 0.03 280)" }}>
             Wager: <WagerLabel wager={match.wager} />
           </p>
         </div>
@@ -161,7 +161,7 @@ export function MatchStatusCard({ match, onLeave }: MatchStatusCardProps) {
         <div
           className="rounded-lg p-5 border space-y-3"
           style={{
-            background: "oklch(0.11 0.01 45)",
+            background: "oklch(0.10 0.03 290)",
             borderColor: "oklch(0.72 0.18 65 / 0.3)",
           }}
         >
@@ -177,12 +177,12 @@ export function MatchStatusCard({ match, onLeave }: MatchStatusCardProps) {
               Wager Agreement
             </span>
           </div>
-          <p className="text-sm" style={{ color: "oklch(0.68 0.03 65)" }}>
+          <p className="text-sm" style={{ color: "oklch(0.62 0.04 280)" }}>
             Both players must agree to wager <WagerLabel wager={match.wager} />{" "}
             each. Winner takes{" "}
             <span
               className="font-mono font-bold"
-              style={{ color: "oklch(0.82 0.18 65)" }}
+              style={{ color: "oklch(0.82 0.14 65)" }}
             >
               {wagerToICP(match.wager) * 2} ICP
             </span>
@@ -190,7 +190,7 @@ export function MatchStatusCard({ match, onLeave }: MatchStatusCardProps) {
           </p>
           <div
             className="flex items-center gap-3 text-xs"
-            style={{ color: "oklch(0.55 0.03 65)" }}
+            style={{ color: "oklch(0.58 0.04 280)" }}
           >
             <span className="flex items-center gap-1">
               <CheckCircle
@@ -237,7 +237,7 @@ export function MatchStatusCard({ match, onLeave }: MatchStatusCardProps) {
         {hasAccepted && (
           <p
             className="text-sm text-center"
-            style={{ color: "oklch(0.55 0.03 65)" }}
+            style={{ color: "oklch(0.58 0.04 280)" }}
           >
             Waiting for opponent to accept…
           </p>
@@ -251,7 +251,7 @@ export function MatchStatusCard({ match, onLeave }: MatchStatusCardProps) {
     <div
       className="rounded-lg px-5 py-4 border flex items-center gap-3"
       style={{
-        background: "oklch(0.11 0.01 45)",
+        background: "oklch(0.10 0.03 290)",
         borderColor: "oklch(0.72 0.18 65 / 0.35)",
       }}
       data-ocid="active-match-state"
@@ -263,11 +263,11 @@ export function MatchStatusCard({ match, onLeave }: MatchStatusCardProps) {
       <div>
         <p
           className="text-sm font-semibold"
-          style={{ color: "oklch(0.82 0.18 65)" }}
+          style={{ color: "oklch(0.82 0.14 65)" }}
         >
           Match Active
         </p>
-        <p className="text-xs" style={{ color: "oklch(0.50 0.03 65)" }}>
+        <p className="text-xs" style={{ color: "oklch(0.50 0.03 280)" }}>
           Pot: <WagerLabel wager={match.wager} /> × 2
         </p>
       </div>

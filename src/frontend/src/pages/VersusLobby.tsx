@@ -77,26 +77,26 @@ function GameCard({
       <p
         className="font-display font-semibold text-base mb-1"
         style={{
-          color: selected ? "oklch(0.88 0.18 65)" : "oklch(0.82 0.02 65)",
+          color: selected ? "oklch(0.85 0.14 65)" : "oklch(0.82 0 0)",
         }}
       >
         {label}
       </p>
       <p
         className="text-xs leading-relaxed"
-        style={{ color: "oklch(0.52 0.03 65)" }}
+        style={{ color: "oklch(0.58 0.04 280)" }}
       >
         {desc}
       </p>
       {selected && (
         <div
           className="mt-3 text-xs font-bold flex items-center gap-1.5"
-          style={{ color: "oklch(0.82 0.18 65)" }}
+          style={{ color: "oklch(0.82 0.14 65)" }}
         >
           <span
             className="w-2 h-2 rounded-full inline-block"
             style={{
-              background: "oklch(0.82 0.18 65)",
+              background: "oklch(0.82 0.14 65)",
               boxShadow: "0 0 6px oklch(0.72 0.18 65 / 0.80)",
             }}
           />
@@ -151,7 +151,7 @@ function OpenMatchRow({
       <div className="flex items-center gap-3 shrink-0">
         <span
           className="font-mono text-sm font-bold icp-value"
-          style={{ color: "oklch(0.82 0.18 65)" }}
+          style={{ color: "oklch(0.82 0.14 65)" }}
         >
           {wagerToICP(match.wager)} ICP
         </span>
@@ -189,12 +189,12 @@ function PlugWalletFullBanner() {
     >
       <Wallet
         className="w-6 h-6 mt-0.5 shrink-0"
-        style={{ color: "oklch(0.82 0.18 65)" }}
+        style={{ color: "oklch(0.82 0.14 65)" }}
       />
       <div className="space-y-1">
         <p
           className="font-display font-bold text-base"
-          style={{ color: "oklch(0.88 0.18 65)" }}
+          style={{ color: "oklch(0.85 0.14 65)" }}
         >
           Plug Wallet Required
         </p>
@@ -332,7 +332,7 @@ export default function VersusLobby({ onMatchStart }: VersusLobbyProps) {
             </svg>
             <h1
               className="heading-cinematic text-gold-glow font-display text-3xl font-bold"
-              style={{ color: "oklch(0.88 0.18 65)" }}
+              style={{ color: "oklch(0.85 0.14 65)" }}
             >
               Versus Mode
             </h1>

@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   ArrowDownToLine,
-  Coins,
   LogIn,
   LogOut,
   Menu,
@@ -61,7 +60,7 @@ export function Navbar({
           left: 0;
           width: 0;
           height: 2px;
-          background: linear-gradient(90deg, oklch(0.72 0.18 65), oklch(0.82 0.18 65));
+          background: linear-gradient(90deg, oklch(0.58 0.22 265), oklch(0.72 0.20 290));
           transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
           border-radius: 1px;
         }
@@ -70,45 +69,106 @@ export function Navbar({
           width: 100%;
         }
         .nav-link.active {
-          color: oklch(0.82 0.18 65);
-          text-shadow: 0 0 12px oklch(0.72 0.18 65 / 0.45);
+          color: oklch(0.80 0.18 280);
+          text-shadow: 0 0 12px oklch(0.58 0.22 265 / 0.45);
         }
       `}</style>
 
       <header
-        className="sticky top-0 z-50 glass-dark blur-xl"
+        className="sticky top-0 z-50"
         style={{
-          backdropFilter: "blur(20px) saturate(1.3)",
-          WebkitBackdropFilter: "blur(20px) saturate(1.3)",
-          borderBottom: "1px solid oklch(0.72 0.18 65 / 0.20)",
+          /* FIXED: deep purple background, not orange-brown */
+          background: "oklch(0.10 0.04 290 / 0.95)",
+          borderBottom: "1px solid oklch(0.55 0.22 265 / 0.25)",
           boxShadow:
-            "0 2px 24px oklch(0 0 0 / 0.65), 0 1px 0 oklch(0.72 0.18 65 / 0.18)",
+            "0 2px 24px oklch(0 0 0 / 0.65), 0 1px 0 oklch(0.55 0.22 265 / 0.18)",
         }}
         data-ocid="navbar"
       >
         <div className="container mx-auto flex items-center justify-between h-16 px-4">
-          {/* Brand */}
+          {/* Brand — DFINITY-inspired purple/indigo/violet gradient logo */}
           <button
             type="button"
             onClick={onNavigate}
             className="flex items-center gap-2.5 group transition-smooth"
             aria-label="ICP Casino Home"
           >
+            {/* Logo icon: DFINITY-inspired wide-spectrum gradient icon */}
             <div
-              className="w-9 h-9 rounded-lg flex items-center justify-center shadow-md group-hover:scale-105 transition-smooth border-gold-pulse"
+              className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md group-hover:scale-105 transition-smooth"
               style={{
                 background:
-                  "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.58 0.18 65))",
-                boxShadow: "0 2px 12px oklch(0.72 0.18 65 / 0.45)",
+                  "linear-gradient(135deg, oklch(0.65 0.28 330) 0%, oklch(0.55 0.27 290) 25%, oklch(0.55 0.28 265) 50%, oklch(0.60 0.27 240) 75%, oklch(0.70 0.25 200) 100%)",
+                boxShadow:
+                  "0 2px 20px oklch(0.60 0.27 265 / 0.65), 0 0 40px oklch(0.65 0.28 300 / 0.25)",
               }}
             >
-              <Coins className="w-5 h-5" style={{ color: "oklch(0.07 0 0)" }} />
+              {/* ICP infinity-style SVG icon with gradient strokes */}
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <defs>
+                  <linearGradient
+                    id="logoIconGrad"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="0%"
+                  >
+                    <stop offset="0%" stopColor="oklch(0.95 0.05 330)" />
+                    <stop offset="50%" stopColor="oklch(0.97 0 0)" />
+                    <stop offset="100%" stopColor="oklch(0.92 0.08 200)" />
+                  </linearGradient>
+                </defs>
+                <ellipse
+                  cx="8"
+                  cy="12"
+                  rx="5.5"
+                  ry="3.5"
+                  stroke="url(#logoIconGrad)"
+                  strokeWidth="2"
+                  fill="none"
+                />
+                <ellipse
+                  cx="16"
+                  cy="12"
+                  rx="5.5"
+                  ry="3.5"
+                  stroke="url(#logoIconGrad)"
+                  strokeWidth="2"
+                  fill="none"
+                />
+                <circle cx="12" cy="12" r="2" fill="oklch(0.97 0 0)" />
+              </svg>
             </div>
-            <span
-              className="heading-cinematic text-gold-glow font-display text-xl font-bold tracking-tight"
-              style={{ color: "oklch(0.88 0.18 65)" }}
-            >
-              ICP <span style={{ color: "oklch(0.72 0.15 300)" }}>Casino</span>
+            {/* Logo text: wide DFINITY-style spectrum gradient */}
+            <span className="heading-cinematic font-display text-xl font-bold tracking-tight">
+              <span
+                style={{
+                  background:
+                    "linear-gradient(90deg, oklch(0.65 0.28 330) 0%, oklch(0.62 0.27 290) 30%, oklch(0.65 0.28 265) 60%, oklch(0.70 0.25 200) 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                ICP{" "}
+              </span>
+              <span
+                style={{
+                  background:
+                    "linear-gradient(90deg, oklch(0.65 0.28 265) 0%, oklch(0.60 0.27 240) 50%, oklch(0.70 0.25 200) 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                Casino
+              </span>
             </span>
           </button>
 
@@ -132,7 +192,7 @@ export function Navbar({
             >
               <Sword
                 className="w-3.5 h-3.5"
-                style={{ color: "oklch(0.72 0.18 65)" }}
+                style={{ color: "oklch(0.68 0.22 265)" }}
               />
               Versus Mode
             </button>
@@ -152,9 +212,9 @@ export function Navbar({
               <div
                 className="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-smooth"
                 style={{
-                  background: "oklch(0.14 0.02 45 / 0.80)",
-                  borderColor: "oklch(0.72 0.18 65 / 0.40)",
-                  boxShadow: "0 0 12px oklch(0.72 0.18 65 / 0.12)",
+                  background: "oklch(0.14 0.04 290 / 0.80)",
+                  borderColor: "oklch(0.55 0.22 265 / 0.40)",
+                  boxShadow: "0 0 12px oklch(0.55 0.22 265 / 0.12)",
                 }}
                 data-ocid="wallet-balance"
               >
@@ -166,8 +226,8 @@ export function Navbar({
                   <Skeleton className="h-4 w-20" />
                 ) : (
                   <span
-                    className="text-sm font-mono font-semibold text-gold-glow wallet-balance"
-                    style={{ color: "oklch(0.88 0.18 65)" }}
+                    className="text-sm font-mono font-semibold wallet-balance"
+                    style={{ color: "oklch(0.83 0.14 65)" }}
                   >
                     {balanceFormatted} ICP
                   </span>
@@ -183,9 +243,9 @@ export function Navbar({
                   <span
                     className="text-xs font-mono px-2.5 py-1.5 rounded-lg"
                     style={{
-                      color: "oklch(0.65 0.03 65)",
-                      background: "oklch(0.14 0.02 45 / 0.80)",
-                      border: "1px solid oklch(0.25 0.05 65 / 0.40)",
+                      color: "oklch(0.70 0.05 280)",
+                      background: "oklch(0.14 0.04 290 / 0.80)",
+                      border: "1px solid oklch(0.30 0.06 280 / 0.40)",
                     }}
                     title={principalText ?? ""}
                   >
@@ -215,9 +275,9 @@ export function Navbar({
                   onClick={logout}
                   className="gap-1.5 transition-smooth"
                   style={{
-                    borderColor: "oklch(0.25 0.05 65 / 0.50)",
-                    color: "oklch(0.65 0.03 65)",
-                    background: "oklch(0.14 0.02 45 / 0.60)",
+                    borderColor: "oklch(0.30 0.06 280 / 0.50)",
+                    color: "oklch(0.68 0.04 280)",
+                    background: "oklch(0.14 0.04 290 / 0.60)",
                   }}
                   data-ocid="logout-btn"
                 >
@@ -267,7 +327,7 @@ export function Navbar({
           <div
             className="md:hidden px-4 pb-4 glass-dark"
             style={{
-              borderTop: "1px solid oklch(0.72 0.18 65 / 0.15)",
+              borderTop: "1px solid oklch(0.55 0.22 265 / 0.20)",
             }}
             data-ocid="mobile-menu"
           >
@@ -293,7 +353,7 @@ export function Navbar({
               >
                 <Sword
                   className="w-4 h-4"
-                  style={{ color: "oklch(0.72 0.18 65)" }}
+                  style={{ color: "oklch(0.68 0.22 265)" }}
                 />
                 Versus Mode
               </button>
@@ -311,14 +371,14 @@ export function Navbar({
               </button>
               <div
                 className="pt-3 mt-1 flex flex-col gap-2"
-                style={{ borderTop: "1px solid oklch(0.72 0.18 65 / 0.20)" }}
+                style={{ borderTop: "1px solid oklch(0.55 0.22 265 / 0.20)" }}
               >
                 {isAuthenticated && isPlugConnected && (
                   <div
                     className="flex items-center gap-2 px-3 py-2.5 rounded-lg border"
                     style={{
-                      background: "oklch(0.14 0.02 45 / 0.80)",
-                      borderColor: "oklch(0.72 0.18 65 / 0.35)",
+                      background: "oklch(0.14 0.04 290 / 0.80)",
+                      borderColor: "oklch(0.55 0.22 265 / 0.35)",
                     }}
                   >
                     <Wallet
@@ -329,8 +389,8 @@ export function Navbar({
                       <Skeleton className="h-4 w-20" />
                     ) : (
                       <span
-                        className="text-sm font-mono font-bold text-gold-glow wallet-balance"
-                        style={{ color: "oklch(0.88 0.18 65)" }}
+                        className="text-sm font-mono font-bold wallet-balance"
+                        style={{ color: "oklch(0.83 0.14 65)" }}
                       >
                         {balanceFormatted} ICP
                       </span>
@@ -367,8 +427,8 @@ export function Navbar({
                       }}
                       className="gap-1.5 w-full transition-smooth"
                       style={{
-                        borderColor: "oklch(0.25 0.05 65 / 0.50)",
-                        color: "oklch(0.65 0.03 65)",
+                        borderColor: "oklch(0.30 0.06 280 / 0.50)",
+                        color: "oklch(0.68 0.04 280)",
                       }}
                     >
                       <LogOut className="w-3.5 h-3.5" /> Sign out

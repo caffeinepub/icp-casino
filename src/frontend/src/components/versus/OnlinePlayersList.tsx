@@ -69,7 +69,7 @@ export function OnlinePlayersList({
           className="text-xs font-mono px-2 py-0.5 rounded-full"
           style={{
             background: "oklch(0.72 0.18 65 / 0.15)",
-            color: "oklch(0.82 0.18 65)",
+            color: "oklch(0.82 0.14 65)",
           }}
           data-ocid="online-count"
         >
@@ -119,7 +119,7 @@ export function OnlinePlayersList({
                   style={{
                     background:
                       "linear-gradient(135deg, oklch(0.72 0.18 65 / 0.25), oklch(0.45 0.15 300 / 0.25))",
-                    color: "oklch(0.82 0.18 65)",
+                    color: "oklch(0.82 0.14 65)",
                     border: "1px solid oklch(0.72 0.18 65 / 0.3)",
                   }}
                 >
@@ -130,7 +130,7 @@ export function OnlinePlayersList({
                     <StatusDot status={player.status} />
                     <span
                       className="text-xs font-mono truncate"
-                      style={{ color: "oklch(0.78 0.03 65)" }}
+                      style={{ color: "oklch(0.70 0 0)" }}
                     >
                       {shortPrincipal(player.id)}
                     </span>

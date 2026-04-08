@@ -823,7 +823,7 @@ export function MidnightDragons() {
             style={{
               fontSize: "clamp(1.8rem, 4vw, 3rem)",
               background:
-                "linear-gradient(135deg, #4a7ae8 0%, #8aadff 30%, #D4AF37 65%, #e8c76a 100%)",
+                "linear-gradient(135deg, #4a7ae8 0%, #8aadff 30%, #D4AF37 65%, #e8d070 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
@@ -1258,7 +1258,7 @@ export function MidnightDragons() {
                     <span style={{ color: "rgba(164,128,255,0.5)" }}>·</span>
                     <span
                       className="text-gold-glow"
-                      style={{ color: "oklch(0.85 0.18 65)" }}
+                      style={{ color: "oklch(0.82 0.14 65)" }}
                     >
                       {win.count}× = {win.multiplier}x
                     </span>

@@ -200,7 +200,7 @@ export function SlotMachine({ title }: SlotMachineProps) {
       <div className="flex items-center gap-2">
         <span
           className="text-xs font-bold uppercase tracking-widest"
-          style={{ color: "oklch(0.80 0.18 65)" }}
+          style={{ color: "oklch(0.82 0.14 65)" }}
         >
           {title}
         </span>
@@ -250,7 +250,7 @@ export function SlotMachine({ title }: SlotMachineProps) {
                 ? {
                     border: "1px solid oklch(0.72 0.18 65 / 0.80)",
                     background: "oklch(0.72 0.18 65 / 0.20)",
-                    color: "oklch(0.90 0.18 65)",
+                    color: "oklch(0.87 0.14 65)",
                   }
                 : {
                     border: "1px solid oklch(0.25 0.05 65 / 0.50)",

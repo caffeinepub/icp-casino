@@ -94,8 +94,7 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
       }}
       className="fixed inset-0 z-[100] flex items-center justify-center w-full h-full max-w-none max-h-none m-0 p-0 border-0 open:flex"
       style={{
-        background: "oklch(0.04 0 0 / 0.85)",
-        backdropFilter: "blur(6px)",
+        background: "oklch(0.04 0 0 / 0.88)",
       }}
       aria-label="Deposit ICP"
       open
@@ -104,7 +103,7 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
       <div
         className="relative w-full max-w-md mx-4 rounded-xl shadow-2xl overflow-hidden"
         style={{
-          background: "oklch(0.10 0.01 45)",
+          background: "oklch(0.10 0.03 290)",
           border: "1px solid oklch(0.72 0.18 65 / 0.35)",
           boxShadow:
             "0 24px 60px oklch(0 0 0 / 0.7), 0 0 0 1px oklch(0.72 0.18 65 / 0.10)",
@@ -129,12 +128,12 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
             >
               <WalletCards
                 className="w-4 h-4"
-                style={{ color: "oklch(0.80 0.18 65)" }}
+                style={{ color: "oklch(0.82 0.14 65)" }}
               />
             </div>
             <h2
               className="font-display text-lg font-bold"
-              style={{ color: "oklch(0.92 0.06 65)" }}
+              style={{ color: "oklch(0.92 0 0)" }}
             >
               Deposit ICP
             </h2>
@@ -143,7 +142,7 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
             type="button"
             onClick={onClose}
             className="p-1.5 rounded-md transition-smooth"
-            style={{ color: "oklch(0.70 0.03 65)" }}
+            style={{ color: "oklch(0.65 0.04 280)" }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLButtonElement).style.color =
                 "oklch(0.90 0.06 65)";
@@ -167,7 +166,7 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
           <section aria-label="Wallet connection">
             <p
               className="text-xs font-semibold uppercase tracking-widest mb-3"
-              style={{ color: "oklch(0.70 0.03 65)" }}
+              style={{ color: "oklch(0.65 0.04 280)" }}
             >
               Step 1 — Connect Wallet
             </p>
@@ -183,7 +182,7 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
                     disabled={isConnecting}
                     className="flex flex-col items-center gap-2 px-4 py-4 rounded-lg transition-smooth disabled:opacity-60 disabled:cursor-not-allowed group"
                     style={{
-                      background: "oklch(0.13 0.01 45)",
+                      background: "oklch(0.13 0.03 290)",
                       border: "1px solid oklch(0.25 0.05 65 / 0.50)",
                     }}
                     onMouseEnter={(e) => {
@@ -226,7 +225,7 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
                     disabled
                     className="flex flex-col items-center gap-2 px-4 py-4 rounded-lg opacity-40 cursor-not-allowed"
                     style={{
-                      background: "oklch(0.13 0.01 45)",
+                      background: "oklch(0.13 0.03 290)",
                       border: "1px solid oklch(0.25 0.05 65 / 0.30)",
                     }}
                     title="Coming soon"
@@ -249,7 +248,7 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-xs hover:underline"
-                    style={{ color: "oklch(0.80 0.18 65)" }}
+                    style={{ color: "oklch(0.82 0.14 65)" }}
                     data-ocid="install-plug-link"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -296,7 +295,7 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
                   <div>
                     <p
                       className="text-xs font-semibold"
-                      style={{ color: "oklch(0.80 0.18 65)" }}
+                      style={{ color: "oklch(0.82 0.14 65)" }}
                     >
                       {walletType === "plug" ? "Plug" : "Stoic"} connected
                     </p>
@@ -332,7 +331,7 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
           >
             <p
               className="text-xs font-semibold uppercase tracking-widest mb-3"
-              style={{ color: "oklch(0.70 0.03 65)" }}
+              style={{ color: "oklch(0.65 0.04 280)" }}
             >
               Step 2 — Enter Amount
             </p>
@@ -350,12 +349,12 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
                       ? {
                           border: "1px solid oklch(0.72 0.18 65 / 0.80)",
                           background: "oklch(0.72 0.18 65 / 0.18)",
-                          color: "oklch(0.88 0.18 65)",
+                          color: "oklch(0.85 0.14 65)",
                         }
                       : {
                           border: "1px solid oklch(0.25 0.05 65 / 0.50)",
                           background: "oklch(0.14 0.02 45)",
-                          color: "oklch(0.70 0.03 65)",
+                          color: "oklch(0.58 0.04 280)",
                         }
                   }
                   data-ocid={`preset-${amt}-icp`}
@@ -384,7 +383,7 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
                   onChange={(e) => setAmountIcp(e.target.value)}
                   className="pr-14 font-mono"
                   style={{
-                    background: "oklch(0.13 0.01 45)",
+                    background: "oklch(0.13 0.03 290)",
                     borderColor: "oklch(0.25 0.05 65 / 0.50)",
                   }}
                   data-ocid="deposit-amount-input"
@@ -437,12 +436,12 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
             >
               <CheckCircle2
                 className="w-5 h-5 shrink-0 mt-0.5"
-                style={{ color: "oklch(0.80 0.18 65)" }}
+                style={{ color: "oklch(0.82 0.14 65)" }}
               />
               <div>
                 <p
                   className="text-sm font-semibold"
-                  style={{ color: "oklch(0.88 0.18 65)" }}
+                  style={{ color: "oklch(0.85 0.14 65)" }}
                 >
                   Deposit successful!
                 </p>

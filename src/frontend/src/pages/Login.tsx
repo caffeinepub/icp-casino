@@ -122,7 +122,7 @@ export default function LoginPage() {
           {/* Title */}
           <h1
             className="heading-cinematic text-gold-glow font-display text-4xl md:text-5xl font-bold text-center mb-3 leading-tight"
-            style={{ color: "oklch(0.88 0.18 65)" }}
+            style={{ color: "oklch(0.85 0.14 65)" }}
           >
             ICP Casino
           </h1>
@@ -184,12 +184,12 @@ export default function LoginPage() {
               >
                 <f.icon
                   className="w-5 h-5"
-                  style={{ color: "oklch(0.82 0.18 65)" }}
+                  style={{ color: "oklch(0.92 0 0)" }}
                 />
               </div>
               <h3
                 className="font-semibold mb-1.5 text-sm"
-                style={{ color: "oklch(0.88 0.02 65)" }}
+                style={{ color: "oklch(0.92 0 0)" }}
               >
                 {f.title}
               </h3>

@@ -133,7 +133,7 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
               className="pl-9 glass-dark transition-smooth focus-visible:ring-1"
               style={{
                 borderColor: "oklch(0.4 0.15 300 / 0.30)",
-                color: "oklch(0.94 0.02 65)",
+                color: "oklch(0.94 0 0)",
               }}
               onFocus={(e) => {
                 e.currentTarget.style.borderColor =
@@ -168,7 +168,7 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
               />
               <h3
                 className="text-lg font-semibold mb-1"
-                style={{ color: "oklch(0.88 0.02 65)" }}
+                style={{ color: "oklch(0.97 0 0)" }}
               >
                 {search ? "No games match your search" : "No games available"}
               </h3>
@@ -183,9 +183,9 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
                 className="flex items-center gap-2 text-sm font-medium transition-smooth btn-premium px-4 py-2 rounded-lg"
                 style={{
                   background:
-                    "linear-gradient(135deg, oklch(0.72 0.18 65 / 0.18), oklch(0.60 0.18 65 / 0.10))",
-                  color: "oklch(0.82 0.18 65)",
-                  border: "1px solid oklch(0.72 0.18 65 / 0.35)",
+                    "linear-gradient(135deg, oklch(0.55 0.22 265 / 0.18), oklch(0.45 0.22 265 / 0.10))",
+                  color: "oklch(0.80 0.18 280)",
+                  border: "1px solid oklch(0.55 0.22 265 / 0.35)",
                 }}
                 data-ocid="clear-filters-btn"
               >
@@ -274,7 +274,7 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
                     </svg>
                     <h2
                       className="heading-cinematic font-display text-2xl font-bold text-gold-glow"
-                      style={{ color: "oklch(0.88 0.18 65)" }}
+                      style={{ color: "oklch(0.85 0.16 65)" }}
                     >
                       Versus Mode
                     </h2>
@@ -291,7 +291,7 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
                   </div>
                   <p
                     className="text-sm leading-relaxed"
-                    style={{ color: "oklch(0.65 0.03 65)" }}
+                    style={{ color: "oklch(0.72 0.03 280)" }}
                   >
                     Challenge real players in Chess, Dice Roll, and Rock Paper
                     Scissors. Wager 10, 30, or 100 ICP — winner takes all.
@@ -336,7 +336,7 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
               className="text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider"
               style={{
                 background: "oklch(0.72 0.18 65 / 0.15)",
-                color: "oklch(0.82 0.18 65)",
+                color: "oklch(0.82 0.14 65)",
                 border: "1px solid oklch(0.72 0.18 65 / 0.35)",
               }}
             >

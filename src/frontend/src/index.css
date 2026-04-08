@@ -14,33 +14,36 @@
 
     /* Deep obsidian backgrounds */
     --background: 0.07 0 0;
-    --foreground: 0.96 0.02 65;
-    --card: 0.1 0.01 45;
-    --card-foreground: 0.94 0.02 65;
-    --popover: 0.13 0.01 45;
-    --popover-foreground: 0.96 0.02 65;
+    /* FIXED: foreground is pure white — zero chroma, no hue tint */
+    --foreground: 0.97 0 0;
+    /* Deep purple card */
+    --card: 0.1 0.03 290;
+    --card-foreground: 0.97 0 0;
+    --popover: 0.13 0.03 290;
+    --popover-foreground: 0.97 0 0;
 
     /* Indigo primary — buttons and interactive accents */
     --primary: 0.55 0.22 265;
     --primary-foreground: 0.97 0 0;
 
     /* Deep velvet secondary */
-    --secondary: 0.14 0.02 45;
-    --secondary-foreground: 0.88 0.02 65;
-    --muted: 0.16 0.01 45;
-    --muted-foreground: 0.7 0.03 65;
+    --secondary: 0.14 0.03 290;
+    --secondary-foreground: 0.92 0 0;
+    --muted: 0.16 0.03 290;
+    /* FIXED: muted-foreground uses neutral/light purple — no hue 65 */
+    --muted-foreground: 0.68 0.04 280;
 
     /* Royal purple accent */
     --accent: 0.4 0.15 300;
-    --accent-foreground: 0.96 0.02 65;
+    --accent-foreground: 0.97 0 0;
 
     --destructive: 0.4 0.15 300;
-    --destructive-foreground: 0.96 0.02 65;
+    --destructive-foreground: 0.97 0 0;
 
-    /* Gold-tinted borders */
-    --border: 0.25 0.05 65;
-    --input: 0.14 0.02 45;
-    --ring: 0.72 0.18 65;
+    /* FIXED: borders use purple hue not amber hue */
+    --border: 0.28 0.06 280;
+    --input: 0.14 0.03 290;
+    --ring: 0.55 0.22 265;
 
     /* Chart colors — gold + purple jewel tones */
     --chart-1: 0.72 0.18 65;
@@ -49,54 +52,53 @@
     --chart-4: 0.6 0.18 300;
     --chart-5: 0.55 0.16 280;
 
-    --sidebar: 0.1 0.01 45;
-    --sidebar-foreground: 0.94 0.02 65;
-    --sidebar-primary: 0.72 0.18 65;
-    --sidebar-primary-foreground: 0.07 0 0;
-    --sidebar-accent: 0.16 0.01 45;
-    --sidebar-accent-foreground: 0.88 0.02 65;
-    --sidebar-border: 0.25 0.05 65;
-    --sidebar-ring: 0.72 0.18 65;
+    --sidebar: 0.1 0.03 290;
+    --sidebar-foreground: 0.97 0 0;
+    --sidebar-primary: 0.55 0.22 265;
+    --sidebar-primary-foreground: 0.97 0 0;
+    --sidebar-accent: 0.16 0.03 290;
+    --sidebar-accent-foreground: 0.92 0 0;
+    --sidebar-border: 0.28 0.06 280;
+    --sidebar-ring: 0.55 0.22 265;
 
     /* Casino semantic tokens */
-    --win: 0.75 0.2 65;
+    --win: 0.72 0.18 65;
     --loss: 0.38 0.15 300;
     --deposit: 0.72 0.18 65;
 
     /* Versus Mode tokens */
     --versus-board-bg: 0.09 0 0;
-    --versus-chat-bg: 0.1 0.01 45;
+    --versus-chat-bg: 0.1 0.03 290;
     --versus-player-online: 0.72 0.18 65;
-    --versus-player-offline: 0.25 0.02 45;
-    --versus-wager-active: 0.72 0.18 65;
+    --versus-player-offline: 0.25 0.03 280;
+    --versus-wager-active: 0.55 0.22 265;
   }
 
   .dark {
     --background: 0.07 0 0;
-    --foreground: 0.96 0.02 65;
-    --card: 0.1 0.01 45;
-    --card-foreground: 0.94 0.02 65;
-    --popover: 0.13 0.01 45;
-    --popover-foreground: 0.96 0.02 65;
+    --foreground: 0.97 0 0;
+    --card: 0.1 0.03 290;
+    --card-foreground: 0.97 0 0;
+    --popover: 0.13 0.03 290;
+    --popover-foreground: 0.97 0 0;
 
     --primary: 0.55 0.22 265;
     --primary-foreground: 0.97 0 0;
 
-    --secondary: 0.14 0.02 45;
-    --secondary-foreground: 0.88 0.02 65;
-    --muted: 0.16 0.01 45;
-    --muted-foreground: 0.7 0.03 65;
+    --secondary: 0.14 0.03 290;
+    --secondary-foreground: 0.92 0 0;
+    --muted: 0.16 0.03 290;
+    --muted-foreground: 0.68 0.04 280;
 
-    /* Royal purple accent */
     --accent: 0.4 0.15 300;
-    --accent-foreground: 0.96 0.02 65;
+    --accent-foreground: 0.97 0 0;
 
     --destructive: 0.4 0.15 300;
-    --destructive-foreground: 0.96 0.02 65;
+    --destructive-foreground: 0.97 0 0;
 
-    --border: 0.25 0.05 65;
-    --input: 0.14 0.02 45;
-    --ring: 0.72 0.18 65;
+    --border: 0.28 0.06 280;
+    --input: 0.14 0.03 290;
+    --ring: 0.55 0.22 265;
 
     --chart-1: 0.72 0.18 65;
     --chart-2: 0.45 0.18 300;
@@ -104,26 +106,26 @@
     --chart-4: 0.6 0.18 300;
     --chart-5: 0.55 0.16 280;
 
-    --sidebar: 0.1 0.01 45;
-    --sidebar-foreground: 0.94 0.02 65;
-    --sidebar-primary: 0.72 0.18 65;
-    --sidebar-primary-foreground: 0.07 0 0;
-    --sidebar-accent: 0.16 0.01 45;
-    --sidebar-accent-foreground: 0.88 0.02 65;
-    --sidebar-border: 0.25 0.05 65;
-    --sidebar-ring: 0.72 0.18 65;
+    --sidebar: 0.1 0.03 290;
+    --sidebar-foreground: 0.97 0 0;
+    --sidebar-primary: 0.55 0.22 265;
+    --sidebar-primary-foreground: 0.97 0 0;
+    --sidebar-accent: 0.16 0.03 290;
+    --sidebar-accent-foreground: 0.92 0 0;
+    --sidebar-border: 0.28 0.06 280;
+    --sidebar-ring: 0.55 0.22 265;
 
     /* Casino semantic tokens */
-    --win: 0.75 0.2 65;
+    --win: 0.72 0.18 65;
     --loss: 0.38 0.15 300;
     --deposit: 0.72 0.18 65;
 
     /* Versus Mode tokens */
     --versus-board-bg: 0.09 0 0;
-    --versus-chat-bg: 0.1 0.01 45;
+    --versus-chat-bg: 0.1 0.03 290;
     --versus-player-online: 0.72 0.18 65;
-    --versus-player-offline: 0.25 0.02 45;
-    --versus-wager-active: 0.72 0.18 65;
+    --versus-player-offline: 0.25 0.03 280;
+    --versus-wager-active: 0.55 0.22 265;
   }
 
   html,
@@ -167,11 +169,11 @@
 
   /* Premium glassmorphism effect */
   .glass-effect {
-    background-color: oklch(0.1 0.01 45 / 0.4);
+    background-color: oklch(0.1 0.03 290 / 0.4);
     backdrop-filter: blur(12px);
     border: 1px solid oklch(0.72 0.18 65 / 0.2);
     box-shadow: 0 8px 32px oklch(0 0 0 / 0.12), inset 1px 1px 0
-      oklch(0.96 0.02 65 / 0.1);
+      oklch(0.97 0 0 / 0.06);
   }
 
   /* Cinematic depth shadows */
@@ -187,7 +189,7 @@
     box-shadow: 0 16px 48px oklch(0 0 0 / 0.25), 0 4px 12px oklch(0 0 0 / 0.15);
   }
 
-  /* Gold shimmer effect */
+  /* Gold shimmer effect — decorative only, for artwork contexts */
   @keyframes shimmerGold {
     0% {
       background-position: -1000px 0;
@@ -328,7 +330,7 @@
     }
   }
 
-  /* Vegas gold shimmer */
+  /* Vegas gold shimmer — decorative artwork */
   @keyframes goldShimmer {
     0% {
       background-position: -200% center;
@@ -338,7 +340,7 @@
     }
   }
 
-  /* Dragon gold glow pulse */
+  /* Dragon gold glow pulse — decorative artwork */
   @keyframes dragonRubyGlow {
     0%,
     100% {
@@ -364,7 +366,7 @@
   .badge-cyan {
     @apply inline-flex items-center px-2.5 py-1 rounded-sm text-xs font-semibold uppercase tracking-wide;
     background-color: oklch(0.72 0.18 65 / 0.2);
-    color: oklch(0.82 0.18 65);
+    color: oklch(0.85 0.16 65);
   }
 
   .badge-magenta {
@@ -391,7 +393,7 @@
     @apply hover:shadow-2xl transition-smooth;
   }
 
-  /* Gold glow effect for wins */
+  /* Gold glow effect for wins — decorative artwork */
   .shadow-gold-glow {
     box-shadow: 0 0 28px oklch(0.72 0.18 65 / 0.45), 0 0 8px
       oklch(0.72 0.18 65 / 0.25);
@@ -469,7 +471,7 @@
 
   .versus-chat-message {
     @apply text-sm font-body rounded-lg px-3 py-2;
-    background-color: oklch(0.13 0.01 45 / 0.6);
+    background-color: oklch(0.13 0.03 290 / 0.6);
   }
 
   .versus-chat-message-player {
@@ -568,16 +570,16 @@
     border-color: oklch(var(--primary) / 0.5);
   }
 
-  /* Wager panel live glow pulse */
+  /* Wager panel live glow pulse — indigo */
   @keyframes wagerGlow {
     0%,
     100% {
-      box-shadow: 0 0 20px oklch(0.72 0.18 65 / 0.18), 0 0 6px
-        oklch(0.72 0.18 65 / 0.1);
+      box-shadow: 0 0 20px oklch(0.55 0.22 265 / 0.18), 0 0 6px
+        oklch(0.55 0.22 265 / 0.1);
     }
     50% {
-      box-shadow: 0 0 36px oklch(0.72 0.18 65 / 0.35), 0 0 12px
-        oklch(0.72 0.18 65 / 0.2);
+      box-shadow: 0 0 36px oklch(0.55 0.22 265 / 0.35), 0 0 12px
+        oklch(0.55 0.22 265 / 0.2);
     }
   }
 
@@ -588,9 +590,9 @@
   /* Plug wallet notice banner */
   .plug-wallet-banner {
     @apply flex items-start gap-4 px-5 py-4 rounded-2xl border-2;
-    background-color: oklch(0.1 0.03 300 / 0.25);
-    border-color: oklch(0.72 0.18 65 / 0.65);
-    box-shadow: 0 0 28px oklch(0.72 0.18 65 / 0.12);
+    background-color: oklch(0.1 0.03 290 / 0.4);
+    border-color: oklch(0.55 0.22 265 / 0.65);
+    box-shadow: 0 0 28px oklch(0.55 0.22 265 / 0.12);
   }
 
   /* ─────────────────────────────────────────────────────────────────────────
@@ -599,14 +601,14 @@
 
   /* Depth shadow CSS custom properties */
   :root {
-    --shadow-sm: 0 2px 8px oklch(0.72 0.18 65 / 0.1), 0 1px 2px
+    --shadow-sm: 0 2px 8px oklch(0.55 0.22 265 / 0.08), 0 1px 2px
       oklch(0 0 0 / 0.4);
-    --shadow-md: 0 4px 16px oklch(0.72 0.18 65 / 0.15), 0 2px 8px
+    --shadow-md: 0 4px 16px oklch(0.55 0.22 265 / 0.12), 0 2px 8px
       oklch(0 0 0 / 0.5);
-    --shadow-lg: 0 8px 32px oklch(0.72 0.18 65 / 0.2), 0 4px 16px
-      oklch(0 0 0 / 0.6), inset 0 1px 0 oklch(0.72 0.18 65 / 0.15);
-    --shadow-xl: 0 16px 48px oklch(0.72 0.18 65 / 0.25), 0 8px 24px
-      oklch(0 0 0 / 0.7), inset 0 1px 0 oklch(0.72 0.18 65 / 0.2);
+    --shadow-lg: 0 8px 32px oklch(0.55 0.22 265 / 0.18), 0 4px 16px
+      oklch(0 0 0 / 0.6), inset 0 1px 0 oklch(0.97 0 0 / 0.06);
+    --shadow-xl: 0 16px 48px oklch(0.55 0.22 265 / 0.22), 0 8px 24px
+      oklch(0 0 0 / 0.7), inset 0 1px 0 oklch(0.97 0 0 / 0.06);
   }
 
   /* Tailwind-usable depth shadow classes */
@@ -623,20 +625,20 @@
     box-shadow: var(--shadow-xl);
   }
 
-  /* Glassmorphism — gold-tinted card glass */
+  /* Glassmorphism — purple-tinted card glass */
   .glass-card {
-    background: oklch(0.72 0.18 65 / 0.08);
+    background: oklch(0.55 0.22 265 / 0.06);
     backdrop-filter: blur(12px) saturate(1.4);
     -webkit-backdrop-filter: blur(12px) saturate(1.4);
-    border: 1px solid oklch(0.72 0.18 65 / 0.2);
+    border: 1px solid oklch(0.72 0.18 65 / 0.18);
     box-shadow: var(--shadow-md);
     transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s
       cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .glass-card:hover {
-    border-color: oklch(0.72 0.18 65 / 0.4);
-    box-shadow: var(--shadow-lg), 0 0 24px oklch(0.72 0.18 65 / 0.18);
+    border-color: oklch(0.72 0.18 65 / 0.35);
+    box-shadow: var(--shadow-lg), 0 0 24px oklch(0.55 0.22 265 / 0.15);
   }
 
   /* Glassmorphism — dark purple modal/overlay variant */
@@ -646,10 +648,10 @@
     -webkit-backdrop-filter: blur(16px) saturate(1.2);
     border: 1px solid oklch(0.4 0.15 300 / 0.25);
     box-shadow: 0 8px 40px oklch(0 0 0 / 0.6), inset 0 1px 0
-      oklch(0.72 0.18 65 / 0.1);
+      oklch(0.97 0 0 / 0.05);
   }
 
-  /* Gold shimmer sweep animation */
+  /* Gold shimmer sweep animation — for decorative artwork only */
   @keyframes shimmer-gold {
     0% {
       background-position: -200% center;
@@ -789,6 +791,7 @@
     text-shadow: 0 1px 4px oklch(0.4 0.15 300 / 0.4);
   }
 
+  /* FIXED: text-gold-glow is for decorative GOLD CASINO text only */
   .text-gold-glow {
     text-shadow: 0 0 12px oklch(0.72 0.18 65 / 0.6), 0 0 24px
       oklch(0.72 0.18 65 / 0.3), 0 1px 2px oklch(0 0 0 / 0.5);
@@ -814,7 +817,7 @@
 
   /* ─── Cinematic Overlay Utilities ────────────────────────────────────── */
 
-  /* Thin gold rim-light at the top edge */
+  /* Thin indigo rim-light at the top edge */
   .cinematic-top-light {
     position: absolute;
     top: 0;
@@ -824,9 +827,9 @@
     background: linear-gradient(
       90deg,
       transparent,
-      oklch(0.72 0.18 65 / 0.6) 40%,
-      oklch(0.82 0.18 65 / 0.8) 50%,
-      oklch(0.72 0.18 65 / 0.6) 60%,
+      oklch(0.72 0.18 65 / 0.5) 40%,
+      oklch(0.85 0.16 65 / 0.7) 50%,
+      oklch(0.72 0.18 65 / 0.5) 60%,
       transparent
     );
     pointer-events: none;
@@ -856,7 +859,7 @@
     inset: 0;
     background: linear-gradient(
       180deg,
-      oklch(0.72 0.18 65 / 0.15) 0%,
+      oklch(0.72 0.18 65 / 0.12) 0%,
       transparent 30%,
       transparent 70%,
       oklch(0 0 0 / 0.4) 100%
@@ -866,35 +869,31 @@
     border-radius: inherit;
   }
 
-  /* ─── Enhanced existing shadow utilities with gold tones ─────────────── */
+  /* ─── Enhanced existing shadow utilities ─────────────────────────────── */
 
   .shadow-depth-sm {
     box-shadow: var(--shadow-sm);
   }
-
   .shadow-depth-md {
     box-shadow: var(--shadow-md);
   }
-
   .shadow-depth-lg {
     box-shadow: var(--shadow-lg);
   }
-
-  /* New: extra-large cinematic depth */
   .shadow-depth-xl {
     box-shadow: var(--shadow-xl);
   }
 
-  /* ─── Neon border pulse for featured/active elements ─────────────────── */
+  /* ─── Neon border pulse for featured/active elements — INDIGO ─────── */
   @keyframes gold-border-pulse {
     0%,
     100% {
-      box-shadow: 0 0 8px oklch(0.72 0.18 65 / 0.25), inset 0 0 8px
-        oklch(0.72 0.18 65 / 0.08);
+      box-shadow: 0 0 8px oklch(0.55 0.22 265 / 0.25), inset 0 0 8px
+        oklch(0.55 0.22 265 / 0.08);
     }
     50% {
-      box-shadow: 0 0 20px oklch(0.72 0.18 65 / 0.5), inset 0 0 16px
-        oklch(0.72 0.18 65 / 0.15);
+      box-shadow: 0 0 20px oklch(0.55 0.22 265 / 0.45), inset 0 0 16px
+        oklch(0.55 0.22 265 / 0.12);
     }
   }
 
@@ -927,7 +926,7 @@
     background: linear-gradient(
       90deg,
       transparent,
-      oklch(0.72 0.18 65 / 0.15),
+      oklch(0.97 0 0 / 0.08),
       transparent
     );
     opacity: 0;
@@ -940,13 +939,13 @@
     animation: surface-shine 0.7s ease-out forwards;
   }
 
-  /* Active filter gold glow shadow */
+  /* Active filter indigo glow shadow */
   .gold-glow {
-    box-shadow: 0 0 12px oklch(0.72 0.18 65 / 0.4), 0 0 4px
-      oklch(0.72 0.18 65 / 0.22);
+    box-shadow: 0 0 12px oklch(0.55 0.22 265 / 0.4), 0 0 4px
+      oklch(0.55 0.22 265 / 0.22);
   }
 
-  /* Gold-direction skeleton shimmer */
+  /* Skeleton shimmer — purple toned */
   @keyframes skeletonGoldShimmer {
     0% {
       background-position: -400px 0;
@@ -959,11 +958,11 @@
   .skeleton-shimmer {
     background: linear-gradient(
       90deg,
-      oklch(0.16 0.01 45) 0%,
-      oklch(0.72 0.18 65 / 0.08) 40%,
-      oklch(0.72 0.18 65 / 0.18) 50%,
-      oklch(0.72 0.18 65 / 0.08) 60%,
-      oklch(0.16 0.01 45) 100%
+      oklch(0.16 0.03 290) 0%,
+      oklch(0.55 0.22 265 / 0.06) 40%,
+      oklch(0.55 0.22 265 / 0.14) 50%,
+      oklch(0.55 0.22 265 / 0.06) 60%,
+      oklch(0.16 0.03 290) 100%
     );
     background-size: 800px 100%;
     animation: skeletonGoldShimmer 1.8s ease-in-out infinite;

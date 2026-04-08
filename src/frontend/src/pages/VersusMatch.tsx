@@ -62,16 +62,16 @@ function PlugWalletBanner({ compact = false }: { compact?: boolean }) {
     >
       <Wallet
         className="w-5 h-5 shrink-0"
-        style={{ color: "oklch(0.82 0.18 65)" }}
+        style={{ color: "oklch(0.82 0.14 65)" }}
       />
       <p
         className="text-sm font-semibold"
-        style={{ color: "oklch(0.82 0.18 65)" }}
+        style={{ color: "oklch(0.82 0.14 65)" }}
       >
         Please use{" "}
         <span style={{ color: "oklch(0.72 0.15 300)" }}>Plug Wallet</span> to
         connect and play Versus Mode.{" "}
-        <span style={{ color: "oklch(0.60 0.03 65)" }}>
+        <span style={{ color: "oklch(0.65 0.04 280)" }}>
           Plug Wallet is required for real ICP betting.
         </span>
       </p>
@@ -115,7 +115,7 @@ function WagerPanel({
       <div className="flex items-center justify-between">
         <span
           className="text-xs font-bold uppercase tracking-widest"
-          style={{ color: "oklch(0.55 0.03 65)" }}
+          style={{ color: "oklch(0.58 0.03 280)" }}
         >
           {pending ? "Proposed Wager" : "Active Wager"}
         </span>
@@ -128,7 +128,7 @@ function WagerPanel({
           <span
             className="font-mono text-4xl font-bold leading-none icp-value"
             style={{
-              color: "oklch(0.90 0.18 65)",
+              color: "oklch(0.87 0.14 65)",
               textShadow:
                 "0 0 20px oklch(0.72 0.18 65 / 0.50), 0 2px 4px oklch(0 0 0 / 0.60)",
             }}
@@ -137,7 +137,7 @@ function WagerPanel({
           </span>
           <span
             className="text-xs font-semibold mt-1.5"
-            style={{ color: "oklch(0.55 0.03 65)" }}
+            style={{ color: "oklch(0.58 0.03 280)" }}
           >
             ICP each
           </span>
@@ -155,7 +155,7 @@ function WagerPanel({
           <span
             className="font-mono text-4xl font-bold leading-none icp-value"
             style={{
-              color: "oklch(0.88 0.18 65)",
+              color: "oklch(0.85 0.14 65)",
               textShadow:
                 "0 0 24px oklch(0.72 0.18 65 / 0.55), 0 2px 4px oklch(0 0 0 / 0.60)",
             }}
@@ -179,7 +179,7 @@ function WagerPanel({
         >
           <p
             className="text-xs font-semibold"
-            style={{ color: "oklch(0.78 0.18 65)" }}
+            style={{ color: "oklch(0.78 0.14 65)" }}
           >
             Wager proposed by opponent — confirm amount to start:
           </p>
@@ -204,7 +204,7 @@ function WagerPanel({
           {!isPlayer2 && (
             <p
               className="text-xs text-center"
-              style={{ color: "oklch(0.50 0.03 65)" }}
+              style={{ color: "oklch(0.54 0.03 280)" }}
             >
               Waiting for opponent to accept this wager…
             </p>
@@ -216,12 +216,12 @@ function WagerPanel({
       {!pending && (
         <div
           className="flex items-center gap-2 text-xs font-bold"
-          style={{ color: "oklch(0.78 0.18 65)" }}
+          style={{ color: "oklch(0.78 0.14 65)" }}
         >
           <span
             className="w-2.5 h-2.5 rounded-full inline-block animate-pulse"
             style={{
-              background: "oklch(0.78 0.18 65)",
+              background: "oklch(0.78 0.14 65)",
               boxShadow:
                 "0 0 8px oklch(0.72 0.18 65 / 0.90), 0 0 16px oklch(0.72 0.18 65 / 0.45)",
             }}
@@ -311,7 +311,7 @@ function ChessBoard({
           <div
             key={f}
             className="flex-1 text-center text-xs"
-            style={{ color: "oklch(0.50 0.03 65)" }}
+            style={{ color: "oklch(0.54 0.03 280)" }}
           >
             {f}
           </div>
@@ -324,7 +324,7 @@ function ChessBoard({
             <div
               key={r}
               className="h-12 flex items-center text-xs"
-              style={{ color: "oklch(0.50 0.03 65)" }}
+              style={{ color: "oklch(0.54 0.03 280)" }}
             >
               {r}
             </div>
@@ -368,7 +368,7 @@ function ChessBoard({
                       style={{
                         color:
                           piece === piece.toUpperCase()
-                            ? "oklch(0.88 0.18 65)"
+                            ? "oklch(0.85 0.14 65)"
                             : "oklch(0.50 0.18 300)",
                         textShadow:
                           piece === piece.toUpperCase()
@@ -389,7 +389,7 @@ function ChessBoard({
       {!myTurn && (
         <p
           className="text-center text-sm mt-3"
-          style={{ color: "oklch(0.55 0.03 65)" }}
+          style={{ color: "oklch(0.58 0.03 280)" }}
         >
           Waiting for opponent's move…
         </p>
@@ -422,9 +422,9 @@ function DiceGame({
             className="w-24 h-24 rounded-2xl flex items-center justify-center text-4xl font-mono font-black border-2 card-shimmer"
             style={{
               background:
-                "linear-gradient(135deg, oklch(0.14 0.02 65 / 0.80), oklch(0.10 0.01 45))",
+                "linear-gradient(135deg, oklch(0.14 0.04 290 / 0.80), oklch(0.10 0.03 290))",
               borderColor: "oklch(0.72 0.18 65 / 0.55)",
-              color: "oklch(0.88 0.18 65)",
+              color: "oklch(0.85 0.14 65)",
               boxShadow:
                 "0 0 20px oklch(0.72 0.18 65 / 0.20), var(--shadow-md)",
               textShadow: "0 0 12px oklch(0.72 0.18 65 / 0.50)",
@@ -436,7 +436,7 @@ function DiceGame({
           </div>
           <p
             className="text-xs font-semibold mt-2"
-            style={{ color: "oklch(0.55 0.03 65)" }}
+            style={{ color: "oklch(0.58 0.03 280)" }}
           >
             Player 1
           </p>
@@ -468,7 +468,7 @@ function DiceGame({
           </div>
           <p
             className="text-xs font-semibold mt-2"
-            style={{ color: "oklch(0.55 0.03 65)" }}
+            style={{ color: "oklch(0.58 0.03 280)" }}
           >
             Player 2
           </p>
@@ -535,7 +535,7 @@ function RPSGame({
             </div>
             <p
               className="text-xs mt-2 font-semibold"
-              style={{ color: "oklch(0.55 0.03 65)" }}
+              style={{ color: "oklch(0.58 0.03 280)" }}
             >
               {rpsState.player1Choice ?? "Choosing…"}
             </p>
@@ -556,7 +556,7 @@ function RPSGame({
             </div>
             <p
               className="text-xs mt-2 font-semibold"
-              style={{ color: "oklch(0.55 0.03 65)" }}
+              style={{ color: "oklch(0.58 0.03 280)" }}
             >
               {rpsState.player2Choice ?? "Choosing…"}
             </p>
@@ -574,7 +574,7 @@ function RPSGame({
               className="w-24 h-24 rounded-2xl text-4xl flex items-center justify-center border-2 transition-smooth hover:scale-110 card-shimmer"
               style={{
                 background:
-                  "linear-gradient(135deg, oklch(0.14 0.02 65 / 0.70), oklch(0.10 0.01 45))",
+                  "linear-gradient(135deg, oklch(0.14 0.04 290 / 0.70), oklch(0.10 0.03 290))",
                 borderColor: "oklch(0.72 0.18 65 / 0.45)",
                 boxShadow: "0 4px 16px oklch(0 0 0 / 0.50)",
               }}
@@ -589,7 +589,7 @@ function RPSGame({
       {myChoice && (
         <p
           className="text-sm text-premium"
-          style={{ color: "oklch(0.55 0.03 65)" }}
+          style={{ color: "oklch(0.58 0.03 280)" }}
         >
           You chose {myChoice}. Waiting for opponent…
         </p>
@@ -639,7 +639,7 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
   if (!match) {
     return (
       <div className="flex flex-col items-center justify-center min-h-96 gap-4">
-        <p style={{ color: "oklch(0.55 0.03 65)" }}>Match not found.</p>
+        <p style={{ color: "oklch(0.58 0.03 280)" }}>Match not found.</p>
         <Button onClick={onBack} variant="outline" data-ocid="back-btn">
           Back to Lobby
         </Button>
@@ -686,7 +686,7 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
             onClick={onBack}
             className="flex items-center gap-2 text-sm transition-smooth btn-premium px-3 py-1.5 rounded-lg"
             style={{
-              color: "oklch(0.65 0.03 65)",
+              color: "oklch(0.66 0.04 280)",
               border: "1px solid oklch(0.25 0.05 65 / 0.40)",
             }}
             data-ocid="back-btn"
@@ -715,7 +715,7 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
           >
             <span
               className="font-bold text-gold-glow"
-              style={{ color: "oklch(0.82 0.18 65)" }}
+              style={{ color: "oklch(0.82 0.14 65)" }}
             >
               You
             </span>

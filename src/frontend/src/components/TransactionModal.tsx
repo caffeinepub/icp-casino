@@ -41,13 +41,13 @@ function typeBadgeStyle(type: TransactionType): React.CSSProperties {
     case TransactionType.Bet:
       return {
         background: "oklch(0.72 0.18 65 / 0.15)",
-        color: "oklch(0.82 0.18 65)",
+        color: "oklch(0.82 0.14 65)",
         borderColor: "oklch(0.72 0.18 65 / 0.35)",
       };
     case TransactionType.Winning:
       return {
         background: "oklch(0.72 0.18 65 / 0.18)",
-        color: "oklch(0.85 0.20 65)",
+        color: "oklch(0.82 0.14 65)",
         borderColor: "oklch(0.72 0.18 65 / 0.45)",
       };
     case TransactionType.Deposit:
@@ -100,7 +100,7 @@ export function TransactionModal({
   const amountStyle: React.CSSProperties = isNeutral
     ? {}
     : isWin
-      ? { color: "oklch(0.82 0.18 65)", fontWeight: 600 }
+      ? { color: "oklch(0.82 0.14 65)", fontWeight: 600 }
       : { color: "oklch(0.55 0.18 300)", fontWeight: 600 };
   const sign = isWin ? "+" : isNeutral ? "" : "-";
   const absAmount =
@@ -160,13 +160,13 @@ export function TransactionModal({
           <ReceiptRow
             label="Principal"
             value={principal}
-            valueStyle={{ fontSize: "0.75rem", color: "oklch(0.55 0.03 65)" }}
+            valueStyle={{ fontSize: "0.75rem", color: "oklch(0.60 0.04 280)" }}
             mono
           />
           <ReceiptRow
             label="Confirmation"
             value={confirmationHash(transaction.id)}
-            valueStyle={{ fontSize: "0.75rem", color: "oklch(0.55 0.03 65)" }}
+            valueStyle={{ fontSize: "0.75rem", color: "oklch(0.60 0.04 280)" }}
             mono
           />
         </div>

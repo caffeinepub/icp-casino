@@ -371,7 +371,7 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
           style={{
             fontSize: "clamp(2.6rem, 7vw, 4.5rem)",
             background:
-              "linear-gradient(135deg, #e8c76a 0%, #D4AF37 45%, #f0d070 60%, #a07830 100%)",
+              "linear-gradient(135deg, #e8d070 0%, #D4AF37 45%, #f0d878 60%, #c09428 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",

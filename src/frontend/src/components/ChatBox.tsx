@@ -79,8 +79,8 @@ export function ChatBox() {
             aria-hidden="true"
           />
           <span
-            className="text-xs font-bold uppercase tracking-widest text-gold-glow"
-            style={{ color: "oklch(0.82 0.18 65)" }}
+            className="text-xs font-bold uppercase tracking-widest"
+            style={{ color: "oklch(0.92 0 0)" }}
           >
             Live Casino Chat
           </span>
