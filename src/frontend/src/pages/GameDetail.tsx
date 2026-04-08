@@ -238,10 +238,10 @@ function WalletGate({
         className="px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
         style={{
           background: isConnecting
-            ? "rgba(212,175,55,0.4)"
-            : "linear-gradient(135deg, #D4AF37 0%, #d4a843 100%)",
-          color: "#1a0740",
-          boxShadow: isConnecting ? "none" : "0 4px 20px rgba(212,175,55,0.4)",
+            ? "rgba(99,102,241,0.4)"
+            : "linear-gradient(135deg, oklch(0.58 0.22 265) 0%, oklch(0.48 0.22 265) 100%)",
+          color: "oklch(0.97 0 0)",
+          boxShadow: isConnecting ? "none" : "0 4px 20px rgba(99,102,241,0.4)",
         }}
       >
         {isConnecting ? "Connecting…" : "Connect Wallet"}

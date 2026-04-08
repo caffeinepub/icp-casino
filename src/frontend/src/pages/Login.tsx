@@ -145,11 +145,11 @@ export default function LoginPage() {
             className="gap-2.5 btn-premium w-full py-6 text-base font-bold rounded-xl"
             style={{
               background:
-                "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
-              color: "oklch(0.07 0 0)",
+                "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
+              color: "oklch(0.97 0 0)",
               border: "none",
               boxShadow:
-                "0 6px 24px oklch(0.72 0.18 65 / 0.40), 0 2px 8px oklch(0 0 0 / 0.50)",
+                "0 6px 24px oklch(0.55 0.22 265 / 0.45), 0 2px 8px oklch(0 0 0 / 0.50)",
             }}
             data-ocid="hero-login-btn"
           >

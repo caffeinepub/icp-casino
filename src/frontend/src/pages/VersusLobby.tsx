@@ -162,10 +162,10 @@ function OpenMatchRow({
           className="font-bold btn-premium"
           style={{
             background:
-              "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
-            color: "oklch(0.07 0 0)",
+              "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
+            color: "oklch(0.97 0 0)",
             border: "none",
-            boxShadow: "0 2px 10px oklch(0.72 0.18 65 / 0.30)",
+            boxShadow: "0 2px 10px oklch(0.55 0.22 265 / 0.35)",
           }}
           data-ocid="join-match-btn"
         >
@@ -421,10 +421,10 @@ export default function VersusLobby({ onMatchStart }: VersusLobbyProps) {
             className="w-full sm:w-auto font-bold btn-premium px-8"
             style={{
               background:
-                "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
-              color: "oklch(0.07 0 0)",
+                "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
+              color: "oklch(0.97 0 0)",
               border: "none",
-              boxShadow: "0 4px 20px oklch(0.72 0.18 65 / 0.40)",
+              boxShadow: "0 4px 20px oklch(0.55 0.22 265 / 0.40)",
             }}
             data-ocid="create-match-btn"
           >

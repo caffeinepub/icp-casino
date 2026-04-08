@@ -112,19 +112,19 @@ export function GameCard({ game, onPlay, index }: GameCardProps) {
           variant="outline"
           className="btn-premium w-full text-xs gap-1.5"
           style={{
-            borderColor: "oklch(0.72 0.18 65 / 0.30)",
-            color: "oklch(0.72 0.18 65)",
+            borderColor: "oklch(0.55 0.22 265 / 0.45)",
+            color: "oklch(0.70 0.22 265)",
           }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLButtonElement).style.background =
-              "oklch(0.72 0.18 65 / 0.12)";
+              "oklch(0.55 0.22 265 / 0.15)";
             (e.currentTarget as HTMLButtonElement).style.borderColor =
-              "oklch(0.72 0.18 65 / 0.65)";
+              "oklch(0.55 0.22 265 / 0.80)";
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLButtonElement).style.background = "";
             (e.currentTarget as HTMLButtonElement).style.borderColor =
-              "oklch(0.72 0.18 65 / 0.30)";
+              "oklch(0.55 0.22 265 / 0.45)";
           }}
           data-ocid="play-btn"
           onClick={(e) => {

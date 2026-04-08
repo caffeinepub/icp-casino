@@ -20,9 +20,9 @@
     --popover: 0.13 0.01 45;
     --popover-foreground: 0.96 0.02 65;
 
-    /* Rich gold primary */
-    --primary: 0.72 0.18 65;
-    --primary-foreground: 0.07 0 0;
+    /* Indigo primary — buttons and interactive accents */
+    --primary: 0.55 0.22 265;
+    --primary-foreground: 0.97 0 0;
 
     /* Deep velvet secondary */
     --secondary: 0.14 0.02 45;
@@ -79,8 +79,8 @@
     --popover: 0.13 0.01 45;
     --popover-foreground: 0.96 0.02 65;
 
-    --primary: 0.72 0.18 65;
-    --primary-foreground: 0.07 0 0;
+    --primary: 0.55 0.22 265;
+    --primary-foreground: 0.97 0 0;
 
     --secondary: 0.14 0.02 45;
     --secondary-foreground: 0.88 0.02 65;
@@ -763,7 +763,7 @@
   }
 
   .btn-premium:hover {
-    box-shadow: 0 4px 16px oklch(0.72 0.18 65 / 0.3), 0 2px 8px
+    box-shadow: 0 4px 16px oklch(0.55 0.22 265 / 0.35), 0 2px 8px
       oklch(0 0 0 / 0.4);
     transform: translateY(-1px);
   }
@@ -771,7 +771,7 @@
   .btn-premium:active {
     transform: scale(0.97) translateY(0);
     opacity: 0.92;
-    box-shadow: 0 1px 4px oklch(0.72 0.18 65 / 0.2);
+    box-shadow: 0 1px 4px oklch(0.55 0.22 265 / 0.25);
   }
 
   /* Apply smooth transitions to all existing button variants */

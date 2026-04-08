@@ -274,9 +274,9 @@ export function SlotMachine({ title }: SlotMachineProps) {
         style={{
           background: spinning
             ? "oklch(0.18 0.02 45)"
-            : "linear-gradient(135deg, oklch(0.72 0.18 65) 0%, oklch(0.60 0.18 65) 50%, oklch(0.72 0.18 65) 100%)",
+            : "linear-gradient(135deg, oklch(0.58 0.22 265) 0%, oklch(0.48 0.22 265) 50%, oklch(0.58 0.22 265) 100%)",
           backgroundSize: spinning ? undefined : "200% 100%",
-          color: spinning ? "oklch(0.50 0.03 65)" : "oklch(0.07 0 0)",
+          color: spinning ? "oklch(0.50 0.03 65)" : "oklch(0.97 0 0)",
           border: "none",
           fontWeight: 700,
         }}

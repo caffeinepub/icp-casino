@@ -191,10 +191,10 @@ function WagerPanel({
               className="w-full font-bold btn-premium"
               style={{
                 background:
-                  "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
-                color: "oklch(0.07 0 0)",
+                  "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
+                color: "oklch(0.97 0 0)",
                 border: "none",
-                boxShadow: "0 4px 20px oklch(0.72 0.18 65 / 0.40)",
+                boxShadow: "0 4px 20px oklch(0.55 0.22 265 / 0.40)",
               }}
               data-ocid="accept-wager-btn"
             >
@@ -481,10 +481,10 @@ function DiceGame({
           className="font-bold btn-premium px-10 py-3 text-base"
           style={{
             background:
-              "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
-            color: "oklch(0.07 0 0)",
+              "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
+            color: "oklch(0.97 0 0)",
             border: "none",
-            boxShadow: "0 4px 20px oklch(0.72 0.18 65 / 0.40)",
+            boxShadow: "0 4px 20px oklch(0.55 0.22 265 / 0.40)",
           }}
           data-ocid="roll-dice-btn"
         >

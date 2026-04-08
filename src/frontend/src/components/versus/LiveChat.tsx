@@ -132,8 +132,8 @@ export function LiveChat({ matchId, messages, opponentName }: LiveChatProps) {
             className="shrink-0 rounded-lg p-2 transition-smooth"
             style={{
               background:
-                "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
-              color: "oklch(0.07 0 0)",
+                "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
+              color: "oklch(0.97 0 0)",
               border: "none",
             }}
             data-ocid="chat-send-btn"

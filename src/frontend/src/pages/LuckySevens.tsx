@@ -208,12 +208,12 @@ function WalletGateOverlay({
         className="btn-premium px-10 py-3.5 rounded-2xl font-black text-base uppercase tracking-widest disabled:opacity-60 disabled:cursor-not-allowed"
         style={{
           background: isConnecting
-            ? "rgba(212,175,55,0.4)"
-            : "linear-gradient(135deg, #e8c96a 0%, #D4AF37 40%, #a07830 100%)",
-          color: "#1a0740",
+            ? "rgba(99,102,241,0.4)"
+            : "linear-gradient(135deg, oklch(0.62 0.22 265) 0%, oklch(0.52 0.22 265) 50%, oklch(0.44 0.22 265) 100%)",
+          color: "oklch(0.97 0 0)",
           boxShadow: isConnecting
             ? "none"
-            : "0 4px 24px rgba(212,175,55,0.55), 0 2px 0 rgba(160,120,48,0.8), inset 0 1px 0 rgba(255,230,120,0.4)",
+            : "0 4px 24px rgba(99,102,241,0.55), 0 2px 0 rgba(70,58,180,0.8), inset 0 1px 0 rgba(180,185,255,0.3)",
         }}
       >
         {isConnecting ? "Connecting…" : "Connect Wallet"}
@@ -664,20 +664,20 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
               fontSize: "1.2rem",
               letterSpacing: "0.22em",
               background: isSpinning
-                ? "rgba(212,175,55,0.3)"
-                : "linear-gradient(135deg, #e8c76a 0%, #D4AF37 30%, #c8a030 65%, #a07830 100%)",
-              color: "#1a0740",
+                ? "rgba(99,102,241,0.3)"
+                : "linear-gradient(135deg, oklch(0.65 0.22 265) 0%, oklch(0.55 0.22 265) 30%, oklch(0.46 0.22 265) 65%, oklch(0.40 0.22 265) 100%)",
+              color: "oklch(0.97 0 0)",
               /* 3D button effect: lighter on top, darker on bottom, depth shadow */
               boxShadow: isSpinning
                 ? "none"
                 : [
                     /* Top highlight — gives 3D top lit feel */
-                    "inset 0 2px 0 rgba(255,230,120,0.5)",
+                    "inset 0 2px 0 rgba(180,185,255,0.4)",
                     /* Bottom shadow — gives pressing depth */
-                    "inset 0 -3px 0 rgba(100,60,0,0.5)",
-                    /* Outer gold ambient glow */
-                    "0 0 32px rgba(212,175,55,0.5)",
-                    "0 0 60px rgba(212,175,55,0.25)",
+                    "inset 0 -3px 0 rgba(40,30,120,0.5)",
+                    /* Outer indigo ambient glow */
+                    "0 0 32px rgba(99,102,241,0.5)",
+                    "0 0 60px rgba(99,102,241,0.25)",
                     /* Hard drop shadow for depth */
                     "0 6px 20px rgba(0,0,0,0.6)",
                     "0 2px 8px rgba(0,0,0,0.4)",
@@ -695,10 +695,10 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
                 const el = e.currentTarget;
                 el.style.transform = "translateY(-2px)";
                 el.style.boxShadow = [
-                  "inset 0 2px 0 rgba(255,230,120,0.5)",
-                  "inset 0 -3px 0 rgba(100,60,0,0.5)",
-                  "0 0 40px rgba(212,175,55,0.65)",
-                  "0 0 80px rgba(212,175,55,0.3)",
+                  "inset 0 2px 0 rgba(180,185,255,0.4)",
+                  "inset 0 -3px 0 rgba(40,30,120,0.5)",
+                  "0 0 40px rgba(99,102,241,0.65)",
+                  "0 0 80px rgba(99,102,241,0.3)",
                   "0 10px 28px rgba(0,0,0,0.65)",
                   "0 4px 12px rgba(0,0,0,0.5)",
                 ].join(", ");
@@ -710,10 +710,10 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
               el.style.boxShadow = isSpinning
                 ? "none"
                 : [
-                    "inset 0 2px 0 rgba(255,230,120,0.5)",
-                    "inset 0 -3px 0 rgba(100,60,0,0.5)",
-                    "0 0 32px rgba(212,175,55,0.5)",
-                    "0 0 60px rgba(212,175,55,0.25)",
+                    "inset 0 2px 0 rgba(180,185,255,0.4)",
+                    "inset 0 -3px 0 rgba(40,30,120,0.5)",
+                    "0 0 32px rgba(99,102,241,0.5)",
+                    "0 0 60px rgba(99,102,241,0.25)",
                     "0 6px 20px rgba(0,0,0,0.6)",
                     "0 2px 8px rgba(0,0,0,0.4)",
                   ].join(", ");
@@ -722,9 +722,9 @@ export default function LuckySevens({ onBack }: LuckySevensProps) {
               const el = e.currentTarget;
               el.style.transform = "scale(0.97) translateY(1px)";
               el.style.boxShadow = [
-                "inset 0 1px 0 rgba(255,230,120,0.3)",
-                "inset 0 -1px 0 rgba(100,60,0,0.4)",
-                "0 0 20px rgba(212,175,55,0.4)",
+                "inset 0 1px 0 rgba(180,185,255,0.3)",
+                "inset 0 -1px 0 rgba(40,30,120,0.4)",
+                "0 0 20px rgba(99,102,241,0.4)",
                 "0 2px 8px rgba(0,0,0,0.5)",
               ].join(", ");
             }}

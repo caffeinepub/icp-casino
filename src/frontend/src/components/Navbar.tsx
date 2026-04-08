@@ -199,10 +199,10 @@ export function Navbar({
                   className="gap-1.5 font-bold btn-premium"
                   style={{
                     background:
-                      "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
+                      "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
                     borderColor: "transparent",
-                    color: "oklch(0.07 0 0)",
-                    boxShadow: "0 2px 12px oklch(0.72 0.18 65 / 0.35)",
+                    color: "oklch(0.97 0 0)",
+                    boxShadow: "0 2px 12px oklch(0.55 0.22 265 / 0.40)",
                   }}
                   data-ocid="deposit-btn"
                 >
@@ -233,10 +233,10 @@ export function Navbar({
                 className="gap-1.5 font-bold btn-premium"
                 style={{
                   background:
-                    "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
-                  color: "oklch(0.07 0 0)",
+                    "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
+                  color: "oklch(0.97 0 0)",
                   border: "none",
-                  boxShadow: "0 2px 12px oklch(0.72 0.18 65 / 0.35)",
+                  boxShadow: "0 2px 12px oklch(0.55 0.22 265 / 0.35)",
                 }}
                 data-ocid="login-btn"
               >
@@ -349,9 +349,9 @@ export function Navbar({
                       className="gap-1.5 w-full font-bold btn-premium"
                       style={{
                         background:
-                          "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
+                          "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
                         borderColor: "transparent",
-                        color: "oklch(0.07 0 0)",
+                        color: "oklch(0.97 0 0)",
                       }}
                       data-ocid="mobile-deposit-btn"
                     >
@@ -385,8 +385,8 @@ export function Navbar({
                     className="gap-1.5 w-full font-bold btn-premium"
                     style={{
                       background:
-                        "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
-                      color: "oklch(0.07 0 0)",
+                        "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
+                      color: "oklch(0.97 0 0)",
                       border: "none",
                     }}
                     data-ocid="mobile-login-btn"

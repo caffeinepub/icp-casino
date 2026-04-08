@@ -188,10 +188,10 @@ export function ChatBox() {
             className="h-8 px-3 font-bold btn-premium"
             style={{
               background:
-                "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
-              color: "oklch(0.07 0 0)",
+                "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
+              color: "oklch(0.97 0 0)",
               border: "none",
-              boxShadow: "0 2px 10px oklch(0.72 0.18 65 / 0.35)",
+              boxShadow: "0 2px 10px oklch(0.55 0.22 265 / 0.35)",
             }}
             disabled={sendMessage.isPending || !input.trim()}
             aria-label="Send message"

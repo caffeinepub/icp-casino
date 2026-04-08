@@ -655,12 +655,12 @@ function WalletGateOverlay({
         className="btn-premium px-10 py-3.5 rounded-2xl font-black text-base uppercase tracking-widest disabled:opacity-60 disabled:cursor-not-allowed"
         style={{
           background: isConnecting
-            ? "rgba(212,175,55,0.4)"
-            : "linear-gradient(135deg, #e8c96a 0%, #D4AF37 40%, #a07830 100%)",
-          color: "#1a0d3a",
+            ? "rgba(99,102,241,0.4)"
+            : "linear-gradient(135deg, oklch(0.62 0.22 265) 0%, oklch(0.52 0.22 265) 40%, oklch(0.44 0.22 265) 100%)",
+          color: "oklch(0.97 0 0)",
           boxShadow: isConnecting
             ? "none"
-            : "0 4px 24px rgba(212,175,55,0.55), 0 2px 0 rgba(140,100,20,0.6), inset 0 1px 0 rgba(255,230,120,0.35)",
+            : "0 4px 24px rgba(99,102,241,0.55), 0 2px 0 rgba(70,58,180,0.6), inset 0 1px 0 rgba(180,185,255,0.25)",
         }}
       >
         {isConnecting ? "Connecting…" : "Connect Wallet"}
@@ -1149,20 +1149,20 @@ export function MidnightDragons() {
                 style={{
                   letterSpacing: "0.18em",
                   background: isSpinning
-                    ? "rgba(212,175,55,0.25)"
-                    : "linear-gradient(135deg, #e8c76a 0%, #D4AF37 35%, #c0980e 65%, #a07830 100%)",
-                  color: "#1a0740",
-                  borderTop: "2px solid rgba(255,230,120,0.5)",
-                  borderLeft: "2px solid rgba(255,220,100,0.35)",
-                  borderRight: "1px solid rgba(120,80,10,0.5)",
-                  borderBottom: "2px solid rgba(100,60,5,0.6)",
+                    ? "rgba(99,102,241,0.25)"
+                    : "linear-gradient(135deg, oklch(0.65 0.22 265) 0%, oklch(0.55 0.22 265) 35%, oklch(0.46 0.22 265) 65%, oklch(0.40 0.22 265) 100%)",
+                  color: "oklch(0.97 0 0)",
+                  borderTop: "2px solid rgba(180,185,255,0.4)",
+                  borderLeft: "2px solid rgba(160,165,255,0.3)",
+                  borderRight: "1px solid rgba(40,30,120,0.5)",
+                  borderBottom: "2px solid rgba(30,20,100,0.6)",
                   boxShadow: isSpinning
                     ? "none"
                     : [
-                        "inset 0 2px 0 rgba(255,235,120,0.4)",
-                        "inset 0 -3px 0 rgba(100,60,0,0.45)",
-                        "0 0 32px rgba(212,175,55,0.5)",
-                        "0 0 60px rgba(212,175,55,0.2)",
+                        "inset 0 2px 0 rgba(180,185,255,0.35)",
+                        "inset 0 -3px 0 rgba(40,30,120,0.45)",
+                        "0 0 32px rgba(99,102,241,0.5)",
+                        "0 0 60px rgba(99,102,241,0.2)",
                         "0 6px 24px rgba(0,0,0,0.7)",
                       ].join(", "),
                   minWidth: 140,
@@ -1179,10 +1179,10 @@ export function MidnightDragons() {
                     const el = e.currentTarget as HTMLButtonElement;
                     el.style.transform = "translateY(-2px)";
                     el.style.boxShadow = [
-                      "inset 0 2px 0 rgba(255,235,120,0.4)",
-                      "inset 0 -3px 0 rgba(100,60,0,0.45)",
-                      "0 0 48px rgba(212,175,55,0.65)",
-                      "0 0 80px rgba(212,175,55,0.3)",
+                      "inset 0 2px 0 rgba(180,185,255,0.35)",
+                      "inset 0 -3px 0 rgba(40,30,120,0.45)",
+                      "0 0 48px rgba(99,102,241,0.65)",
+                      "0 0 80px rgba(99,102,241,0.3)",
                       "0 10px 32px rgba(0,0,0,0.75)",
                     ].join(", ");
                   }
@@ -1193,10 +1193,10 @@ export function MidnightDragons() {
                   el.style.boxShadow = isSpinning
                     ? "none"
                     : [
-                        "inset 0 2px 0 rgba(255,235,120,0.4)",
-                        "inset 0 -3px 0 rgba(100,60,0,0.45)",
-                        "0 0 32px rgba(212,175,55,0.5)",
-                        "0 0 60px rgba(212,175,55,0.2)",
+                        "inset 0 2px 0 rgba(180,185,255,0.35)",
+                        "inset 0 -3px 0 rgba(40,30,120,0.45)",
+                        "0 0 32px rgba(99,102,241,0.5)",
+                        "0 0 60px rgba(99,102,241,0.2)",
                         "0 6px 24px rgba(0,0,0,0.7)",
                       ].join(", ");
                 }}

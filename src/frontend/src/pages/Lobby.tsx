@@ -301,9 +301,9 @@ export default function LobbyPage({ onPlay, onVersusMode }: LobbyPageProps) {
                   className="shrink-0 ml-4 px-6 py-3 rounded-xl font-semibold text-sm btn-premium"
                   style={{
                     background:
-                      "linear-gradient(135deg, oklch(0.72 0.18 65), oklch(0.60 0.18 65))",
-                    color: "oklch(0.07 0 0)",
-                    boxShadow: "0 4px 16px oklch(0.72 0.18 65 / 0.35)",
+                      "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
+                    color: "oklch(0.97 0 0)",
+                    boxShadow: "0 4px 16px oklch(0.55 0.22 265 / 0.35)",
                   }}
                 >
                   Play Now →

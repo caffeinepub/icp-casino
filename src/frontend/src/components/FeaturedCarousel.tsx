@@ -127,10 +127,12 @@ export function FeaturedCarousel({
         </div>
         <Button
           size="lg"
-          className="btn-premium w-fit gap-2 shadow-gold-glow"
+          className="btn-premium w-fit gap-2"
           style={{
-            background: "oklch(0.72 0.18 65)",
-            color: "oklch(0.07 0 0)",
+            background:
+              "linear-gradient(135deg, oklch(0.58 0.22 265), oklch(0.48 0.22 265))",
+            color: "oklch(0.97 0 0)",
+            boxShadow: "0 4px 16px oklch(0.55 0.22 265 / 0.40)",
           }}
           onClick={() => onPlay?.(game)}
           data-ocid="carousel-play-btn"
