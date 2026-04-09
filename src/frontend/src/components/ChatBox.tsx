@@ -15,6 +15,7 @@ import {
   useLobbyChatMessages,
   useSendLobbyChatMessage,
 } from "../hooks/use-wallet";
+import { FlagIcon, isFlagAvatar } from "./FlagIcons";
 
 // Vegas-themed user colors — gold & purple jewel tones
 const USER_COLORS = [
@@ -51,14 +52,22 @@ function AvatarDot({
 }) {
   const initials = name.slice(0, 1).toUpperCase();
   const isEmoji = isEmojiAvatar(avatarUrl);
+  const isFlag = isFlagAvatar(avatarUrl);
 
   return (
     <span
       className="profile-avatar-thumbnail shrink-0"
-      style={{ width: size, height: size, fontSize: size * 0.45 }}
+      style={{
+        width: size,
+        height: size,
+        fontSize: size * 0.45,
+        overflow: "hidden",
+      }}
       aria-hidden="true"
     >
-      {avatarUrl && isEmoji ? (
+      {avatarUrl && isFlag ? (
+        <FlagIcon code={avatarUrl} size={size * 1.5} />
+      ) : avatarUrl && isEmoji ? (
         <span style={{ fontSize: size * 0.62, lineHeight: 1 }}>
           {avatarUrl}
         </span>

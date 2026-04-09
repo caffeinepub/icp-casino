@@ -6,12 +6,14 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import type { Match, OnlinePlayer } from "../backend";
 import { VersusGameType, WagerAmount } from "../backend";
+import { FlagIcon, isFlagAvatar } from "../components/FlagIcons";
 import { OnlinePlayersList } from "../components/versus/OnlinePlayersList";
 import { WagerSelector } from "../components/versus/WagerSelector";
 import { useAuth } from "../hooks/use-auth";
 import {
   getAvatarUrl,
   getDisplayName,
+  isEmojiAvatar,
   useMyProfile,
 } from "../hooks/use-profile";
 import {
@@ -273,10 +275,15 @@ function MyIdentityBadge() {
           fontSize: 11,
           border: "1px solid oklch(0.65 0.25 265 / 0.5)",
           boxShadow: "0 0 8px oklch(0.65 0.25 265 / 0.3)",
+          overflow: "hidden",
         }}
         aria-hidden="true"
       >
-        {avatarUrl ? (
+        {avatarUrl && isFlagAvatar(avatarUrl) ? (
+          <FlagIcon code={avatarUrl} size={42} />
+        ) : avatarUrl && isEmojiAvatar(avatarUrl) ? (
+          <span style={{ fontSize: 17, lineHeight: 1 }}>{avatarUrl}</span>
+        ) : avatarUrl ? (
           <img src={avatarUrl} alt={displayName} />
         ) : (
           <span style={{ color: "oklch(0.65 0.25 265)" }}>{initial}</span>

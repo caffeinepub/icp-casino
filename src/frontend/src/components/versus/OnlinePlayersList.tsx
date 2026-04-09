@@ -5,6 +5,7 @@ import { PlayerStatus } from "../../backend";
 import { isEmojiAvatar } from "../../hooks/use-profile";
 import { formatICP } from "../../hooks/use-wallet";
 import { shortPrincipal } from "../../types/versus";
+import { FlagIcon, isFlagAvatar } from "../FlagIcons";
 
 /** Extended type to carry optional profile fields returned from enriched backend */
 type OnlinePlayerWithProfile = OnlinePlayer;
@@ -78,6 +79,7 @@ function PlayerAvatar({
   const hue = (username.charCodeAt(0) * 137) % 360;
   const glowColor = `oklch(0.65 0.22 ${hue})`;
   const isEmoji = isEmojiAvatar(avatarUrl);
+  const isFlag = isFlagAvatar(avatarUrl);
 
   return (
     <div
@@ -89,10 +91,13 @@ function PlayerAvatar({
         boxShadow: `0 0 8px ${glowColor}40`,
         fontSize: 14,
         transition: "box-shadow 0.2s ease",
+        overflow: "hidden",
       }}
       aria-hidden="true"
     >
-      {avatarUrl && isEmoji ? (
+      {avatarUrl && isFlag ? (
+        <FlagIcon code={avatarUrl} size={54} />
+      ) : avatarUrl && isEmoji ? (
         <span style={{ fontSize: 22, lineHeight: 1 }}>{avatarUrl}</span>
       ) : avatarUrl ? (
         <img src={avatarUrl} alt={username} />

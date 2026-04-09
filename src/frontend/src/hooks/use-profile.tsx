@@ -1,6 +1,10 @@
 import { useActor } from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createActor } from "../backend";
+import type {
+  UserProfile as BackendUserProfile,
+  backendInterface,
+} from "../backend.d";
 
 export interface UserProfile {
   userId: { toText: () => string };
@@ -9,20 +13,10 @@ export interface UserProfile {
   createdAt: bigint;
 }
 
-// Extended actor type covering profile methods not yet in generated bindings.
-interface ProfileActor {
-  getMyProfile: () => Promise<[] | [UserProfile]>;
-  hasProfile: () => Promise<boolean>;
-  setProfile: (
-    username: string,
-    avatarUrl: [] | [string],
-  ) => Promise<{ ok: null } | { err: string }>;
-}
-
 function useProfileActor() {
   const { actor, isFetching } = useActor(createActor);
   return {
-    actor: actor as unknown as ProfileActor | null,
+    actor: actor as unknown as backendInterface | null,
     ready: !!actor && !isFetching,
   };
 }
@@ -35,8 +29,16 @@ export function useMyProfile() {
       if (!actor) return null;
       try {
         const result = await actor.getMyProfile();
-        if (Array.isArray(result) && result.length > 0)
-          return result[0] ?? null;
+        if (!result) return null;
+        // backend.d.ts returns UserProfile | null directly
+        const p = result as BackendUserProfile;
+        // Normalise into the local UserProfile shape (avatarUrl as Candid opt array)
+        return {
+          userId: p.userId as unknown as { toText: () => string },
+          username: p.username,
+          avatarUrl: p.avatarUrl != null ? [p.avatarUrl] : [],
+          createdAt: p.createdAt,
+        };
       } catch {
         // profile methods not yet deployed — treat as no profile
       }
@@ -78,8 +80,9 @@ export function useSetProfile() {
     mutationFn: async ({ username, avatarEmoji }) => {
       if (!actor) throw new Error("Not connected");
 
-      // Save emoji string directly as avatarUrl — the backend accepts any text
-      const avatarArg: [] | [string] = avatarEmoji ? [avatarEmoji] : [];
+      // backend.d.ts expects (string, string | null) — pass the emoji directly,
+      // NOT wrapped in an array. Wrapping in [] causes "Invalid opt text argument".
+      const avatarArg: string | null = avatarEmoji ?? null;
 
       const result = await actor.setProfile(username, avatarArg);
       if ("err" in result) throw new Error(result.err);
@@ -121,9 +124,12 @@ export function getAvatarUrl(
 /**
  * Returns true if the given string is a single emoji/icon character
  * (used to decide whether to render as <img> or as text).
+ * Returns false for flag_ prefixed strings (those render as SVG flags).
  */
 export function isEmojiAvatar(value: string | null | undefined): boolean {
   if (!value) return false;
+  // Flag identifiers like "flag_us" are not emoji — they render as SVG
+  if (value.startsWith("flag_")) return false;
   // Emoji are typically 1-4 chars in length; URLs contain slashes or dots
   if (value.length > 10) return false;
   // If it contains a slash, colon, or dot it's likely a URL

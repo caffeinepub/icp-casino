@@ -1,5 +1,11 @@
 import { useState } from "react";
 import { useSetProfile } from "../hooks/use-profile";
+import {
+  ALL_FLAG_CODES,
+  FLAG_LABELS,
+  FlagIcon,
+  isFlagAvatar,
+} from "./FlagIcons";
 
 interface ProfileSetupProps {
   onComplete: () => void;
@@ -25,6 +31,14 @@ const ICON_CATEGORIES: { label: string; icons: string[] }[] = [
       "💎",
       "🏆",
       "👑",
+      "♠",
+      "♣",
+      "♥",
+      "♦",
+      "🂡",
+      "🂱",
+      "🃁",
+      "🃑",
     ],
   },
   {
@@ -67,24 +81,7 @@ const ICON_CATEGORIES: { label: string; icons: string[] }[] = [
   },
   {
     label: "Country Flags",
-    icons: [
-      "🇺🇸",
-      "🇬🇧",
-      "🇩🇪",
-      "🇫🇷",
-      "🇯🇵",
-      "🇨🇳",
-      "🇧🇷",
-      "🇨🇦",
-      "🇦🇺",
-      "🇲🇽",
-      "🇰🇷",
-      "🇮🇳",
-      "🇷🇺",
-      "🇮🇹",
-      "🇪🇸",
-      "🇸🇦",
-    ],
+    icons: ALL_FLAG_CODES,
   },
 ];
 
@@ -156,11 +153,28 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
                           type="button"
                           className={`profile-icon-btn${isSelected ? " profile-icon-btn-selected" : ""}`}
                           onClick={() => setSelectedIcon(icon)}
-                          aria-label={`Select icon ${icon}`}
+                          aria-label={`Select icon ${isFlagAvatar(icon) ? (FLAG_LABELS[icon] ?? icon) : icon}`}
                           aria-pressed={isSelected}
                           data-ocid="profile-icon-option"
                         >
-                          <span className="profile-icon-emoji">{icon}</span>
+                          {isFlagAvatar(icon) ? (
+                            <span
+                              className="profile-icon-flag-wrap"
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: "2.8rem",
+                                height: "2.8rem",
+                                borderRadius: "50%",
+                                overflow: "hidden",
+                              }}
+                            >
+                              <FlagIcon code={icon} size={52} />
+                            </span>
+                          ) : (
+                            <span className="profile-icon-emoji">{icon}</span>
+                          )}
                         </button>
                       );
                     })}
@@ -171,9 +185,27 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
 
             {selectedIcon && (
               <div className="profile-icon-selected-preview">
-                <span className="profile-icon-preview-emoji">
-                  {selectedIcon}
-                </span>
+                {isFlagAvatar(selectedIcon) ? (
+                  <span
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "3.5rem",
+                      height: "3.5rem",
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                      border: "2px solid oklch(0.72 0.18 65 / 0.8)",
+                      boxShadow: "0 0 18px oklch(0.72 0.18 65 / 0.5)",
+                    }}
+                  >
+                    <FlagIcon code={selectedIcon} size={64} />
+                  </span>
+                ) : (
+                  <span className="profile-icon-preview-emoji">
+                    {selectedIcon}
+                  </span>
+                )}
                 <span className="profile-icon-preview-label">Selected</span>
               </div>
             )}

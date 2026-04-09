@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { GameState, OnlinePlayer } from "../backend";
 import { MatchStatus, VersusGameType } from "../backend";
 import type { WagerAmount } from "../backend";
+import { FlagIcon, isFlagAvatar } from "../components/FlagIcons";
 import { LiveChat } from "../components/versus/LiveChat";
 import { MatchStatusCard } from "../components/versus/MatchStatusCard";
 import { OnlinePlayersList } from "../components/versus/OnlinePlayersList";
@@ -13,6 +14,7 @@ import { useAuth } from "../hooks/use-auth";
 import {
   getAvatarUrl,
   getDisplayName,
+  isEmojiAvatar,
   useMyProfile,
 } from "../hooks/use-profile";
 import {
@@ -588,10 +590,15 @@ function OpponentCard({
           fontSize: 11,
           border: `1px solid ${color}60`,
           boxShadow: `0 0 6px ${color}40`,
+          overflow: "hidden",
         }}
         aria-hidden="true"
       >
-        {avatarUrl ? (
+        {avatarUrl && isFlagAvatar(avatarUrl) ? (
+          <FlagIcon code={avatarUrl} size={42} />
+        ) : avatarUrl && isEmojiAvatar(avatarUrl) ? (
+          <span style={{ fontSize: 17, lineHeight: 1 }}>{avatarUrl}</span>
+        ) : avatarUrl ? (
           <img src={avatarUrl} alt={name} />
         ) : (
           <span style={{ color }}>{initial}</span>
@@ -759,10 +766,15 @@ export default function VersusMatch({ matchId, onBack }: VersusMatchProps) {
               height: 20,
               fontSize: 9,
               border: "1px solid oklch(0.65 0.25 265 / 0.4)",
+              overflow: "hidden",
             }}
             aria-hidden="true"
           >
-            {myAvatarUrl ? (
+            {myAvatarUrl && isFlagAvatar(myAvatarUrl) ? (
+              <FlagIcon code={myAvatarUrl} size={30} />
+            ) : myAvatarUrl && isEmojiAvatar(myAvatarUrl) ? (
+              <span style={{ fontSize: 13, lineHeight: 1 }}>{myAvatarUrl}</span>
+            ) : myAvatarUrl ? (
               <img src={myAvatarUrl} alt={myDisplayName} />
             ) : (
               <span style={{ color: "oklch(0.65 0.25 265)" }}>
