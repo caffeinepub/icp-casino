@@ -1,5 +1,7 @@
 import { loadConfig } from "@caffeineai/core-infrastructure";
 import { useActor } from "@caffeineai/core-infrastructure";
+import { useInternetIdentity } from "@caffeineai/core-infrastructure";
+import type { Identity } from "@icp-sdk/core/agent";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createActor } from "../backend";
 
@@ -31,17 +33,25 @@ function useProfileActor() {
 
 /**
  * Upload a File to the Caffeine object-storage gateway and return a public URL.
- * Uses StorageClient from @caffeineai/object-storage via loadConfig.
+ * Must be called with the user's authenticated Identity so the StorageClient
+ * can sign the certificate request against the backend canister.
  */
-async function uploadAvatarFile(file: File): Promise<string> {
+async function uploadAvatarFile(
+  file: File,
+  identity: Identity,
+): Promise<string> {
   const config = await loadConfig();
 
   // Dynamically import to avoid bundling issues when object-storage is not needed
   const { StorageClient } = await import("@caffeineai/object-storage");
   const { HttpAgent } = await import("@icp-sdk/core/agent");
 
+  // Build an authenticated agent using the user's Internet Identity delegation.
+  // Without this identity the getCertificate() call inside StorageClient.putFile()
+  // returns 403 Forbidden: Invalid payload because the canister rejects unsigned calls.
   const agent = new HttpAgent({
     host: config.backend_host,
+    identity,
   });
 
   if (config.backend_host?.includes("localhost")) {
@@ -105,6 +115,8 @@ export function useHasProfile() {
 
 export function useSetProfile() {
   const { actor } = useProfileActor();
+  // Grab the authenticated identity so we can pass it to the StorageClient
+  const { identity } = useInternetIdentity();
   const qc = useQueryClient();
 
   const mutation = useMutation<
@@ -118,8 +130,17 @@ export function useSetProfile() {
       // Upload avatar if provided; otherwise pass empty option
       let avatarArg: [] | [string] = [];
       if (avatarFile) {
-        const url = await uploadAvatarFile(avatarFile);
-        avatarArg = [url];
+        if (!identity) {
+          throw new Error("Please log in before uploading a profile picture.");
+        }
+        try {
+          const url = await uploadAvatarFile(avatarFile, identity);
+          avatarArg = [url];
+        } catch (uploadErr) {
+          const msg =
+            uploadErr instanceof Error ? uploadErr.message : String(uploadErr);
+          throw new Error(`Avatar upload failed: ${msg}`);
+        }
       }
 
       const result = await actor.setProfile(username, avatarArg);
