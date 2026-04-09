@@ -125,7 +125,7 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
     <div className="profile-modal-overlay" data-ocid="profile-setup-overlay">
       <div
         className="profile-card"
-        style={{ maxWidth: 560, maxHeight: "92vh", overflowY: "auto" }}
+        style={{ maxWidth: 600, maxHeight: "92vh", overflowY: "auto" }}
       >
         <div className="profile-card-content">
           {/* Header */}
@@ -140,7 +140,7 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
 
             <div
               className="profile-icon-scroll"
-              style={{ maxHeight: 260, overflowY: "auto" }}
+              style={{ maxHeight: 340, overflowY: "auto" }}
             >
               {ICON_CATEGORIES.map((category) => (
                 <div key={category.label} className="mb-4">
