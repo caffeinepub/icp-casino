@@ -7,11 +7,11 @@ import VersusMixin "mixins/versus-api";
 import LobbyChatMixin "mixins/lobby-chat-api";
 import ProfileMixin "mixins/profile-api";
 import CasinoLib "lib/casino";
-import Migration "migration";
+
 import Map "mo:core/Map";
 import List "mo:core/List";
 
-(with migration = Migration.run)
+
 actor {
   // Casino state
   let games = List.empty<Types.Game>();

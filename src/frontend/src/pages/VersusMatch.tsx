@@ -33,27 +33,17 @@ interface VersusMatchProps {
 }
 
 /** Extended OnlinePlayer with optional profile fields */
-interface OnlinePlayerWithProfile extends OnlinePlayer {
-  username?: [] | [string];
-  avatarUrl?: [] | [string];
-}
+type OnlinePlayerWithProfile = OnlinePlayer;
 
 function resolveOnlinePlayerName(player: OnlinePlayerWithProfile): string {
-  if (player.username && player.username.length > 0) {
-    const name = player.username[0];
-    if (name) return name;
-  }
+  if (player.username) return player.username;
   return `Player_${player.id.toText().replace(/-/g, "").slice(-6).toUpperCase()}`;
 }
 
 function resolveOnlinePlayerAvatar(
   player: OnlinePlayerWithProfile,
 ): string | null {
-  if (player.avatarUrl && player.avatarUrl.length > 0) {
-    const url = player.avatarUrl[0];
-    return url ?? null;
-  }
-  return null;
+  return player.avatarUrl ?? null;
 }
 
 function wagerToICP(wager: string): number {

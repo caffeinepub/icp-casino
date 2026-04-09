@@ -6,24 +6,15 @@ import { formatICP } from "../../hooks/use-wallet";
 import { shortPrincipal } from "../../types/versus";
 
 /** Extended type to carry optional profile fields returned from enriched backend */
-interface OnlinePlayerWithProfile extends OnlinePlayer {
-  username?: [] | [string];
-  avatarUrl?: [] | [string];
-}
+type OnlinePlayerWithProfile = OnlinePlayer;
 
 function resolveUsername(player: OnlinePlayerWithProfile): string {
-  if (player.username && player.username.length > 0)
-    return (
-      player.username[0] ??
-      `Player_${player.id.toText().replace(/-/g, "").slice(-6).toUpperCase()}`
-    );
+  if (player.username) return player.username;
   return `Player_${player.id.toText().replace(/-/g, "").slice(-6).toUpperCase()}`;
 }
 
 function resolveAvatarUrl(player: OnlinePlayerWithProfile): string | null {
-  if (player.avatarUrl && player.avatarUrl.length > 0)
-    return player.avatarUrl[0] ?? null;
-  return null;
+  return player.avatarUrl ?? null;
 }
 
 interface OnlinePlayersListProps {

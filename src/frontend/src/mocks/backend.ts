@@ -1,4 +1,4 @@
-import type { backendInterface, Game, LobbyChatMessage, Match, OnlinePlayer, Transaction, ChatMessage } from "../backend";
+import type { backendInterface, Game, LobbyChatMessage, Match, OnlinePlayer, Transaction, ChatMessage, UserProfile } from "../backend";
 import { GameCategory, MatchStatus, PlayerStatus, TransactionType, VersusGameType, WagerAmount } from "../backend";
 import type { Principal } from "@icp-sdk/core/principal";
 
@@ -130,6 +130,10 @@ export const mockBackend: backendInterface = {
     senderId: mockPrincipal1,
   }),
   getLobbyChatMessages: async () => mockLobbyChatMessages,
+  getMyProfile: async (): Promise<UserProfile | null> => null,
+  getProfile: async (_userId): Promise<UserProfile | null> => null,
+  hasProfile: async (): Promise<boolean> => false,
+  setProfile: async (_username, _avatarUrl) => ({ __kind__: "ok", ok: null }),
   sendLobbyChatMessage: async (message, senderName) => {
     const msg: LobbyChatMessage = {
       id: `${Date.now()}`,

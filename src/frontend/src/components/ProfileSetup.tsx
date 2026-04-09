@@ -12,7 +12,7 @@ const MAX_LEN = 20;
 export function ProfileSetup({ onComplete }: ProfileSetupProps) {
   const [username, setUsername] = useState("");
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [avatarBase64, setAvatarBase64] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { setProfile, isLoading, error } = useSetProfile();
 
@@ -28,19 +28,16 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const dataUrl = ev.target?.result as string;
-      setAvatarPreview(dataUrl);
-      setAvatarBase64(dataUrl);
-    };
-    reader.readAsDataURL(file);
+    // Store the File object for upload; use a local object URL for preview only
+    setAvatarFile(file);
+    const objectUrl = URL.createObjectURL(file);
+    setAvatarPreview(objectUrl);
   }
 
   async function handleSubmit() {
     if (!isValidUsername) return;
     try {
-      await setProfile(username, avatarBase64 ?? undefined);
+      await setProfile(username, avatarFile ?? undefined);
       onComplete();
     } catch {
       // error shown via `error` state
@@ -64,11 +61,9 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
         <div className="profile-card-content">
           {/* Header */}
           <div className="profile-header">
-            <h1 className="tech-text glitch-text neon-glow">
-              INITIALIZE YOUR IDENTITY
-            </h1>
+            <h1 className="tech-text glitch-text neon-glow">ACCOUNT SETUP</h1>
             <p>
-              Choose a callsign and avatar to identify yourself in the arena
+              Choose a username and avatar to identify yourself in the arena
             </p>
           </div>
 
@@ -104,13 +99,13 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
           {/* Username Input */}
           <div className="profile-username-group">
             <label htmlFor="username-input" className="profile-username-label">
-              CALLSIGN
+              USERNAME
             </label>
             <input
               id="username-input"
               type="text"
               className="profile-username-input"
-              placeholder="Enter your callsign..."
+              placeholder="Enter your username..."
               value={username}
               maxLength={MAX_LEN}
               onChange={(e) => setUsername(e.target.value)}
@@ -125,7 +120,7 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
                   : username.length > 0 && username.length < MIN_LEN
                     ? `Min ${MIN_LEN} characters`
                     : isValidUsername
-                      ? "✓ Valid callsign"
+                      ? "✓ Valid username"
                       : "3–20 characters · letters, numbers, underscores"}
               </span>
               <span>

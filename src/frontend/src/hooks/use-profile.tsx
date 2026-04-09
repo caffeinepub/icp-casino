@@ -1,3 +1,4 @@
+import { loadConfig } from "@caffeineai/core-infrastructure";
 import { useActor } from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createActor } from "../backend";
@@ -26,6 +27,41 @@ function useProfileActor() {
     actor: actor as unknown as ProfileActor | null,
     ready: !!actor && !isFetching,
   };
+}
+
+/**
+ * Upload a File to the Caffeine object-storage gateway and return a public URL.
+ * Uses StorageClient from @caffeineai/object-storage via loadConfig.
+ */
+async function uploadAvatarFile(file: File): Promise<string> {
+  const config = await loadConfig();
+
+  // Dynamically import to avoid bundling issues when object-storage is not needed
+  const { StorageClient } = await import("@caffeineai/object-storage");
+  const { HttpAgent } = await import("@icp-sdk/core/agent");
+
+  const agent = new HttpAgent({
+    host: config.backend_host,
+  });
+
+  if (config.backend_host?.includes("localhost")) {
+    await agent.fetchRootKey().catch(() => {});
+  }
+
+  const storageClient = new StorageClient(
+    config.bucket_name,
+    config.storage_gateway_url,
+    config.backend_canister_id,
+    config.project_id,
+    agent,
+  );
+
+  const arrayBuffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(arrayBuffer);
+
+  const { hash } = await storageClient.putFile(bytes);
+  const url = await storageClient.getDirectURL(hash);
+  return url;
 }
 
 export function useMyProfile() {
@@ -74,11 +110,18 @@ export function useSetProfile() {
   const mutation = useMutation<
     void,
     Error,
-    { username: string; avatarUrl?: string }
+    { username: string; avatarFile?: File }
   >({
-    mutationFn: async ({ username, avatarUrl }) => {
+    mutationFn: async ({ username, avatarFile }) => {
       if (!actor) throw new Error("Not connected");
-      const avatarArg: [] | [string] = avatarUrl ? [avatarUrl] : [];
+
+      // Upload avatar if provided; otherwise pass empty option
+      let avatarArg: [] | [string] = [];
+      if (avatarFile) {
+        const url = await uploadAvatarFile(avatarFile);
+        avatarArg = [url];
+      }
+
       const result = await actor.setProfile(username, avatarArg);
       if ("err" in result) throw new Error(result.err);
     },
@@ -89,8 +132,8 @@ export function useSetProfile() {
   });
 
   return {
-    setProfile: (username: string, avatarUrl?: string) =>
-      mutation.mutateAsync({ username, avatarUrl }),
+    setProfile: (username: string, avatarFile?: File) =>
+      mutation.mutateAsync({ username, avatarFile }),
     isLoading: mutation.isPending,
     error: mutation.error?.message ?? null,
   };
