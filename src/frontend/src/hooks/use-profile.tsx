@@ -1,7 +1,5 @@
-import { loadConfig } from "@caffeineai/core-infrastructure";
 import { useActor } from "@caffeineai/core-infrastructure";
-import { useInternetIdentity } from "@caffeineai/core-infrastructure";
-import type { Identity } from "@icp-sdk/core/agent";
+import { ExternalBlob } from "@caffeineai/object-storage";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createActor } from "../backend";
 
@@ -21,6 +19,8 @@ interface ProfileActor {
     username: string,
     avatarUrl: [] | [string],
   ) => Promise<{ ok: null } | { err: string }>;
+  /** Internal upload callback injected by createActorWithConfig */
+  _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>;
 }
 
 function useProfileActor() {
@@ -33,31 +33,49 @@ function useProfileActor() {
 
 /**
  * Upload a File to the Caffeine object-storage gateway and return a public URL.
- * Must be called with the user's authenticated Identity so the StorageClient
- * can sign the certificate request against the backend canister.
+ *
+ * Uses the actor's internal _uploadFile callback (injected by createActorWithConfig)
+ * which already has a correctly-configured StorageClient with a properly initialized
+ * HttpAgent. This avoids re-creating an HttpAgent and ensures the same network
+ * configuration (host, root key, time sync state) is used for the certificate call.
+ *
+ * The MOTOKO_DEDUPLICATION_SENTINEL ("!caf!") prefix is stripped to get the raw
+ * hash, then getDirectURL is called to produce the public blob URL.
  */
 async function uploadAvatarFile(
   file: File,
-  identity: Identity,
+  uploadFile: (blob: ExternalBlob) => Promise<Uint8Array>,
 ): Promise<string> {
-  const config = await loadConfig();
-
-  // Dynamically import to avoid bundling issues when object-storage is not needed
+  const { loadConfig } = await import("@caffeineai/core-infrastructure");
   const { StorageClient } = await import("@caffeineai/object-storage");
   const { HttpAgent } = await import("@icp-sdk/core/agent");
 
-  // Build an authenticated agent using the user's Internet Identity delegation.
-  // Without this identity the getCertificate() call inside StorageClient.putFile()
-  // returns 403 Forbidden: Invalid payload because the canister rejects unsigned calls.
-  const agent = new HttpAgent({
-    host: config.backend_host,
-    identity,
-  });
+  const arrayBuffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(arrayBuffer);
+  const blob = ExternalBlob.fromBytes(bytes);
 
-  if (config.backend_host?.includes("localhost")) {
-    await agent.fetchRootKey().catch(() => {});
+  // Use the actor's internal _uploadFile — it calls storageClient.putFile() with
+  // the correctly configured agent (same one used for all backend actor calls).
+  // Returns Motoko bytes with "!caf!" prefix followed by the sha256 hash.
+  const resultBytes = await uploadFile(blob);
+
+  const SENTINEL = "!caf!";
+  const hashWithPrefix = new TextDecoder().decode(resultBytes);
+
+  if (!hashWithPrefix.startsWith(SENTINEL)) {
+    throw new Error(
+      `Unexpected upload result format: ${hashWithPrefix.slice(0, 20)}`,
+    );
   }
 
+  const hash = hashWithPrefix.slice(SENTINEL.length);
+
+  // Build the direct URL using the same config the StorageClient uses.
+  const config = await loadConfig();
+
+  // Create a temporary StorageClient just for getDirectURL — this never makes
+  // any canister calls, it only constructs the URL string.
+  const agent = new HttpAgent({ host: config.backend_host });
   const storageClient = new StorageClient(
     config.bucket_name,
     config.storage_gateway_url,
@@ -66,12 +84,7 @@ async function uploadAvatarFile(
     agent,
   );
 
-  const arrayBuffer = await file.arrayBuffer();
-  const bytes = new Uint8Array(arrayBuffer);
-
-  const { hash } = await storageClient.putFile(bytes);
-  const url = await storageClient.getDirectURL(hash);
-  return url;
+  return storageClient.getDirectURL(hash);
 }
 
 export function useMyProfile() {
@@ -103,8 +116,8 @@ export function useHasProfile() {
       try {
         return await actor.hasProfile();
       } catch {
-        // profile methods not yet deployed — allow bypass
-        return true;
+        // On any error, assume no profile exists so Account Setup is shown
+        return false;
       }
     },
     enabled: ready,
@@ -115,8 +128,6 @@ export function useHasProfile() {
 
 export function useSetProfile() {
   const { actor } = useProfileActor();
-  // Grab the authenticated identity so we can pass it to the StorageClient
-  const { identity } = useInternetIdentity();
   const qc = useQueryClient();
 
   const mutation = useMutation<
@@ -130,11 +141,14 @@ export function useSetProfile() {
       // Upload avatar if provided; otherwise pass empty option
       let avatarArg: [] | [string] = [];
       if (avatarFile) {
-        if (!identity) {
-          throw new Error("Please log in before uploading a profile picture.");
-        }
         try {
-          const url = await uploadAvatarFile(avatarFile, identity);
+          // Use the actor's internal _uploadFile which has the correctly
+          // configured StorageClient — avoids re-creating an HttpAgent
+          // and reuses the same network/time-sync state as backend calls.
+          const url = await uploadAvatarFile(
+            avatarFile,
+            actor._uploadFile.bind(actor),
+          );
           avatarArg = [url];
         } catch (uploadErr) {
           const msg =
