@@ -6,6 +6,7 @@ import { useAuth } from "../../hooks/use-auth";
 import {
   getAvatarUrl,
   getDisplayName,
+  isEmojiAvatar,
   useMyProfile,
 } from "../../hooks/use-profile";
 import { useSendChatMessage } from "../../hooks/use-versus";
@@ -30,6 +31,8 @@ function MsgAvatar({
   const initial = name.slice(0, 1).toUpperCase();
   const hue = (name.charCodeAt(0) * 137) % 360;
   const color = `oklch(0.65 0.22 ${hue})`;
+  const isEmoji = isEmojiAvatar(avatarUrl);
+
   return (
     <span
       className="profile-avatar-thumbnail shrink-0"
@@ -41,7 +44,9 @@ function MsgAvatar({
       }}
       aria-hidden="true"
     >
-      {avatarUrl ? (
+      {avatarUrl && isEmoji ? (
+        <span style={{ fontSize: 15, lineHeight: 1 }}>{avatarUrl}</span>
+      ) : avatarUrl ? (
         <img src={avatarUrl} alt={name} />
       ) : (
         <span style={{ color }}>{initial}</span>

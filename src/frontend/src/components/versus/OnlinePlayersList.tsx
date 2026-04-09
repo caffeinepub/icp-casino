@@ -2,6 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Users } from "lucide-react";
 import type { OnlinePlayer } from "../../backend";
 import { PlayerStatus } from "../../backend";
+import { isEmojiAvatar } from "../../hooks/use-profile";
 import { formatICP } from "../../hooks/use-wallet";
 import { shortPrincipal } from "../../types/versus";
 
@@ -76,6 +77,7 @@ function PlayerAvatar({
   const initial = username.slice(0, 1).toUpperCase();
   const hue = (username.charCodeAt(0) * 137) % 360;
   const glowColor = `oklch(0.65 0.22 ${hue})`;
+  const isEmoji = isEmojiAvatar(avatarUrl);
 
   return (
     <div
@@ -90,7 +92,9 @@ function PlayerAvatar({
       }}
       aria-hidden="true"
     >
-      {avatarUrl ? (
+      {avatarUrl && isEmoji ? (
+        <span style={{ fontSize: 22, lineHeight: 1 }}>{avatarUrl}</span>
+      ) : avatarUrl ? (
         <img src={avatarUrl} alt={username} />
       ) : (
         <span style={{ color: glowColor }}>{initial}</span>

@@ -1,5 +1,4 @@
 import { useActor } from "@caffeineai/core-infrastructure";
-import { ExternalBlob } from "@caffeineai/object-storage";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createActor } from "../backend";
 
@@ -11,7 +10,6 @@ export interface UserProfile {
 }
 
 // Extended actor type covering profile methods not yet in generated bindings.
-// Will be resolved once pnpm bindgen runs after backend deployment.
 interface ProfileActor {
   getMyProfile: () => Promise<[] | [UserProfile]>;
   hasProfile: () => Promise<boolean>;
@@ -19,8 +17,6 @@ interface ProfileActor {
     username: string,
     avatarUrl: [] | [string],
   ) => Promise<{ ok: null } | { err: string }>;
-  /** Internal upload callback injected by createActorWithConfig */
-  _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>;
 }
 
 function useProfileActor() {
@@ -29,62 +25,6 @@ function useProfileActor() {
     actor: actor as unknown as ProfileActor | null,
     ready: !!actor && !isFetching,
   };
-}
-
-/**
- * Upload a File to the Caffeine object-storage gateway and return a public URL.
- *
- * Uses the actor's internal _uploadFile callback (injected by createActorWithConfig)
- * which already has a correctly-configured StorageClient with a properly initialized
- * HttpAgent. This avoids re-creating an HttpAgent and ensures the same network
- * configuration (host, root key, time sync state) is used for the certificate call.
- *
- * The MOTOKO_DEDUPLICATION_SENTINEL ("!caf!") prefix is stripped to get the raw
- * hash, then getDirectURL is called to produce the public blob URL.
- */
-async function uploadAvatarFile(
-  file: File,
-  uploadFile: (blob: ExternalBlob) => Promise<Uint8Array>,
-): Promise<string> {
-  const { loadConfig } = await import("@caffeineai/core-infrastructure");
-  const { StorageClient } = await import("@caffeineai/object-storage");
-  const { HttpAgent } = await import("@icp-sdk/core/agent");
-
-  const arrayBuffer = await file.arrayBuffer();
-  const bytes = new Uint8Array(arrayBuffer);
-  const blob = ExternalBlob.fromBytes(bytes);
-
-  // Use the actor's internal _uploadFile — it calls storageClient.putFile() with
-  // the correctly configured agent (same one used for all backend actor calls).
-  // Returns Motoko bytes with "!caf!" prefix followed by the sha256 hash.
-  const resultBytes = await uploadFile(blob);
-
-  const SENTINEL = "!caf!";
-  const hashWithPrefix = new TextDecoder().decode(resultBytes);
-
-  if (!hashWithPrefix.startsWith(SENTINEL)) {
-    throw new Error(
-      `Unexpected upload result format: ${hashWithPrefix.slice(0, 20)}`,
-    );
-  }
-
-  const hash = hashWithPrefix.slice(SENTINEL.length);
-
-  // Build the direct URL using the same config the StorageClient uses.
-  const config = await loadConfig();
-
-  // Create a temporary StorageClient just for getDirectURL — this never makes
-  // any canister calls, it only constructs the URL string.
-  const agent = new HttpAgent({ host: config.backend_host });
-  const storageClient = new StorageClient(
-    config.bucket_name,
-    config.storage_gateway_url,
-    config.backend_canister_id,
-    config.project_id,
-    agent,
-  );
-
-  return storageClient.getDirectURL(hash);
 }
 
 export function useMyProfile() {
@@ -133,29 +73,13 @@ export function useSetProfile() {
   const mutation = useMutation<
     void,
     Error,
-    { username: string; avatarFile?: File }
+    { username: string; avatarEmoji?: string }
   >({
-    mutationFn: async ({ username, avatarFile }) => {
+    mutationFn: async ({ username, avatarEmoji }) => {
       if (!actor) throw new Error("Not connected");
 
-      // Upload avatar if provided; otherwise pass empty option
-      let avatarArg: [] | [string] = [];
-      if (avatarFile) {
-        try {
-          // Use the actor's internal _uploadFile which has the correctly
-          // configured StorageClient — avoids re-creating an HttpAgent
-          // and reuses the same network/time-sync state as backend calls.
-          const url = await uploadAvatarFile(
-            avatarFile,
-            actor._uploadFile.bind(actor),
-          );
-          avatarArg = [url];
-        } catch (uploadErr) {
-          const msg =
-            uploadErr instanceof Error ? uploadErr.message : String(uploadErr);
-          throw new Error(`Avatar upload failed: ${msg}`);
-        }
-      }
+      // Save emoji string directly as avatarUrl — the backend accepts any text
+      const avatarArg: [] | [string] = avatarEmoji ? [avatarEmoji] : [];
 
       const result = await actor.setProfile(username, avatarArg);
       if ("err" in result) throw new Error(result.err);
@@ -167,8 +91,8 @@ export function useSetProfile() {
   });
 
   return {
-    setProfile: (username: string, avatarFile?: File) =>
-      mutation.mutateAsync({ username, avatarFile }),
+    setProfile: (username: string, avatarEmoji?: string) =>
+      mutation.mutateAsync({ username, avatarEmoji }),
     isLoading: mutation.isPending,
     error: mutation.error?.message ?? null,
   };
@@ -185,11 +109,24 @@ export function getDisplayName(
   return `Player_${suffix}`;
 }
 
-/** Resolve avatar URL from a profile */
+/** Resolve avatar URL (or emoji) from a profile */
 export function getAvatarUrl(
   profile: UserProfile | null | undefined,
 ): string | null {
   if (!profile?.avatarUrl) return null;
   const arr = profile.avatarUrl;
   return arr.length > 0 ? (arr[0] ?? null) : null;
+}
+
+/**
+ * Returns true if the given string is a single emoji/icon character
+ * (used to decide whether to render as <img> or as text).
+ */
+export function isEmojiAvatar(value: string | null | undefined): boolean {
+  if (!value) return false;
+  // Emoji are typically 1-4 chars in length; URLs contain slashes or dots
+  if (value.length > 10) return false;
+  // If it contains a slash, colon, or dot it's likely a URL
+  if (/[/:.]/.test(value)) return false;
+  return true;
 }

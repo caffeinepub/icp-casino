@@ -1618,6 +1618,109 @@
     letter-spacing: 0.08em;
   }
 
+  /* ─── Icon Picker ────────────────────────────────────────────────────── */
+  .profile-icon-picker {
+    margin-bottom: 2rem;
+  }
+
+  .profile-icon-scroll {
+    border: 1px solid oklch(var(--profile-avatar-glow) / 0.2);
+    border-radius: 12px;
+    padding: 0.75rem;
+    background: oklch(0.08 0.02 290 / 0.5);
+    scrollbar-width: thin;
+    scrollbar-color: oklch(var(--profile-avatar-glow) / 0.3) transparent;
+  }
+
+  .profile-icon-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+  .profile-icon-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .profile-icon-scroll::-webkit-scrollbar-thumb {
+    background: oklch(var(--profile-avatar-glow) / 0.3);
+    border-radius: 2px;
+  }
+
+  .profile-icon-category-label {
+    font-family: "JetBrains Mono", var(--font-mono), monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: oklch(0.55 0.08 280);
+    margin-bottom: 0.5rem;
+    padding-left: 0.25rem;
+  }
+
+  .profile-icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+    gap: 0.375rem;
+  }
+
+  .profile-icon-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid oklch(var(--profile-avatar-glow) / 0.25);
+    background: oklch(0.13 0.03 290 / 0.4);
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .profile-icon-btn:hover {
+    border-color: oklch(var(--profile-avatar-glow) / 0.6);
+    background: oklch(0.18 0.04 290 / 0.6);
+    transform: scale(1.08);
+    box-shadow: 0 0 10px oklch(var(--profile-avatar-glow) / 0.3);
+  }
+
+  .profile-icon-btn-selected {
+    border-color: oklch(0.72 0.18 65);
+    background: oklch(0.72 0.18 65 / 0.12);
+    transform: scale(1.12);
+    box-shadow: 0 0 0 3px oklch(0.72 0.18 65 / 0.35), 0 0 16px
+      oklch(0.72 0.18 65 / 0.4);
+    animation: avatar-glow-pulse 2s ease-in-out infinite;
+  }
+
+  .profile-icon-emoji {
+    font-size: 1.375rem;
+    line-height: 1;
+    display: block;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .profile-icon-selected-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+    background: oklch(0.72 0.18 65 / 0.08);
+    border: 1px solid oklch(0.72 0.18 65 / 0.3);
+  }
+
+  .profile-icon-preview-emoji {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .profile-icon-preview-label {
+    font-family: "JetBrains Mono", var(--font-mono), monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: oklch(0.72 0.18 65);
+    text-transform: uppercase;
+  }
+
   /* ─── Utility: .profile-username-group ──────────────────────────────── */
   .profile-username-group {
     margin-bottom: 2.5rem;

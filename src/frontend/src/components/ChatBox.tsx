@@ -8,6 +8,7 @@ import { useAuth } from "../hooks/use-auth";
 import {
   getAvatarUrl,
   getDisplayName,
+  isEmojiAvatar,
   useMyProfile,
 } from "../hooks/use-profile";
 import {
@@ -49,13 +50,19 @@ function AvatarDot({
   size?: number;
 }) {
   const initials = name.slice(0, 1).toUpperCase();
+  const isEmoji = isEmojiAvatar(avatarUrl);
+
   return (
     <span
       className="profile-avatar-thumbnail shrink-0"
       style={{ width: size, height: size, fontSize: size * 0.45 }}
       aria-hidden="true"
     >
-      {avatarUrl ? (
+      {avatarUrl && isEmoji ? (
+        <span style={{ fontSize: size * 0.62, lineHeight: 1 }}>
+          {avatarUrl}
+        </span>
+      ) : avatarUrl ? (
         <img src={avatarUrl} alt={name} />
       ) : (
         <span style={{ color: getUserColor(name) }}>{initials}</span>
